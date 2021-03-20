@@ -1,7 +1,6 @@
 const got = require("got");
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
 const Discord = require("discord.js");
+const { divider } = require("../config.json");
 
 module.exports = {
 	name: "inf",
@@ -12,11 +11,12 @@ module.exports = {
 				return message.channel.send(
 					`Zlý počet argumentov, ${message.author}!`
 				);
-			
-			let systemName = '', systemNameWeb = '';
+
+			let systemName = "",
+				systemNameWeb = "";
 			for (let i = 0; i < args.length; i++) {
-				systemName += (args[i].toLowerCase() + ' ');
-				systemNameWeb += (args[i].toLowerCase() + '%20');
+				systemName += args[i].toLowerCase() + " ";
+				systemNameWeb += args[i].toLowerCase() + "%20";
 			}
 
 			let url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemName}`;
@@ -27,9 +27,7 @@ module.exports = {
 
 					if (response.body.length == 2)
 						return message.channel.send(
-							`Systém ${systemName} neexistuje, ${
-								message.author
-							}!`
+							`Systém ${systemName} neexistuje, ${message.author}!`
 						);
 
 					const resJson = JSON.parse(response.body);
@@ -43,12 +41,11 @@ module.exports = {
 								Math.round(faction.influence * 1000) / 10;
 							object.activeStates = faction.activeStates;
 							object.pendingStates = faction.pendingStates;
+							object.lastUpdate = faction.lastUpdate;
 							data.push(object);
 						}
 					});
-					//console.log(data[0].pendingStates);
-					//console.log(data[1].activeStates);
-					//console.log(data);
+
 					return data;
 				})
 				.catch((err) => {
@@ -64,9 +61,14 @@ module.exports = {
 						}`
 					)
 					.setDescription(
-						`[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})`
+						`[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${divider}`
+					)
+					.setFooter(
+						`Last update: ${this.convertDatetime(
+							output[0].lastUpdate
+						)}`
 					);
-				
+
 				output.forEach((el) => {
 					outputEmbed.addField(
 						`${el.influence}% - ${el.name}`,
@@ -106,9 +108,20 @@ module.exports = {
 		if (pending === "" && active === "") return "\u200b";
 
 		let output = "";
-		if (pending !== "")	output += `🟠 ${pending}`;
+		if (pending !== "") output += `🟠 ${pending}`;
 		if (active !== "") output += `\n🟢 ${active}`;
 
-		return output += `\n\u200b`;
+		return (output += `\n\u200b`);
+	},
+	convertDatetime(element) {
+		let date = new Date(element * 1000);
+
+		let year = date.getFullYear().toString();
+		let month = (date.getMonth() + 1).toString().padStart(2, "0");
+		let day = date.getDate().toString().padStart(2, "0");
+		let hours = date.getHours().toString().padStart(2, "0");
+		let minutes = date.getMinutes().toString().padStart(2, "0");
+
+		return day + "." + month + "." + year + " " + hours + ":" + minutes;
 	},
 };

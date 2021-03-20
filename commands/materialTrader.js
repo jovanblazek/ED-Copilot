@@ -2,6 +2,7 @@ const got = require("got");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const Discord = require("discord.js");
+const {divider} = require("../config.json");
 
 module.exports = {
 	name: "trader",
@@ -64,7 +65,10 @@ module.exports = {
 			if (output != null || output != undefined) {
 				const outputEmbed = new Discord.MessageEmbed()
 					.setColor("#ffa500")
-					.setTitle("Material Traders");
+					.setTitle("Material Traders")
+					.setDescription(
+						`[INARA](${url})\n${divider}`
+					);
 
 				output.forEach((el) => {
 					outputEmbed.addField(

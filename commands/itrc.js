@@ -2,6 +2,7 @@ const got = require("got");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const Discord = require("discord.js");
+const {divider} = require("../config.json");
 
 module.exports = {
 	name: "itrc",
@@ -81,19 +82,20 @@ module.exports = {
 			if (output != null || output != undefined) {
 				const outputEmbed = new Discord.MessageEmbed()
 					.setColor("#ffa500")
-					.setTitle("ITRC conflicts")
+					.setTitle("ITRC Conflicts")
 					.setDescription(
-						"[INARA](https://inara.cz/minorfaction/77953/)\n------------------------------------------------"
+						`[INARA](https://inara.cz/minorfaction/77953/)`
 					);
 
 				output.forEach((el) => {
+					outputEmbed.addField(`${divider}`, '\u200B');
 					outputEmbed.addField(
 						`ITRC vs ${el.enemy}`,
-						`System: ${el.system}\n
-						\`${el.score} vs ${el.scoreEnemy} (${el.state})\`
-						Vicory: ${el.assetWin}\n Defeat: ${el.asseetLose}
-						\n------------------------------------------------`
+						`<:system:822765748111671326> ${el.system}`
 					);
+					outputEmbed.addField(`\`${el.score} vs ${el.scoreEnemy} (${el.state})\``, '\u200B', true);
+					outputEmbed.addField(`🏆 ${el.assetWin}`, `💥 ${el.asseetLose}`, true);
+					
 				});
 
 				message.channel.send({ embed: outputEmbed });
@@ -132,20 +134,20 @@ module.exports = {
 							case 12:
 							case 13:
 								object.type =
-									"<:coriolis:822579704610816000> Starport";
+									"<:coriolis:822765325350076426> Starport";
 								break;
 							case 3:
 								object.type =
-									"<:outpost:822579639502241803> Outpost";
+									"<:outpost:822765313870397460> Outpost";
 								break;
 							case 14:
 							case 15:
 								object.type =
-									"<:surface:822579866465337344> Planetary port";
+									"<:surface:822765337548029962> Planetary port";
 								break;
 							default:
 								object.type =
-									"<:other:822579672621383690> Other";
+									"<:other:822765350536871946> Other";
 								break;
 						}
 						data.push(object);
@@ -171,9 +173,9 @@ module.exports = {
 			if (output != null || output != undefined) {
 				const outputEmbed = new Discord.MessageEmbed()
 					.setColor("#ffa500")
-					.setTitle("ITRC stations")
+					.setTitle("ITRC Stations")
 					.setDescription(
-						"[INARA](https://inara.cz/minorfaction/77953/)\n------------------------------------------------------------"
+						`[INARA](https://inara.cz/minorfaction/77953/)\n${divider}`
 					);
 
 				output.forEach((el) => {
