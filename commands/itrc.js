@@ -42,6 +42,11 @@ module.exports = {
 
 					for (let i = 0; i < row.length; i++) {
 						let object = {};
+
+						const status = row[i].querySelector("td:nth-child(2)");
+
+						status.textContent === "pending" ? object.isPending = true : object.isPending = false;
+							
 						const links = row[i].querySelectorAll(
 							"td:first-child a.inverse"
 						);
@@ -59,16 +64,18 @@ module.exports = {
 								assets.nextElementSibling.nextElementSibling.lastElementChild.textContent;
 						}
 
-						const status = row[i].querySelector("td:nth-child(2)");
-						object.score = status.querySelector(
-							"span:first-child"
-						).textContent;
-						object.scoreEnemy = status.querySelector(
-							"span:nth-child(3)"
-						).textContent;
-						object.state = status.querySelector(
-							"span:last-child"
-						).textContent;
+						if(!object.isPending)
+						{
+							object.score = status.querySelector(
+								"span:first-child"
+							).textContent;
+							object.scoreEnemy = status.querySelector(
+								"span:nth-child(3)"
+							).textContent;
+							object.state = status.querySelector(
+								"span:last-child"
+							).textContent;
+						}
 
 						data.push(object);
 					}
@@ -87,15 +94,21 @@ module.exports = {
 						`[INARA](https://inara.cz/minorfaction/77953/)`
 					);
 
+				if(output.length == 0) {
+					outputEmbed.addField(`Žiadne aktívne konflikty`, '\u200B');
+				}
+
 				output.forEach((el) => {
 					outputEmbed.addField(`${divider}`, '\u200B');
 					outputEmbed.addField(
 						`ITRC vs ${el.enemy}`,
 						`<:system:822765748111671326> ${el.system}`
 					);
-					outputEmbed.addField(`\`${el.score} vs ${el.scoreEnemy} (${el.state})\``, '\u200B', true);
+					if(el.isPending)
+						outputEmbed.addField(`\`pending\``, '\u200B', true);
+					else
+						outputEmbed.addField(`\`${el.score} vs ${el.scoreEnemy} (${el.state})\``, '\u200B', true);
 					outputEmbed.addField(`🏆 ${el.assetWin}`, `💥 ${el.asseetLose}`, true);
-					
 				});
 
 				message.channel.send({ embed: outputEmbed });
