@@ -21,6 +21,8 @@ module.exports = {
 			\`?inf <system>\` - Vypíše **influence** a stavy frakcíí v systéme \n\n\
 			\`?itrc <argument>\` \n\
 			\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \
+			\`systems\` - Vypíše všetky **systémy**, v ktorých je ITRC \n\
+			\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \
 				\`stations\` - Vypíše všetky **stanice** pod kontrolou ITRC \n\
 			\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \
 				\`conflicts\` - Vypíše všetky **konflikty** ITRC \n\n\

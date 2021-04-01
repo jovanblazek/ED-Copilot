@@ -2,12 +2,13 @@ const got = require("got");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const Discord = require("discord.js");
-const {divider} = require("../config.json");
+const { divider } = require("../config.json");
 
 module.exports = {
 	name: "itrc",
 	description: "Vypíše konflikty ITRC",
 	url: "https://inara.cz/minorfaction/77953/",
+	systemsUrl: "https://elitebgs.app/api/ebgs/v5/factions?eddbId=76911&systemDetails=true&count=2",
 	execute(message, args) {
 		try {
 			if (!args.length || args.length > 1)
@@ -17,6 +18,7 @@ module.exports = {
 
 			if (args[0] === "conflicts") this.conflicts(message);
 			else if (args[0] === "stations") this.stations(message);
+			else if (args[0] === "systems") this.systems(message);
 			else {
 				message.channel.send(
 					`Neznámy argument ${args[0]}, ${message.author}!`
@@ -45,8 +47,10 @@ module.exports = {
 
 						const status = row[i].querySelector("td:nth-child(2)");
 
-						status.textContent === "pending" ? object.isPending = true : object.isPending = false;
-							
+						status.textContent === "pending"
+							? (object.isPending = true)
+							: (object.isPending = false);
+
 						const links = row[i].querySelectorAll(
 							"td:first-child a.inverse"
 						);
@@ -64,8 +68,7 @@ module.exports = {
 								assets.nextElementSibling.nextElementSibling.lastElementChild.textContent;
 						}
 
-						if(!object.isPending)
-						{
+						if (!object.isPending) {
 							object.score = status.querySelector(
 								"span:first-child"
 							).textContent;
@@ -94,21 +97,29 @@ module.exports = {
 						`[INARA](https://inara.cz/minorfaction/77953/)`
 					);
 
-				if(output.length == 0) {
-					outputEmbed.addField(`Žiadne aktívne konflikty`, '\u200B');
+				if (output.length == 0) {
+					outputEmbed.addField(`Žiadne aktívne konflikty`, "\u200B");
 				}
 
 				output.forEach((el) => {
-					outputEmbed.addField(`${divider}`, '\u200B');
+					outputEmbed.addField(`${divider}`, "\u200B");
 					outputEmbed.addField(
 						`ITRC vs ${el.enemy}`,
 						`<:system:822765748111671326> ${el.system}`
 					);
-					if(el.isPending)
-						outputEmbed.addField(`\`pending\``, '\u200B', true);
+					if (el.isPending)
+						outputEmbed.addField(`\`pending\``, "\u200B", true);
 					else
-						outputEmbed.addField(`\`${el.score} vs ${el.scoreEnemy} (${el.state})\``, '\u200B', true);
-					outputEmbed.addField(`🏆 ${el.assetWin}`, `💥 ${el.asseetLose}`, true);
+						outputEmbed.addField(
+							`\`${el.score} vs ${el.scoreEnemy} (${el.state})\``,
+							"\u200B",
+							true
+						);
+					outputEmbed.addField(
+						`🏆 ${el.assetWin}`,
+						`💥 ${el.asseetLose}`,
+						true
+					);
 				});
 
 				message.channel.send({ embed: outputEmbed });
@@ -204,4 +215,109 @@ module.exports = {
 			console.log(error);
 		}
 	},
+	async systems(message) {
+		try {
+			const output = await got(this.systemsUrl)
+				.then((response) => {
+					let data = [];
+					const resJson = JSON.parse(response.body);
+
+					const systems = resJson.docs[0].faction_presence;
+					systems.forEach((system) => {
+						let object = {};
+						object.system = system.system_name;
+						object.realInfluence = system.influence;
+						object.influence =
+							Math.round(system.influence * 1000) / 10;
+						object.lastUpdate = this.parseISOString(
+							system.updated_at
+						);
+
+						object.population = this.addSuffixToInt(system.system_details.population);
+						object.trend = 0;
+						data.push(object);
+					});
+
+					data.sort(this.sortByInfluence);
+					this.calculateInfluenceHistory(data, resJson.docs[0].history);
+					return data;
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+
+			if (output != null || output != undefined) {
+				const outputEmbed = new Discord.MessageEmbed()
+					.setColor("#ffa500")
+					.setTitle("ITRC Systems")
+					.setDescription(
+						`[INARA](https://inara.cz/minorfaction/77953/)\n${divider}`
+					);
+
+				output.forEach((el) => {
+					outputEmbed.addField(
+						`${el.influence.toFixed(1)}% - ${this.printTrend(el.trend)} - ${el.system} - 🙍‍♂️ ${el.population}`,
+						`${el.lastUpdate}`
+					);
+				});
+
+				message.channel.send({ embed: outputEmbed });
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	},
+	parseISOString(isoDate) {
+		date = new Date(isoDate);
+		year = date.getFullYear();
+		month = date.getMonth() + 1;
+		dt = date.getDate();
+		hour = date.getHours();
+		minute = date.getMinutes();
+
+		if (dt < 10)
+			dt = "0" + dt;
+		if (month < 10)
+			month = "0" + month;
+		if (hour < 10)
+			hour = "0" + hour;
+		if (minute < 10)
+			minute = "0" + minute;
+		
+		return `${dt}.${month}.${year} ${hour}:${minute}`
+	},
+	addSuffixToInt (value) {
+		var suffixes = ["", "k", "m", "b","t"];
+		var suffixNum = Math.floor((""+value).length/3);
+		var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value).toPrecision(2));
+		if (shortValue % 1 != 0) {
+			shortValue = shortValue.toFixed(1);
+		}
+		return shortValue+suffixes[suffixNum];
+	},
+	sortByInfluence(a, b) {
+		if(a.influence < b.influence)
+			return 1;
+		if(a.influence > b.influence)
+			return -1;
+		return 0;
+	},
+	calculateInfluenceHistory(data, history) {
+		for (let i = 0; i < data.length; i++) {
+			for (let j = 0; j < history.length; j++) {
+				if(data[i].system === history[j].system && data[i].realInfluence !== history[j].influence)
+				{
+					//console.log('Before '+ history[j].influence+ '-- After ' +data[i].realInfluence);
+					data[i].trend = data[i].realInfluence - history[j].influence;
+					data[i].trend = (Math.round(data[i].trend * 1000) / 10).toFixed(1);
+				}			
+			}
+			
+		}
+	},
+	printTrend(trend) {
+		if (trend < 0)
+			return `🔻 ${trend}%`
+		else return `✅ +${trend}%`
+	}
 };
