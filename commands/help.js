@@ -19,6 +19,7 @@ module.exports = {
 			.setTitle("🔨 Podporované príkazy")
 			.setDescription("\n\`?help\` - Vypíše **zoznam** podporovaných príkazov \n\n\
 			\`?inf <system>\` - Vypíše **influence** a stavy frakcíí v systéme \n\n\
+			\`?dis <system1> : <system2>\` - Vypočíta **vzdialenosť** medzi 2 systémami \n\n\
 			\`?itrc <argument>\` \n\
 			\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \
 			\`systems\` - Vypíše všetky **systémy**, v ktorých je ITRC \n\
