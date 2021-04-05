@@ -1,5 +1,8 @@
 const got = require("got");
 const Discord = require("discord.js");
+const moment = require('moment');
+const momenttz = require('moment-timezone');
+moment.locale('sk');
 
 module.exports = {
 	name: "tick",
@@ -26,24 +29,23 @@ module.exports = {
 						);
 
 					const resJson = JSON.parse(response.body);
-					return resJson[0].time;
+					return date = moment.utc(resJson[0].time);
 				})
 				.catch((err) => {
 					console.log(err);
 				});
 
-			const timeNow = new Date();
-            const tickTime = new Date(output);
-            const difference = Math.floor((timeNow - tickTime) / (3600*1000));
-            const wasToday = tickTime.getDate() == timeNow.getDate();
+
+			const difference = output.tz('Europe/Berlin').from(moment.tz('Europe/Berlin'));
+			const wasToday = output.tz('Europe/Berlin').date() == moment.tz('Europe/Berlin').date();
 
 			if (output != null || output != undefined) {
 				const outputEmbed = new Discord.MessageEmbed()
 					.setColor("#ffa500")
 					.setTitle(`Posledný TICK`)
 					.setDescription(
-						`**${this.parseISOString(output)}**
-                        Pred ${difference}h\n
+						`**${output.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')}**
+                        ${difference}\n
                         Dnes: ${wasToday ? '✅' : '❌'}\n
                         [HISTÓRIA](https://elitebgs.app/tick)`
 					);
@@ -53,20 +55,5 @@ module.exports = {
 		} catch (error) {
 			console.log(error);
 		}
-	},
-	parseISOString(isoDate) {
-		date = new Date(isoDate);
-		year = date.getFullYear();
-		month = date.getMonth() + 1;
-		dt = date.getDate();
-		hour = date.getHours();
-		minute = date.getMinutes();
-
-		if (dt < 10) dt = "0" + dt;
-		if (month < 10) month = "0" + month;
-		if (hour < 10) hour = "0" + hour;
-		if (minute < 10) minute = "0" + minute;
-
-		return `${dt}.${month}.${year} ${hour}:${minute}`;
 	},
 };
