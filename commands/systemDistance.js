@@ -22,8 +22,11 @@ module.exports = {
 			let systemName1 = systems[0].trim(),
 				systemName2 = systems[1].trim();
 
-			let url1 = `https://www.edsm.net/api-v1/system?systemName=${systemName1}&showCoordinates=1`;
-			let url2 = `https://www.edsm.net/api-v1/system?systemName=${systemName2}&showCoordinates=1`;
+			const systemName1Web = encodeURIComponent(systemName1);
+			const systemName2Web = encodeURIComponent(systemName2);
+
+			let url1 = `https://www.edsm.net/api-v1/system?systemName=${systemName1Web}&showCoordinates=1`;
+			let url2 = `https://www.edsm.net/api-v1/system?systemName=${systemName2Web}&showCoordinates=1`;
 
 			const coords1 = await got(url1)
 				.then((response) => {

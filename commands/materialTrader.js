@@ -2,7 +2,7 @@ const got = require("got");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const Discord = require("discord.js");
-const {divider} = require("../config.json");
+const { divider } = require("../config.json");
 
 module.exports = {
 	name: "trader",
@@ -13,12 +13,14 @@ module.exports = {
 				return message.channel.send(
 					`Zlý počet argumentov, ${message.author}!`
 				);
-			
-			let systemName = '', systemNameWeb = '';
-			for (let i = 0; i < args.length; i++) {
-				systemName += (args[i].toLowerCase() + ' ');
-				systemNameWeb += (args[i].toLowerCase() + '%20');
-			}
+
+			let systemName = "",
+				systemNameWeb = "";
+			for (let i = 0; i < args.length; i++)
+				systemName += args[i].toLowerCase() + " ";
+
+			systemName.trim();
+			systemNameWeb = encodeURIComponent(systemName);
 
 			let url = `https://inara.cz/nearest-stations/?ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=0&pi19=0&pa1%5B25%5D=1&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0`;
 
@@ -46,7 +48,8 @@ module.exports = {
 
 						const distance = row[i].querySelector("td:last-child");
 						if (distance != null) {
-							object.distanceLs = distance.previousElementSibling.textContent;
+							object.distanceLs =
+								distance.previousElementSibling.textContent;
 							object.distance = distance.textContent;
 						}
 
@@ -66,9 +69,7 @@ module.exports = {
 				const outputEmbed = new Discord.MessageEmbed()
 					.setColor("#ffa500")
 					.setTitle("Material Traders")
-					.setDescription(
-						`[INARA](${url})\n${divider}`
-					);
+					.setDescription(`[INARA](${url})\n${divider}`);
 
 				output.forEach((el) => {
 					outputEmbed.addField(

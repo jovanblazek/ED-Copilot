@@ -3,12 +3,18 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const Discord = require("discord.js");
 const { divider } = require("../config.json");
+const moment = require("moment");
+const momenttz = require("moment-timezone");
+moment.locale("sk");
 
 module.exports = {
 	name: "itrc",
 	description: "Vypíše konflikty ITRC",
 	url: "https://inara.cz/minorfaction/77953/",
-	systemsUrl: "https://elitebgs.app/api/ebgs/v5/factions?eddbId=76911&systemDetails=true&count=2",
+	conflictsUrl:
+		"https://elitebgs.app/api/ebgs/v5/factions?eddbId=76911&systemDetails=true",
+	systemsUrl:
+		"https://elitebgs.app/api/ebgs/v5/factions?eddbId=76911&systemDetails=true&count=2",
 	execute(message, args) {
 		try {
 			if (!args.length || args.length > 1)
@@ -30,58 +36,42 @@ module.exports = {
 	},
 	async conflicts(message) {
 		try {
-			const output = await got(this.url)
+			const output = await got(this.conflictsUrl)
 				.then((response) => {
 					let data = [];
+					const resJson = JSON.parse(response.body);
+					const presence = resJson.docs[0].faction_presence;
 
-					const dom = new JSDOM(response.body);
-					const row = dom.window.document.querySelectorAll(
-						".switchtabs > div:last-child table tbody tr"
-					);
+					presence.forEach((system) => {
+						if (system.conflicts.length == 0) return;
 
-					if (row.length == 0)
-						return message.channel.send(`Žiadne aktívne konflikty`);
-
-					for (let i = 0; i < row.length; i++) {
 						let object = {};
+						object.faction1 = {};
+						object.faction2 = {};
 
-						const status = row[i].querySelector("td:nth-child(2)");
+						const conflict = system.system_details.conflicts[0];
 
-						status.textContent === "pending"
-							? (object.isPending = true)
-							: (object.isPending = false);
+						object.system = system.system_name;
+						object.lastUpdate = moment.utc(system.updated_at);
+						object.status = conflict.status;
 
-						const links = row[i].querySelectorAll(
-							"td:first-child a.inverse"
-						);
+						object.faction1.name = conflict.faction1.name;
+						object.faction1.stake = conflict.faction1.stake;
+						object.faction1.days_won = conflict.faction1.days_won;
 
-						object.enemy = links[0].textContent;
-						object.system = links[1].textContent;
+						object.faction2.name = conflict.faction2.name;
+						object.faction2.stake = conflict.faction2.stake;
+						object.faction2.days_won = conflict.faction2.days_won;
 
-						const assets = row[i].querySelector(
-							"td:first-child .minor.smaller"
-						);
-						if (assets != null) {
-							object.assetWin =
-								assets.lastElementChild.textContent;
-							object.asseetLose =
-								assets.nextElementSibling.nextElementSibling.lastElementChild.textContent;
-						}
-
-						if (!object.isPending) {
-							object.score = status.querySelector(
-								"span:first-child"
-							).textContent;
-							object.scoreEnemy = status.querySelector(
-								"span:nth-child(3)"
-							).textContent;
-							object.state = status.querySelector(
-								"span:last-child"
-							).textContent;
-						}
+						if (
+							conflict.faction1.faction_id ===
+							"5d646fde07dcf10d3e908300"
+						)
+							object.faction1.isItrc = true;
+						else object.faction2.isItrc = true;
 
 						data.push(object);
-					}
+					});
 
 					return data;
 				})
@@ -98,29 +88,16 @@ module.exports = {
 					);
 
 				if (output.length == 0) {
-					outputEmbed.addField(`Žiadne aktívne konflikty`, "\u200B");
+					outputEmbed.addField(`Žiadne konflikty 🎉`, "\u200B");
 				}
-
-				output.forEach((el) => {
-					outputEmbed.addField(`${divider}`, "\u200B");
-					outputEmbed.addField(
-						`ITRC vs ${el.enemy}`,
-						`<:system:822765748111671326> ${el.system}`
-					);
-					if (el.isPending)
-						outputEmbed.addField(`\`pending\``, "\u200B", true);
-					else
-						outputEmbed.addField(
-							`\`${el.score} vs ${el.scoreEnemy} (${el.state})\``,
-							"\u200B",
-							true
-						);
-					outputEmbed.addField(
-						`🏆 ${el.assetWin}`,
-						`💥 ${el.asseetLose}`,
-						true
-					);
-				});
+				else {
+					output.forEach((el) => {
+						if (el.faction1.isItrc)
+							this.printConflicts(outputEmbed, el.faction1, el.faction2, el);
+						else
+							this.printConflicts(outputEmbed, el.faction2, el.faction1, el);
+					});
+				}
 
 				message.channel.send({ embed: outputEmbed });
 			}
@@ -229,17 +206,20 @@ module.exports = {
 						object.realInfluence = system.influence;
 						object.influence =
 							Math.round(system.influence * 1000) / 10;
-						object.lastUpdate = this.parseISOString(
-							system.updated_at
-						);
+						object.lastUpdate = moment.utc(system.updated_at);
 
-						object.population = this.addSuffixToInt(system.system_details.population);
+						object.population = this.addSuffixToInt(
+							system.system_details.population
+						);
 						object.trend = 0;
 						data.push(object);
 					});
 
 					data.sort(this.sortByInfluence);
-					this.calculateInfluenceHistory(data, resJson.docs[0].history);
+					this.calculateInfluenceHistory(
+						data,
+						resJson.docs[0].history
+					);
 					return data;
 				})
 				.catch((err) => {
@@ -256,8 +236,12 @@ module.exports = {
 
 				output.forEach((el) => {
 					outputEmbed.addField(
-						`${el.influence.toFixed(1)}% - ${this.printTrend(el.trend)} - ${el.system} - 🙍‍♂️ ${el.population}`,
-						`${el.lastUpdate}`
+						`${el.influence.toFixed(1)}% - ${this.printTrend(
+							el.trend
+						)} - ${el.system} - 🙍‍♂️ ${el.population}`,
+						`${el.lastUpdate
+							.tz("Europe/Berlin")
+							.format("DD.MM.YYYY HH:mm")}`
 					);
 				});
 
@@ -267,57 +251,66 @@ module.exports = {
 			console.log(error);
 		}
 	},
-	parseISOString(isoDate) {
-		date = new Date(isoDate);
-		year = date.getFullYear();
-		month = date.getMonth() + 1;
-		dt = date.getDate();
-		hour = date.getHours();
-		minute = date.getMinutes();
-
-		if (dt < 10)
-			dt = "0" + dt;
-		if (month < 10)
-			month = "0" + month;
-		if (hour < 10)
-			hour = "0" + hour;
-		if (minute < 10)
-			minute = "0" + minute;
-		
-		return `${dt}.${month}.${year} ${hour}:${minute}`
-	},
-	addSuffixToInt (value) {
-		var suffixes = ["", "k", "m", "b","t"];
-		var suffixNum = Math.floor((""+value).length/3);
-		var shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value).toPrecision(2));
+	addSuffixToInt(value) {
+		var suffixes = ["", "k", "m", "b", "t"];
+		var suffixNum = Math.floor(("" + value).length / 3);
+		var shortValue = parseFloat(
+			(suffixNum != 0
+				? value / Math.pow(1000, suffixNum)
+				: value
+			).toPrecision(2)
+		);
 		if (shortValue % 1 != 0) {
 			shortValue = shortValue.toFixed(1);
 		}
-		return shortValue+suffixes[suffixNum];
+		return shortValue + suffixes[suffixNum];
 	},
 	sortByInfluence(a, b) {
-		if(a.influence < b.influence)
-			return 1;
-		if(a.influence > b.influence)
-			return -1;
+		if (a.influence < b.influence) return 1;
+		if (a.influence > b.influence) return -1;
 		return 0;
 	},
 	calculateInfluenceHistory(data, history) {
 		for (let i = 0; i < data.length; i++) {
 			for (let j = 0; j < history.length; j++) {
-				if(data[i].system === history[j].system && data[i].realInfluence !== history[j].influence)
-				{
+				if (
+					data[i].system === history[j].system &&
+					data[i].realInfluence !== history[j].influence
+				) {
 					//console.log('Before '+ history[j].influence+ '-- After ' +data[i].realInfluence);
-					data[i].trend = data[i].realInfluence - history[j].influence;
-					data[i].trend = (Math.round(data[i].trend * 1000) / 10).toFixed(1);
-				}			
+					data[i].trend =
+						data[i].realInfluence - history[j].influence;
+					data[i].trend = (
+						Math.round(data[i].trend * 1000) / 10
+					).toFixed(1);
+				}
 			}
-			
 		}
 	},
 	printTrend(trend) {
-		if (trend < 0)
-			return `🔻 ${trend}%`
-		else return `✅ +${trend}%`
+		if (trend < 0) return `🔻 ${trend}%`;
+		else return `✅ +${trend}%`;
+	},
+	printConflicts(outputEmbed, itrc, enemy, data)
+	{
+		outputEmbed.addField(
+			`${divider}`,
+			`**ITRC vs ${enemy.name}**\n<:system:822765748111671326> ${data.system}`
+		);
+		if (data.status === "pending")
+			outputEmbed.addField(`\`pending\``, "\u200B", true);
+		else
+			outputEmbed.addField(
+				`\`${itrc.days_won} vs ${enemy.days_won}\``,
+				"\u200B",
+				true
+			);
+
+		outputEmbed.addField(
+			`🏆 ${enemy.stake || ' ---'}`,
+			`💥 ${itrc.stake || ' ---'}`,
+			true
+		);
+		outputEmbed.addField(`\u200B`, `${data.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')}`)
 	}
 };

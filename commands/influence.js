@@ -1,6 +1,9 @@
 const got = require("got");
 const Discord = require("discord.js");
 const { divider } = require("../config.json");
+const moment = require('moment');
+const momenttz = require('moment-timezone');
+moment.locale('sk');
 
 module.exports = {
 	name: "inf",
@@ -14,12 +17,13 @@ module.exports = {
 
 			let systemName = "",
 				systemNameWeb = "";
-			for (let i = 0; i < args.length; i++) {
+			for (let i = 0; i < args.length; i++)
 				systemName += args[i].toLowerCase() + " ";
-				systemNameWeb += args[i].toLowerCase() + "%20";
-			}
+			
+			systemName.trim();
+			systemNameWeb = encodeURIComponent(systemName);
 
-			let url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemName}`;
+			let url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`;
 
 			const output = await got(url)
 				.then((response) => {
@@ -41,7 +45,7 @@ module.exports = {
 								Math.round(faction.influence * 1000) / 10;
 							object.activeStates = faction.activeStates;
 							object.pendingStates = faction.pendingStates;
-							object.lastUpdate = faction.lastUpdate;
+							object.lastUpdate = moment.unix(faction.lastUpdate).utc();
 							data.push(object);
 						}
 					});
@@ -64,9 +68,7 @@ module.exports = {
 						`[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${divider}`
 					)
 					.setFooter(
-						`Last update: ${this.convertDatetime(
-							output[0].lastUpdate
-						)}`
+						`Last update: ${output[0].lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')}`
 					);
 
 				output.forEach((el) => {
@@ -112,16 +114,5 @@ module.exports = {
 		if (active !== "") output += `\n🟢 ${active}`;
 
 		return (output += `\n\u200b`);
-	},
-	convertDatetime(element) {
-		let date = new Date(element * 1000);
-
-		let year = date.getFullYear().toString();
-		let month = (date.getMonth() + 1).toString().padStart(2, "0");
-		let day = date.getDate().toString().padStart(2, "0");
-		let hours = date.getHours().toString().padStart(2, "0");
-		let minutes = date.getMinutes().toString().padStart(2, "0");
-
-		return day + "." + month + "." + year + " " + hours + ":" + minutes;
 	},
 };
