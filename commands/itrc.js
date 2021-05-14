@@ -5,6 +5,7 @@ const Discord = require("discord.js");
 const { divider } = require("../config.json");
 const moment = require("moment");
 const momenttz = require("moment-timezone");
+const config = require("../config.json");
 moment.locale("sk");
 
 module.exports = {
@@ -192,10 +193,10 @@ module.exports = {
 			console.log(error);
 		}
 	},
-	async systems(message) {
+	async systems(message, client = null) {
 		try {
-			const output = await got(this.systemsUrl)
-				.then((response) => {
+			got(this.systemsUrl)
+				.then(async (response) => {
 					let data = [];
 					const resJson = JSON.parse(response.body);
 
@@ -212,6 +213,7 @@ module.exports = {
 							system.system_details.population
 						);
 						object.trend = 0;
+						object.isUpdated = false;
 						data.push(object);
 					});
 
@@ -220,33 +222,50 @@ module.exports = {
 						data,
 						resJson.docs[0].history
 					);
+					
+					await this.getTickTime()
+					.then((tt) => {
+						const tickTime = tt.tz("Europe/Berlin")
+						for (let i = 0; i < data.length; i++)
+						{
+							let difference = (((data[i].lastUpdate)-tickTime)/1000)/60
+							if(difference > 0)
+								data[i].isUpdated = true;
+							else
+								data[i].isUpdated = false;
+						}
+					})
+
 					return data;
+				})
+				.then((output) => {
+					const outputEmbed = new Discord.MessageEmbed()
+						.setColor("#ffa500")
+						.setTitle("ITRC Systems")
+						.setDescription(
+							`[INARA](https://inara.cz/minorfaction/77953/)\n${divider}`
+						);
+
+					output.forEach((el) => {
+						outputEmbed.addField(
+							`${el.influence.toFixed(1)}% - ${this.printTrend(
+								el.trend
+							)} - ${el.system} - 🙍‍♂️ ${el.population}`,
+							` ${el.isUpdated ? `✅` : `❌`} \u200B${el.lastUpdate
+								.tz("Europe/Berlin")
+								.from(moment.tz("Europe/Berlin"))}`
+						);
+					});
+
+					if (client != null)
+						client.channels.cache
+							.get(config.tickReportChannel)
+							.send({ embed: outputEmbed });
+					else message.channel.send({ embed: outputEmbed });
 				})
 				.catch((err) => {
 					console.log(err);
 				});
-
-			if (output != null || output != undefined) {
-				const outputEmbed = new Discord.MessageEmbed()
-					.setColor("#ffa500")
-					.setTitle("ITRC Systems")
-					.setDescription(
-						`[INARA](https://inara.cz/minorfaction/77953/)\n${divider}`
-					);
-
-				output.forEach((el) => {
-					outputEmbed.addField(
-						`${el.influence.toFixed(1)}% - ${this.printTrend(
-							el.trend
-						)} - ${el.system} - 🙍‍♂️ ${el.population}`,
-						`${el.lastUpdate
-							.tz("Europe/Berlin")
-							.format("DD.MM.YYYY HH:mm")}`
-					);
-				});
-
-				message.channel.send({ embed: outputEmbed });
-			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -288,8 +307,8 @@ module.exports = {
 		}
 	},
 	printTrend(trend) {
-		if (trend < 0) return `🔻 ${trend}%`;
-		else return `✅ +${trend}%`;
+		if (trend < 0) return `<:arrow_red:842824890918764544> ${trend}%`;
+		else return `<:arrow_green:842824851072614487> +${trend}%`;
 	},
 	printConflicts(outputEmbed, itrc, enemy, data)
 	{
@@ -312,5 +331,28 @@ module.exports = {
 			true
 		);
 		outputEmbed.addField(`\u200B`, `${data.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')}`)
-	}
+	},
+	async getTickTime() {
+		try {
+			let timeToday = Math.floor(new Date().getTime() / 1000.0);
+			let timeYesterday = new Date();
+			timeYesterday.setDate(timeYesterday.getDate() - 2);
+			timeYesterday = Math.floor(timeYesterday.getTime() / 1000.0);
+
+			let url = `https://elitebgs.app/api/ebgs/v5/ticks?timeMin=${timeYesterday}000&timeMax=${timeToday}000`;
+
+			return await got(url)
+				.then((response) => {
+					if (response.body.length == 2) return;
+
+					const resJson = JSON.parse(response.body);
+					return (date = moment.utc(resJson[0].time));
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		} catch (error) {
+			console.log(error);
+		}
+	},
 };

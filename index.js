@@ -1,10 +1,6 @@
 const fs = require("fs");
 const Discord = require("discord.js");
 const config = require("./config.json");
-const fetch = require("node-fetch");
-const got = require("got");
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
 
 const prefix = config.prefix;
 const client = new Discord.Client();
@@ -18,9 +14,8 @@ for (const file of commandFiles) {
 	client.commands.set(command.name, command);
 }
 
-
 client.once("ready", () => {
-	console.log("bot is online");
+	console.log("Bot is online");
 
 	client.user.setPresence({
 		status: "online",
@@ -47,5 +42,10 @@ client.on("message", async function (message) {
 		message.reply("Pri vykonávaní príkazu sa vyskytla chyba!");
 	}
 });
+
+setInterval(function() {
+	console.log("Cheking tick");
+	client.commands.get("tick").checkTick(client);
+}, 60 * 60 * 1000);
 
 client.login(config.BOT_TOKEN);
