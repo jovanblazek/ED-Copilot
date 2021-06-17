@@ -46,7 +46,7 @@ module.exports = {
 							j++;
 						});
 
-						const distance = row[i].querySelector("td:last-child");
+						const distance = row[i].querySelector("td:nth-last-child(2)");
 						if (distance != null) {
 							object.distanceLs =
 								distance.previousElementSibling.textContent;

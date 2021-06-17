@@ -137,24 +137,29 @@ module.exports = {
 							case 13:
 								object.type =
 									"<:coriolis:822765325350076426> Starport";
+								object.priority = 1;
 								break;
 							case 3:
 								object.type =
 									"<:outpost:822765313870397460> Outpost";
+								object.priority = 2;
 								break;
 							case 14:
 							case 15:
 								object.type =
 									"<:surface:822765337548029962> Planetary port";
+								object.priority = 3;
 								break;
 							default:
 								object.type =
 									"<:other:822765350536871946> Other";
+								object.priority = 4;
 								break;
 						}
 						data.push(object);
 					}
 
+					//sort by system name
 					data.sort((a, b) => {
 						const systemA = a.system.toUpperCase();
 						const systemB = b.system.toUpperCase();
@@ -166,7 +171,62 @@ module.exports = {
 						return comparison;
 					});
 
-					return data;
+					//convert data to system with stations array
+					let result = [];
+					let didpush = false;
+					data.forEach(el => {
+						didpush = false;
+
+						if(result.length) {
+							result.forEach(resEl => {
+								if(resEl.system === el.system){
+									resEl.stations.push({
+										name: el.stationName,
+										type: el.type,
+										priority: el.priority
+									});
+									didpush = true;
+									return;
+								}
+							});
+							if(didpush == false) {
+								result.push({
+									system: el.system,
+									stations: [{
+										name: el.stationName,
+										type: el.type,
+										priority: el.priority
+									}]
+								})
+							}
+						}
+						else {
+							result.push({
+								system: el.system,
+								stations: [{
+									name: el.stationName,
+									type: el.type,
+									priority: el.priority
+								}]
+							})
+						}
+					})
+
+					//sort by station priority
+					result.forEach(el => {
+						el.stations.sort((a, b) => {
+							const stationA = a.priority;
+							const stationB = b.priority;
+
+							let comparison = 0;
+							if (stationA > stationB) comparison = 1;
+							else if (stationA < stationB) comparison = -1;
+
+							return comparison;
+						});
+					});
+
+					return result;
 				})
 				.catch((err) => {
 					console.log(err);
@@ -180,10 +240,20 @@ module.exports = {
 						`[INARA](https://inara.cz/minorfaction/77953/)\n${divider}`
 					);
 
-				output.forEach((el) => {
+				output.forEach((outputEl) => {
 					outputEmbed.addField(
-						`${el.system} - ${el.stationName}`,
-						`${el.type}`
+						`${outputEl.system}`,
+						`${divider}`
+					);
+					outputEl.stations.forEach(el => {
+						outputEmbed.addField(
+							`${el.name}`,
+							`${el.type}`
+						);
+					});
+					outputEmbed.addField(
+						`\u200B`,
+						`${divider}`
 					);
 				});
 
