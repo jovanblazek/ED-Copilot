@@ -2,7 +2,9 @@ const got = require("got");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const Discord = require("discord.js");
-const { divider } = require("../config.json");
+const { divider, embedColor } = require("../config.json");
+const { argsError, systemError } = require("../helpers/error.js");
+const { parseSystemName } = require("../helpers/systemName.js");
 
 module.exports = {
 	name: "factors",
@@ -10,76 +12,63 @@ module.exports = {
 		"Vypíše 5 najbližších Interstellar Factors (len Orbitaly s L padmi)",
 	async execute(message, args) {
 		try {
-			if (!args.length || args.length > 5)
-				return message.channel.send(
-					`Zlý počet argumentov, ${message.author}!`
-				);
+			const argsLength = args.length;
+			if (!argsLength || argsLength > 5) return argsError(message);
 
-			let systemName = "",
-				systemNameWeb = "";
-			for (let i = 0; i < args.length; i++)
-				systemName += args[i].toLowerCase() + " ";
+			const { systemName, systemNameWeb } = parseSystemName(args);
+			const url = `https://inara.cz/nearest-stations/?ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=3&pi19=0&pi17=1&pi2=1&pa1%5B18%5D=1&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0`;
 
-			systemName.trim();
-			systemNameWeb = encodeURIComponent(systemName);
+			const fetchedData = await got(url);
+			const dom = new JSDOM(fetchedData.body);
 
-			let url = `https://inara.cz/nearest-stations/?ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=3&pi19=0&pi17=1&pi2=1&pa1%5B18%5D=1&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0`;
+			const rows = dom.window.document.querySelectorAll("tr");
+			if (rows.length == 0) return systemError(systemName, message);
 
-			const output = await got(url)
-				.then((response) => {
-					let data = [];
+			const parsedData = this.parseData(rows);
 
-					const dom = new JSDOM(response.body);
-					const row = dom.window.document.querySelectorAll("tr");
-					if (row.length == 0)
-						return message.channel.send(
-							`Systém ${systemName} neexistuje, ${message.author}!`
-						);
-
-					for (let i = 1; i < 6; i++) {
-						let object = {};
-						const links = row[i].querySelectorAll("td a.inverse");
-
-						let j = 0;
-						links.forEach((element) => {
-							if (j == 0) object.station = element.textContent;
-							else object.system = element.textContent;
-							j++;
-						});
-
-						const distance = row[i].querySelector("td:nth-last-child(2)");
-						if (distance != null) {
-							object.distanceLs =
-								distance.previousElementSibling.textContent;
-							object.distance = distance.textContent;
-						}
-
-						data.push(object);
-					}
-
-					return data;
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-
-			if (output != null || output != undefined) {
-				const outputEmbed = new Discord.MessageEmbed()
-					.setColor("#ffa500")
-					.setTitle("Interstellar Factors")
-					.setDescription(`[INARA](${url})\n${divider}`);
-
-				output.forEach((el) => {
-					outputEmbed.addField(
-						`${el.system}`,
-						`${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`
-					);
-				});
-
-				message.channel.send({ embed: outputEmbed });
-			}
+			message.channel.send({
+				embed: this.generateEmbed(url, parsedData),
+			});
 		} catch (error) {
 			console.log(error);
 		}
+	},
+	parseData(rows) {
+		let data = [];
+		for (let i = 1; i < 6; i++) {
+			let object = {};
+			const links = rows[i].querySelectorAll("td a.inverse");
+
+			let j = 0;
+			links.forEach((element) => {
+				if (j == 0) object.station = element.textContent;
+				else object.system = element.textContent;
+				j++;
+			});
+
+			const distance = rows[i].querySelector("td:nth-last-child(2)");
+			if (distance != null) {
+				object.distanceLs = distance.previousElementSibling.textContent;
+				object.distance = distance.textContent;
+			}
+
+			data.push(object);
+		}
+		return data;
+	},
+	generateEmbed(url, data) {
+		const embed = new Discord.MessageEmbed()
+			.setColor(embedColor)
+			.setTitle(`Interstellar Factors`)
+			.setDescription(`[INARA](${url})\n${divider}`);
+
+		data.forEach((el) => {
+			embed.addField(
+				`${el.system}`,
+				`${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`
+			);
+		});
+
+		return embed;
 	},
 };

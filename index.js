@@ -1,6 +1,7 @@
 const fs = require("fs");
 const Discord = require("discord.js");
 const config = require("./config.json");
+const { replyError } = require("./helpers/error.js");
 
 const prefix = config.prefix;
 const client = new Discord.Client();
@@ -39,7 +40,7 @@ client.on("message", async function (message) {
 		client.commands.get(commandName).execute(message, args);
 	} catch (error) {
 		console.error(error);
-		message.reply("Pri vykonávaní príkazu sa vyskytla chyba!");
+		replyError("Pri vykonávaní príkazu sa vyskytla chyba!", message);
 	}
 });
 

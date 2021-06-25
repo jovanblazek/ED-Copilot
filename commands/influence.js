@@ -4,7 +4,8 @@ const { divider, embedColor } = require("../config.json");
 const moment = require("moment");
 const momenttz = require("moment-timezone");
 moment.locale("sk");
-const { displayError } = require("./error.js");
+const { argsError, systemError } = require("../helpers/error.js");
+const { parseSystemName } = require("../helpers/systemName.js");
 
 module.exports = {
 	name: "inf",
@@ -13,14 +14,14 @@ module.exports = {
 		try {
 			const argsLength = args.length;
 			if (!argsLength || argsLength > 5)
-			return displayError(`Zlý počet argumentov`, message);
+			return argsError(message);
 
-			const { systemName, systemNameWeb } = this.getSystemName(args);
+			const { systemName, systemNameWeb } = parseSystemName(args);
 			const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`;
 
 			const fetchedData = await got(url).json();
 			if (JSON.stringify(fetchedData) === "{}")
-				return displayError(`Systém ${systemName} neexistuje`, message);
+				return systemError(systemName, message);
 
 			const { systemData, lastUpdate } = this.processFetchedData(fetchedData);
 			if(systemData == null)
@@ -37,19 +38,6 @@ module.exports = {
 		} catch (error) {
 			console.log(error);
 		}
-	},
-	getSystemName(args) {
-		const argsLength = args.length;
-		let systemName = "",
-			systemNameWeb = "";
-
-		for (let i = 0; i < argsLength; i++)
-			systemName += args[i].toLowerCase() + " ";
-
-		systemName.trim();
-		systemNameWeb = encodeURIComponent(systemName);
-
-		return { systemName, systemNameWeb };
 	},
 	processFetchedData(response) {
 		const { factions } = response;

@@ -1,4 +1,6 @@
 const Discord = require("discord.js");
+const { divider, embedColor } = require("../config.json");
+
 module.exports = {
 	name: "help",
 	description: "Help!",
@@ -15,9 +17,9 @@ module.exports = {
 			`);*/
 
 		const outputEmbed = new Discord.MessageEmbed()
-			.setColor("#ffa500")
+			.setColor(embedColor)
 			.setTitle("🔨 Podporované príkazy")
-			.setDescription("\n\`?help\` - Vypíše **zoznam** podporovaných príkazov \n\n\
+			.setDescription(divider + "\n\`?help\` - Vypíše **zoznam** podporovaných príkazov \n\n\
 			\`?dis <system1> : <system2>\` - Vypočíta **vzdialenosť** medzi 2 systémami \n\n\
 			\`?inf <system>\` - Vypíše **influence** a stavy frakcíí v systéme \n\n\
 			\`?itrc <argument>\` \n\
