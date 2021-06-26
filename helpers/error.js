@@ -14,4 +14,8 @@ function argsError(discordMessage) {
 	return discordMessage.channel.send(`Zlý počet argumentov, ${discordMessage.author}!`);
 }
 
-module.exports = { replyError, displayError, systemError, argsError };
+function tickError(discordMessage) {
+	return discordMessage.channel.send(`Nepodarilo sa získať informácie o ticku.`);
+}
+
+module.exports = { replyError, displayError, systemError, argsError, tickError };

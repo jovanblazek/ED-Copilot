@@ -2,348 +2,152 @@ const got = require("got");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const Discord = require("discord.js");
-const { divider } = require("../config.json");
+const { argsError, displayError, tickError } = require("../helpers/error.js");
 const moment = require("moment");
 const momenttz = require("moment-timezone");
-const config = require("../config.json");
+const { divider, embedColor, inaraFactionUrl, tickReportChannel, eddbid, factionId } = require("../config.json");
+const {wasAfterTick, getTickTime} = require("../helpers/tick.js");
 moment.locale("sk");
 
 module.exports = {
 	name: "itrc",
 	description: "Vypíše konflikty ITRC",
-	url: "https://inara.cz/minorfaction/77953/",
-	conflictsUrl:
-		"https://elitebgs.app/api/ebgs/v5/factions?eddbId=76911&systemDetails=true",
-	systemsUrl:
-		"https://elitebgs.app/api/ebgs/v5/factions?eddbId=76911&systemDetails=true&count=2",
+	conflictsUrl: `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${eddbid}&systemDetails=true`,
+	systemsUrl: `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${eddbid}&systemDetails=true&count=2`,
 	execute(message, args) {
 		try {
-			if (!args.length || args.length > 1)
-				return message.channel.send(
-					`Zlý počet argumentov, ${message.author}!`
-				);
+			const argsLength = args.length;
+			if (!argsLength || argsLength > 1)
+				return argsError(message);
 
 			if (args[0] === "conflicts") this.conflicts(message);
 			else if (args[0] === "stations") this.stations(message);
 			else if (args[0] === "systems") this.systems(message);
-			else {
-				message.channel.send(
-					`Neznámy argument ${args[0]}, ${message.author}!`
-				);
-			}
+			else 
+				displayError(`Neznámy argument ${args[0]}`, message);
+			
 		} catch (error) {
 			console.log(error);
 		}
 	},
 	async conflicts(message) {
 		try {
-			const output = await got(this.conflictsUrl)
-				.then((response) => {
-					let data = [];
-					const resJson = JSON.parse(response.body);
-					const presence = resJson.docs[0].faction_presence;
+			const fetchedData = await got(this.conflictsUrl).json();
 
-					presence.forEach((system) => {
-						if (system.conflicts.length == 0) return;
-
-						let object = {};
-						object.faction1 = {};
-						object.faction2 = {};
-
-						const conflict = system.system_details.conflicts[0];
-
-						object.system = system.system_name;
-						object.lastUpdate = moment.utc(system.updated_at);
-						object.status = conflict.status;
-
-						object.faction1.name = conflict.faction1.name;
-						object.faction1.stake = conflict.faction1.stake;
-						object.faction1.days_won = conflict.faction1.days_won;
-
-						object.faction2.name = conflict.faction2.name;
-						object.faction2.stake = conflict.faction2.stake;
-						object.faction2.days_won = conflict.faction2.days_won;
-
-						if (
-							conflict.faction1.faction_id ===
-							"5d646fde07dcf10d3e908300"
-						)
-							object.faction1.isItrc = true;
-						else object.faction2.isItrc = true;
-
-						data.push(object);
-					});
-
-					return data;
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-
-			if (output != null || output != undefined) {
-				const outputEmbed = new Discord.MessageEmbed()
-					.setColor("#ffa500")
-					.setTitle("ITRC Conflicts")
-					.setDescription(
-						`[INARA](https://inara.cz/minorfaction/77953/)`
-					);
-
-				if (output.length == 0) {
-					outputEmbed.addField(`Žiadne konflikty 🎉`, "\u200B");
-				}
-				else {
-					output.forEach((el) => {
-						if (el.faction1.isItrc)
-							this.printConflicts(outputEmbed, el.faction1, el.faction2, el);
-						else
-							this.printConflicts(outputEmbed, el.faction2, el.faction1, el);
-					});
-				}
-
-				message.channel.send({ embed: outputEmbed });
-			}
+			const tickTime = await getTickTime();
+			if(tickTime == null)
+				return tickError(message);
+			
+			const parsedData = this.parseConflictsData(fetchedData.docs[0].faction_presence, tickTime);
+			message.channel.send({ embed: this.generateConflictsEmbed(parsedData) });
 		} catch (error) {
 			console.log(error);
 		}
 	},
 	async stations(message) {
 		try {
-			const output = await got(this.url)
-				.then((response) => {
-					let data = [];
+			const fetchedData = await got(inaraFactionUrl);
+			const dom = new JSDOM(fetchedData.body);
+			const rows = dom.window.document.querySelectorAll(
+				".maincontent1 > div.maintable table tbody tr"
+			);
+			if (rows.length == 0) return message.channel.send(`Žiadne stanice`);
 
-					const dom = new JSDOM(response.body);
-					const row = dom.window.document.querySelectorAll(
-						".maincontent1 > div.maintable table tbody tr"
-					);
+			const parsedData = this.parseStationData(rows);
 
-					if (row.length == 0)
-						return message.channel.send(`Žiadne stanice`);
+			//sort by system name
+			parsedData.sort((a, b) => {
+				const systemA = a.system.toUpperCase();
+				const systemB = b.system.toUpperCase();
 
-					for (let i = 0; i < row.length; i++) {
-						let object = {};
-						const links = row[i].querySelectorAll("td a.inverse");
+				if (systemA > systemB) return 1;
+				else if (systemA < systemB) return -1;
 
-						object.system = links[1].textContent;
-						object.stationName = links[0].textContent;
+				return 0;
+			});
 
-						const type = row[i]
-							.querySelector("td:first-child")
-							.getAttribute("data-order");
+			//convert data to array of system objects with array of stations
+			let result = [];
+			let didpush = false;
+			parsedData.forEach(el => {
+				didpush = false;
 
-						switch (parseInt(type)) {
-							case 1:
-							case 12:
-							case 13:
-								object.type =
-									"<:coriolis:822765325350076426> Starport";
-								object.priority = 1;
-								break;
-							case 3:
-								object.type =
-									"<:outpost:822765313870397460> Outpost";
-								object.priority = 2;
-								break;
-							case 14:
-							case 15:
-								object.type =
-									"<:surface:822765337548029962> Planetary port";
-								object.priority = 3;
-								break;
-							default:
-								object.type =
-									"<:other:822765350536871946> Other";
-								object.priority = 4;
-								break;
-						}
-						data.push(object);
-					}
-
-					//sort by system name
-					data.sort((a, b) => {
-						const systemA = a.system.toUpperCase();
-						const systemB = b.system.toUpperCase();
-
-						let comparison = 0;
-						if (systemA > systemB) comparison = 1;
-						else if (systemA < systemB) comparison = -1;
-
-						return comparison;
-					});
-
-					//convert data to system with stations array
-					let result = [];
-					let didpush = false;
-					data.forEach(el => {
-						didpush = false;
-
-						if(result.length) {
-							result.forEach(resEl => {
-								if(resEl.system === el.system){
-									resEl.stations.push({
-										name: el.stationName,
-										type: el.type,
-										priority: el.priority
-									});
-									didpush = true;
-									return;
-								}
+				if(result.length) {
+					result.forEach(resEl => {
+						if(resEl.system === el.system){
+							resEl.stations.push({
+								name: el.stationName,
+								type: el.type,
+								priority: el.priority
 							});
-							if(didpush == false) {
-								result.push({
-									system: el.system,
-									stations: [{
-										name: el.stationName,
-										type: el.type,
-										priority: el.priority
-									}]
-								})
-							}
+							didpush = true;
+							return;
 						}
-						else {
-							result.push({
-								system: el.system,
-								stations: [{
-									name: el.stationName,
-									type: el.type,
-									priority: el.priority
-								}]
-							})
-						}
+					});
+					if(didpush == false) {
+						result.push({
+							system: el.system,
+							stations: [{
+								name: el.stationName,
+								type: el.type,
+								priority: el.priority
+							}]
+						})
+					}
+				}
+				else {
+					result.push({
+						system: el.system,
+						stations: [{
+							name: el.stationName,
+							type: el.type,
+							priority: el.priority
+						}]
 					})
+				}
+			})
 
-					//sort by station priority
-					result.forEach(el => {
-						el.stations.sort((a, b) => {
-							const stationA = a.priority;
-							const stationB = b.priority;
+			//sort by station priority
+			result.forEach(el => {
+				el.stations.sort((a, b) => {
+					const stationA = a.priority;
+					const stationB = b.priority;
 
-							let comparison = 0;
-							if (stationA > stationB) comparison = 1;
-							else if (stationA < stationB) comparison = -1;
+					if (stationA > stationB) return 1;
+					else if (stationA < stationB) return -1;
 
-							return comparison;
-						});
-					});
-
-					return result;
-				})
-				.catch((err) => {
-					console.log(err);
+					return 0;
 				});
+			});
 
-			if (output != null || output != undefined) {
-				const outputEmbed = new Discord.MessageEmbed()
-					.setColor("#ffa500")
-					.setTitle("ITRC Stations")
-					.setDescription(
-						`[INARA](https://inara.cz/minorfaction/77953/)\n${divider}`
-					);
-
-				output.forEach((outputEl) => {
-					outputEmbed.addField(
-						`${outputEl.system}`,
-						`${divider}`
-					);
-					outputEl.stations.forEach(el => {
-						outputEmbed.addField(
-							`${el.name}`,
-							`${el.type}`
-						);
-					});
-					outputEmbed.addField(
-						`\u200B`,
-						`${divider}`
-					);
-				});
-
-				message.channel.send({ embed: outputEmbed });
-			}
+			message.channel.send({ embed: this.generateStationsEmbed(result) });
+				
 		} catch (error) {
 			console.log(error);
 		}
 	},
 	async systems(message, client = null) {
 		try {
-			got(this.systemsUrl)
-				.then(async (response) => {
-					let data = [];
-					const resJson = JSON.parse(response.body);
+			const fetchedData = await got(this.systemsUrl).json();
+			const parsedData = this.parseSystemsData(fetchedData.docs[0].faction_presence);
+			this.calculateInfluenceHistory(parsedData, fetchedData.docs[0].history);
 
-					const systems = resJson.docs[0].faction_presence;
-					systems.forEach((system) => {
-						let object = {};
-						object.system = system.system_name;
-						object.realInfluence = system.influence;
-						object.influence =
-							Math.round(system.influence * 1000) / 10;
-						object.lastUpdate = moment.utc(system.updated_at);
-
-						object.population = this.addSuffixToInt(
-							system.system_details.population
-						);
-						object.trend = 0;
-						object.isUpdated = false;
-						data.push(object);
-					});
-
-					data.sort(this.sortByInfluence);
-					this.calculateInfluenceHistory(
-						data,
-						resJson.docs[0].history
-					);
-					
-					await this.getTickTime()
-					.then((tt) => {
-						const tickTime = tt.tz("Europe/Berlin")
-						for (let i = 0; i < data.length; i++)
-						{
-							let difference = (((data[i].lastUpdate)-tickTime)/1000)/60
-							if(difference > 0)
-								data[i].isUpdated = true;
-							else
-								data[i].isUpdated = false;
-						}
-					})
-
-					return data;
-				})
-				.then((output) => {
-					const outputEmbed = new Discord.MessageEmbed()
-						.setColor("#ffa500")
-						.setTitle("ITRC Systems")
-						.setDescription(
-							`[INARA](https://inara.cz/minorfaction/77953/)\n${divider}`
-						);
-
-					output.forEach((el) => {
-						outputEmbed.addField(
-							`${el.influence.toFixed(1)}% - ${this.printTrend(
-								el.trend
-							)} - ${el.system} - 🙍‍♂️ ${el.population}`,
-							` ${el.isUpdated ? `✅` : `❌`} \u200B${el.lastUpdate
-								.tz("Europe/Berlin")
-								.from(moment.tz("Europe/Berlin"))}`
-						);
-					});
-
-					if (client != null)
-						client.channels.cache
-							.get(config.tickReportChannel)
-							.send({ embed: outputEmbed });
-					else message.channel.send({ embed: outputEmbed });
-				})
-				.catch((err) => {
-					console.log(err);
-				});
+			const tickTime = await getTickTime();
+			if(tickTime == null)
+				return tickError(message);
+			
+			parsedData.forEach(data => data.isUpdated = wasAfterTick(data.lastUpdate, tickTime));
+			if (client != null)
+				client.channels.cache.get(tickReportChannel).send({ embed: this.generateSystemsEmbed(parsedData) });
+			else message.channel.send({ embed: this.generateSystemsEmbed(parsedData) });
 		} catch (error) {
 			console.log(error);
 		}
 	},
 	addSuffixToInt(value) {
-		var suffixes = ["", "k", "m", "b", "t"];
-		var suffixNum = Math.floor(("" + value).length / 3);
-		var shortValue = parseFloat(
+		const suffixes = ["", "k", "m", "b", "t"];
+		const suffixNum = Math.floor(("" + value).length / 3);
+		let shortValue = parseFloat(
 			(suffixNum != 0
 				? value / Math.pow(1000, suffixNum)
 				: value
@@ -354,14 +158,11 @@ module.exports = {
 		}
 		return shortValue + suffixes[suffixNum];
 	},
-	sortByInfluence(a, b) {
-		if (a.influence < b.influence) return 1;
-		if (a.influence > b.influence) return -1;
-		return 0;
-	},
 	calculateInfluenceHistory(data, history) {
-		for (let i = 0; i < data.length; i++) {
-			for (let j = 0; j < history.length; j++) {
+		const dataLength = data.length;
+		const historyLength = history.length;
+		for (let i = 0; i < dataLength; i++) {
+			for (let j = 0; j < historyLength; j++) {
 				if (
 					data[i].system === history[j].system &&
 					data[i].realInfluence !== history[j].influence
@@ -380,49 +181,193 @@ module.exports = {
 		if (trend < 0) return `<:arrow_red:842824890918764544> ${trend}%`;
 		else return `<:arrow_green:842824851072614487> +${trend}%`;
 	},
-	printConflicts(outputEmbed, itrc, enemy, data)
+	getStationIcon(stationTypeInt) {
+		let type, priority;
+		switch (parseInt(stationTypeInt)) {
+			case 1:
+			case 12:
+			case 13:
+				type =
+					"<:coriolis:822765325350076426> Starport";
+				priority = 1;
+				break;
+			case 3:
+				type =
+					"<:outpost:822765313870397460> Outpost";
+				priority = 2;
+				break;
+			case 14:
+			case 15:
+				type =
+					"<:surface:822765337548029962> Planetary port";
+				priority = 3;
+				break;
+			default:
+				type =
+					"<:other:822765350536871946> Other";
+				priority = 4;
+				break;
+		}
+		return {type, priority};
+	},
+	parseStationData(rows) {
+		let data = [];
+		const rowsLength = rows.length
+		for (let i = 0; i < rowsLength; i++) {
+			let object = {};
+			const links = rows[i].querySelectorAll("td a.inverse");
+
+			object.system = links[1].textContent;
+			object.stationName = links[0].textContent;
+
+			const type = rows[i]
+				.querySelector("td:first-child")
+				.getAttribute("data-order");
+
+			({type: object.type, priority: object.priority} = this.getStationIcon(type));
+
+			data.push(object);
+		}
+		return data;
+	},
+	generateStationsEmbed(data) {
+		const embed = new Discord.MessageEmbed()
+			.setColor(embedColor)
+			.setTitle(`ITRC Stations`)
+			.setDescription(`[INARA](${inaraFactionUrl})\n${divider}`);
+
+		data.forEach((outputEl) => {
+			embed.addField(
+				`${outputEl.system}`,
+				`${divider}`
+			);
+			outputEl.stations.forEach(el => {
+				embed.addField(
+					`${el.name}`,
+					`${el.type}`
+				);
+			});
+			embed.addField(
+				`\u200B`,
+				`${divider}`
+			);
+		});
+
+		return embed;
+	},
+	parseConflictsData(systemsPresent, tickTime) {
+		let data = [];
+		systemsPresent.forEach((system) => {
+			if (system.conflicts.length == 0) return;
+
+			let object = {};
+			object.faction1 = {};
+			object.faction2 = {};
+
+			const conflict = system.system_details.conflicts[0];
+
+			object.system = system.system_name;
+			object.lastUpdate = moment.utc(system.updated_at);
+			object.isUpdated = wasAfterTick(object.lastUpdate, tickTime);
+			object.status = conflict.status;
+
+			//read from conflict - print to object
+			['name', 'stake', 'days_won'].forEach(prop => object.faction1[prop] = conflict.faction1[prop]);
+			['name', 'stake', 'days_won'].forEach(prop => object.faction2[prop] = conflict.faction2[prop]);
+			if (
+				conflict.faction1.faction_id ===
+				factionId
+			)
+				object.faction1.isItrc = true;
+			else object.faction2.isItrc = true;
+
+			data.push(object);
+		});
+		return data;
+	},
+	generateConflictsEmbed(data) {
+		const embed = new Discord.MessageEmbed()
+			.setColor(embedColor)
+			.setTitle(`ITRC Conflicts`)
+			.setDescription(`[INARA](${inaraFactionUrl})\n${divider}`);
+
+			if (data.length == 0) {
+				embed.addField(`Žiadne konflikty 🎉`, "\u200B");
+			}
+			else {
+				data.forEach((conflict) => {
+					if (conflict.faction1.isItrc)
+						this.printConflict(embed, conflict.faction1, conflict.faction2, conflict);
+					else
+						this.printConflict(embed, conflict.faction2, conflict.faction1, conflict);
+				});
+			}
+
+		return embed;
+	},
+	printConflict(embed, itrc, enemy, conflict)
 	{
-		outputEmbed.addField(
+		embed.addField(
 			`${divider}`,
-			`**ITRC vs ${enemy.name}**\n<:system:822765748111671326> ${data.system}`
+			`**ITRC vs ${enemy.name}**\n<:system:822765748111671326> ${conflict.system}`
 		);
-		if (data.status === "pending")
-			outputEmbed.addField(`\`pending\``, "\u200B", true);
+		if (conflict.status === "pending")
+			embed.addField(`\`pending\``, "\u200B", true);
 		else
-			outputEmbed.addField(
+			embed.addField(
 				`\`${itrc.days_won} vs ${enemy.days_won}\``,
 				"\u200B",
 				true
 			);
 
-		outputEmbed.addField(
+		embed.addField(
 			`🏆 ${enemy.stake || ' ---'}`,
 			`💥 ${itrc.stake || ' ---'}`,
 			true
 		);
-		outputEmbed.addField(`\u200B`, `${data.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')}`)
+		embed.addField(`\u200B`, `${conflict.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')} ${conflict.isUpdated ? `✅` : `❌`}`)
 	},
-	async getTickTime() {
-		try {
-			let timeToday = Math.floor(new Date().getTime() / 1000.0);
-			let timeYesterday = new Date();
-			timeYesterday.setDate(timeYesterday.getDate() - 2);
-			timeYesterday = Math.floor(timeYesterday.getTime() / 1000.0);
+	parseSystemsData(systemsPresent) {
+		let data = [];
+		systemsPresent.forEach((system) => {
+			let object = {};
+			object.system = system.system_name;
+			object.realInfluence = system.influence;
+			object.influence =
+				Math.round(system.influence * 1000) / 10;
+			object.lastUpdate = moment.utc(system.updated_at);
 
-			let url = `https://elitebgs.app/api/ebgs/v5/ticks?timeMin=${timeYesterday}000&timeMax=${timeToday}000`;
+			object.population = this.addSuffixToInt(
+				system.system_details.population
+			);
+			object.trend = 0;
+			object.isUpdated = false;
+			data.push(object);
+		});
 
-			return await got(url)
-				.then((response) => {
-					if (response.body.length == 2) return;
-
-					const resJson = JSON.parse(response.body);
-					return (date = moment.utc(resJson[0].time));
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		} catch (error) {
-			console.log(error);
-		}
+		//sort by influence
+		data.sort((a, b) => {
+			if (a.influence < b.influence) return 1;
+			if (a.influence > b.influence) return -1;
+			return 0;
+		});
+		return data;
 	},
+	generateSystemsEmbed(data) {
+		const embed = new Discord.MessageEmbed()
+		.setColor(embedColor)
+		.setTitle(`ITRC Systems`)
+		.setDescription(`[INARA](${inaraFactionUrl})\n${divider}`);
+
+		data.forEach((el) => {
+			embed.addField(
+				`${el.influence.toFixed(1)}% - ${this.printTrend(
+					el.trend
+				)} - ${el.system} - 🙍‍♂️ ${el.population}`,
+				` ${el.isUpdated ? `✅` : `❌`} \u200B${el.lastUpdate.tz("Europe/Berlin").from(moment.tz("Europe/Berlin"))}`
+			);
+		});
+
+		return embed;
+	}
 };

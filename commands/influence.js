@@ -4,8 +4,9 @@ const { divider, embedColor } = require("../config.json");
 const moment = require("moment");
 const momenttz = require("moment-timezone");
 moment.locale("sk");
-const { argsError, systemError } = require("../helpers/error.js");
+const { argsError, systemError, tickError } = require("../helpers/error.js");
 const { parseSystemName } = require("../helpers/systemName.js");
+const { wasAfterTick, getTickTime } = require("../helpers/tick.js");
 
 module.exports = {
 	name: "inf",
@@ -14,7 +15,7 @@ module.exports = {
 		try {
 			const argsLength = args.length;
 			if (!argsLength || argsLength > 5)
-			return argsError(message);
+				return argsError(message);
 
 			const { systemName, systemNameWeb } = parseSystemName(args);
 			const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`;
@@ -26,12 +27,17 @@ module.exports = {
 			const { systemData, lastUpdate } = this.processFetchedData(fetchedData);
 			if(systemData == null)
 				return displayError(`Chyba pri spracovaní dát systému`, message);
+			
+			const tickTime = await getTickTime();
+				if(tickTime == null)
+					return tickError(message);
 
 			message.channel.send({
 				embed: this.generateEmbed({
 					name: systemName,
 					url: url,
 					lastUpdate: lastUpdate,
+					isUpdated: wasAfterTick(lastUpdate, tickTime),
 					data: systemData,
 				}),
 			});
@@ -45,7 +51,7 @@ module.exports = {
 			return null;
 
 		let systemData = [];
-		let lastUpdate = moment.unix(factions[0].lastUpdate).utc().tz("Europe/Berlin").format("DD.MM.YYYY HH:mm");
+		let lastUpdate = moment.unix(factions[0].lastUpdate).utc();
 
 		factions.forEach((faction) => {
 			if (faction.influence * 100 > 0) {
@@ -89,7 +95,7 @@ module.exports = {
 			.setColor(embedColor)
 			.setTitle(`Frakcie v systéme ${system.name[0].toUpperCase() + system.name.slice(1)}`)
 			.setDescription(`[INARA](${system.url})\n${divider}`)
-			.setFooter(`Last update: ${system.lastUpdate}`);
+			.setFooter(`Last update: ${system.lastUpdate.tz("Europe/Berlin").format("DD.MM.YYYY HH:mm")} ${system.isUpdated ? `✅` : `❌`}`);
 
 		system.data.forEach((el) => {
 			embed.addField(
