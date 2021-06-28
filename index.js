@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require("fs");
 const Discord = require("discord.js");
 const config = require("./config.json");
@@ -49,4 +50,4 @@ setInterval(function() {
 	client.commands.get("tick").checkTick(client);
 }, 60 * 60 * 1000);
 
-client.login(config.BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
