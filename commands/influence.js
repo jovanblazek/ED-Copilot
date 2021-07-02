@@ -35,7 +35,7 @@ module.exports = {
 			message.channel.send({
 				embed: this.generateEmbed({
 					name: systemName,
-					url: url,
+					webName: systemNameWeb,
 					lastUpdate: lastUpdate,
 					isUpdated: wasAfterTick(lastUpdate, tickTime),
 					data: systemData,
@@ -94,7 +94,7 @@ module.exports = {
 		const embed = new Discord.MessageEmbed()
 			.setColor(embedColor)
 			.setTitle(`Frakcie v systéme ${system.name[0].toUpperCase() + system.name.slice(1)}`)
-			.setDescription(`[INARA](${system.url})\n${divider}`)
+			.setDescription(`[INARA](https://inara.cz/starsystem/?search=${system.webName})\n${divider}`)
 			.setFooter(`Last update: ${system.lastUpdate.tz("Europe/Berlin").format("DD.MM.YYYY HH:mm")} ${system.isUpdated ? `✅` : `❌`}`);
 
 		system.data.forEach((el) => {
