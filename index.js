@@ -3,6 +3,7 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const config = require("./config.json");
 const { replyError } = require("./helpers/error.js");
+const { getRandomActivity } = require("./helpers/activityChanger");
 
 const prefix = config.prefix;
 const client = new Discord.Client();
@@ -18,14 +19,15 @@ for (const file of commandFiles) {
 
 client.once("ready", () => {
 	console.log("Bot is online");
+	client.user.setPresence(getRandomActivity());
 
-	client.user.setPresence({
-		status: "online",
-		activity: {
-			name: `${prefix}help`,
-			type: "PLAYING",
-		},
-	});
+	//Change status every hour and check for tick
+	setInterval(() => {
+		client.user.setPresence(getRandomActivity());
+
+		console.log("Cheking tick");
+		client.commands.get("tick").checkTick(client);
+	}, 1000 * 60 * 60);
 });
 
 client.on("message", async function (message) {
@@ -45,9 +47,6 @@ client.on("message", async function (message) {
 	}
 });
 
-setInterval(function() {
-	console.log("Cheking tick");
-	client.commands.get("tick").checkTick(client);
-}, 60 * 60 * 1000);
+
 
 client.login(process.env.BOT_TOKEN);
