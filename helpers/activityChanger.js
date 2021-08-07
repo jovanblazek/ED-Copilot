@@ -8,7 +8,9 @@ const activities = [
     'Mining Painite ⛏',
     'That is a big haul 👀',
     'Top 1% of all bots!',
-    'Simping for Aisling 😍'
+    'Simping for Aisling 😍',
+    'Making ITRC great again!',
+    'Free Conda @ Hutton 😉'
 ]
 
 function getRandomActivity() {
