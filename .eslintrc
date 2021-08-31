@@ -1,0 +1,18 @@
+{
+	"env": {
+		"browser": true,
+		"commonjs": true,
+		"es2021": true
+	},
+	"extends": [
+		"@sudolabs-io/eslint-config-sudolabs/javascript",
+		"@sudolabs-io/eslint-config-sudolabs/with/prettier",
+		"plugin:prettier/recommended"
+	],
+	"parserOptions": {
+		"ecmaVersion": 12
+	},
+	"rules": {
+		"no-plusplus": "off"
+	}
+}
