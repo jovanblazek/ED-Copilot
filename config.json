@@ -1,9 +1,19 @@
 {
-    "prefix": "?",
-    "divider": "━━━━━━━━━━━━━━━━━━━━━━━━━━",
-    "tickReportChannel": "615874591948275724",
-    "embedColor": "#ffa500",
-    "inaraFactionUrl": "https://inara.cz/minorfaction/77953/",
-    "eddbid": "76911",
-    "factionId": "5d646fde07dcf10d3e908300"
+	"prefix": "?",
+	"divider": "━━━━━━━━━━━━━━━━━━━━━━━━━━",
+	"embedColor": "#ffa500",
+	"tickReportChannel": "615874591948275724",
+	"factionName": "Interstellar Technology Research Corporation",
+	"activities": [
+		"Waiting for tick ⏱",
+		"Reading elitehub.eu 📕",
+		"Exploring the galaxy 🚀",
+		"Enjoying Lavian Brandy 🍸",
+		"Mining Painite ⛏",
+		"That is a big haul 👀",
+		"Top 1% of all bots!",
+		"Simping for Aisling 😍",
+		"Making ITRC great again!",
+		"Free Conda @ Hutton 😉"
+	]
 }
