@@ -1,25 +1,20 @@
 const got = require('got')
 const Discord = require('discord.js')
 const moment = require('moment')
-// eslint-disable-next-line no-unused-vars
-const momenttz = require('moment-timezone')
 const { divider, embedColor } = require('../config.json')
-
-moment.locale('sk')
-const { argsError, systemError, tickError, displayError } = require('../helpers/error')
+const { systemError, tickError, displayError } = require('../helpers/error')
 const { parseSystemName } = require('../helpers/systemName')
 const { wasAfterTick, getTickTime } = require('../helpers/tick')
+const { validateArgs } = require('../helpers/arguments')
+
+moment.locale('sk')
 
 module.exports = {
 	name: 'inf',
 	description: 'Vypíše influence frakcií v systéme',
 	async execute(message, args) {
 		try {
-			const argsLength = args.length
-			if (!argsLength || argsLength > 5) {
-				argsError(message)
-				return
-			}
+			if (!validateArgs(args, message)) return
 
 			const { systemName, systemNameWeb } = parseSystemName(args)
 			const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`
@@ -85,15 +80,12 @@ module.exports = {
 		if (pending !== '') output += `🟠 ${pending}`
 		if (active !== '') output += `\n🟢 ${active}`
 
-		// eslint-disable-next-line no-return-assign
 		return (output += `\n\u200b`)
 	},
 	reduceStatesArray(array) {
 		return array.reduce((accumulator, currentValue, currentIndex, currentArray) => {
-			// eslint-disable-next-line no-param-reassign
 			accumulator += currentValue.state
 			if (currentIndex < currentArray.length - 1) {
-				// eslint-disable-next-line no-param-reassign
 				accumulator += ', '
 			}
 			return accumulator

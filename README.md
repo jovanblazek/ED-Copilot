@@ -1,13 +1,13 @@
 # Discord bot for Elite Dangerous
-Made specifically for our player faction, although it is possible to change links and ids in `config.json` to make it work with yours.
+Made specifically for our player faction, although it is possible to change faction name in `config.json` to make it work with yours.
 
 ## Features
 
 #### General:
 
-- Check if there was tick today
+- Check if there was tick today (UTC +1)
 - Get influence and states of factions in chosen system
-- Get nearest Tech Brokers, Material Traders or Interstellar factors from chosen system
+- Get nearest Tech Brokers, Material Traders or Interstellar factors
 - Calculate distance between two systems
 - Report to chosen channel when tick happens. (requires manual config)
 
@@ -29,25 +29,29 @@ List of commands: `?help`
 
 1. Clone repo
 2. Run `npm install`
-3. Get your faction information from `https://elitebgs.app/api/ebgs/v5/factions?name=FACTION%20NAME`.
-4. Copy `_id` to `factionId` in `config.js`
-5. Copy `eddb_id` to `eddbid` in `config.js`
-6. Replace `inaraFactionUrl` in `config.js` with url to your faction
-7. Replace `tickReportChannel` with id of your discord channel, where you want to get messages when there was a tick.
-8. Create `.env` file and write `BOT_TOKEN=`, then paste here your discord bot token
-9. Run `node index.js` to start the bot
+3. Replace `factionName` value in `config.js` with your faction name
+4. Replace `tickReportChannel` value with id of your discord text channel, where you want to get messages when tick happens.
+5. Rename `.env.example` to `.env`, then paste here your discord bot token
+6. Run `node index.js` to start the bot
+
+(Optional) Translate text to your language
+
+## Changing the commands
+
+To change the command name, rename `name` property in the command file.
+
 
 ## Contributing
 
-Make issues or contact me directly.
+Feel free to make issues/feature requests or contact me directly.
 
-> I plan to make this bot less specific and more configurable so it can be easily used by anyone.
+> I plan to make this bot less specific and more configurable so it can be easily used by anyone. This goes for translations as well
 
 ## License
 
->You can check out the full license [here](https://github.com/jovanblazek/elitehub-bot/blob/main/LICENSE.md)
-
 This project is licensed under the terms of the **MIT** license.
+
+>You can check out the full license [here](https://github.com/jovanblazek/elitehub-bot/blob/main/LICENSE.md)
 
 ---
 

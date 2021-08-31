@@ -50,7 +50,7 @@ module.exports = {
 			})
 
 			const distance = rows[i].querySelector('td:nth-last-child(2)')
-			if (distance != null) {
+			if (distance !== null) {
 				object.distanceLs = distance.previousElementSibling.textContent
 				object.distance = distance.textContent
 			}

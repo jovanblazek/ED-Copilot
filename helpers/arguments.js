@@ -1,9 +1,9 @@
 const { argsError } = require('./error')
 
-function validateArgs(args, message, expectedLength = 5) {
+function validateArgs(args, message, maxLength = 5) {
 	if (!args) return false
 
-	if (args.length > expectedLength) {
+	if (args.length > maxLength) {
 		argsError(message)
 		return false
 	}

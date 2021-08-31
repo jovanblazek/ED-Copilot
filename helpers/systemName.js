@@ -1,15 +1,14 @@
 function parseSystemName(args) {
-    const argsLength = args.length;
-    let systemName = "",
-        systemNameWeb = "";
+	const argsLength = args.length
+	let systemName = ''
+	let systemNameWeb = ''
 
-    for (let i = 0; i < argsLength; i++)
-        systemName += args[i].toLowerCase() + " ";
+	for (let i = 0; i < argsLength; i++) systemName += `${args[i].toLowerCase()} `
 
-    systemName.trim();
-    systemNameWeb = encodeURIComponent(systemName);
+	systemName = systemName.trim()
+	systemNameWeb = encodeURIComponent(systemName)
 
-    return { systemName, systemNameWeb };
+	return { systemName, systemNameWeb }
 }
 
-module.exports = { parseSystemName };
+module.exports = { parseSystemName }

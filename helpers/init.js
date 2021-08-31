@@ -7,7 +7,7 @@ exports.init = async () => {
 		const factionNameEncoded = encodeURIComponent(factionName)
 
 		const url = `https://elitebgs.app/api/ebgs/v5/factions?name=${factionNameEncoded}`
-		const inaraUrl = `https://inara.cz/minorfaction/?search=${factionName}`
+		const inaraUrl = `https://inara.cz/minorfaction/?search=${factionNameEncoded}`
 
 		const { docs } = await got(url).json()
 

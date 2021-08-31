@@ -1,12 +1,11 @@
 require('dotenv').config()
 const fs = require('fs')
 const Discord = require('discord.js')
-const config = require('./config.json')
+const { prefix } = require('./config.json')
 const { replyError } = require('./helpers/error')
 const { getRandomActivity } = require('./helpers/activityChanger')
 const { init } = require('./helpers/init')
 
-const { prefix } = config
 const client = new Discord.Client()
 client.commands = new Discord.Collection()
 const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'))
@@ -20,8 +19,7 @@ commandFiles.forEach((file) => {
 })
 
 client.once('ready', async () => {
-	// await init()
-
+	await init()
 	client.user.setPresence(getRandomActivity())
 	console.log('Bot is online')
 
