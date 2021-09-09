@@ -1,9 +1,9 @@
 const Discord = require('discord.js')
 const { validateArgs } = require('../helpers/arguments')
-const { divider, embedColor } = require('../config.json')
+const { divider, embedColor, prefix } = require('../config.json')
 const { getCommands } = require('../data/Commands')
 const { displayError } = require('../helpers/error')
-const { getCommandSyntax, getArgumentOptions } = require('../helpers/commadSyntax')
+const { getCommandSyntax, getArgumentOptions, getArgumentInfo } = require('../helpers/commadSyntax')
 
 const DEFAULT_HELP = `${divider}\n\`?help\` - Vypíše **zoznam** podporovaných príkazov \n\n\
 \`?dis <system1> : <system2>\` - Vypočíta **vzdialenosť** medzi 2 systémami \n\n\
@@ -46,15 +46,22 @@ module.exports = {
 			try {
 				const command = commands.get(inputCommand)
 
-				console.log(command.name, command.description)
-				console.log(getCommandSyntax(command))
+				const embed = new Discord.MessageEmbed()
+					.setColor(embedColor)
+					.setTitle(`${prefix}${command.name} command`)
+					.setDescription(`${command.description}\n`)
 
-				// if any of the arguments have options, print them
+				embed.addField('✏️ Syntax', getCommandSyntax(command))
+
 				command.arguments.forEach((el) => {
-					if (el.options && el.options.length > 0) {
-						console.log(getArgumentOptions(el))
+					const argumentOptions = getArgumentOptions(el)
+					embed.addField('🔨 Arguments', `${getArgumentInfo(el)}`)
+					if (argumentOptions !== null) {
+						embed.addField('\u200B', argumentOptions)
 					}
 				})
+
+				message.channel.send(embed)
 			} catch (error) {
 				console.error(error)
 				displayError('Pri vykonávaní príkazu sa vyskytla chyba!', message)

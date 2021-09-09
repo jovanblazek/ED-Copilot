@@ -5,11 +5,17 @@ module.exports = {
 		if (command.getSyntax) {
 			return command.getSyntax()
 		}
-		return `${prefix}${command.name}${command.arguments.map((arg) => ` <${arg.name}>`)}`
+		return `\`${prefix}${command.name} ${command.arguments
+			.map((arg) => `<${arg.name}>`)
+			.join(' ')}\``
 	},
-	getArgumentOptions(argument) {
-		return `${argument.name} \n ${argument.options.map(
-			(option) => `${option.name} - ${option.description}\n`
-		)}`
+	getArgumentInfo(argument) {
+		return `\`<${argument.name}>\` - ${argument.description}\n`
+	},
+	getArgumentOptions({ options }) {
+		if (options && options.length > 0) {
+			return options.map((option) => `\`${option.name}\` - ${option.description}`).join('\n')
+		}
+		return null
 	},
 }
