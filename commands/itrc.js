@@ -14,6 +14,26 @@ const { JSDOM } = jsdom
 module.exports = {
 	name: 'itrc',
 	description: 'Vypíše konflikty ITRC',
+	arguments: [
+		{
+			name: 'argument',
+			description: 'Východzí systém (systém v ktorom sa nachádzaš)',
+			options: [
+				{
+					name: 'conflicts',
+					description: 'Vypíše konflikty ITRC',
+				},
+				{
+					name: 'stations',
+					description: 'Vypíše stanice pod kontrolou ITRC',
+				},
+				{
+					name: 'systems',
+					description: 'Vypíše systémy, v ktorých je ITRC prítomná',
+				},
+			],
+		},
+	],
 	execute(message, args) {
 		try {
 			if (!validateArgs(args, message, 1)) return

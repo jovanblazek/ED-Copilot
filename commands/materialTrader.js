@@ -11,6 +11,12 @@ const { JSDOM } = jsdom
 module.exports = {
 	name: 'trader',
 	description: 'Vypíše 5 najbližších Material Traderov',
+	arguments: [
+		{
+			name: 'system',
+			description: 'Východzí systém (systém v ktorom sa nachádzaš)',
+		},
+	],
 	async execute(message, args) {
 		try {
 			if (!validateArgs(args, message)) return

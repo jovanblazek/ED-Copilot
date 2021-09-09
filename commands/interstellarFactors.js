@@ -11,6 +11,12 @@ const { JSDOM } = jsdom
 module.exports = {
 	name: 'factors',
 	description: 'Vypíše 5 najbližších Interstellar Factors (len Orbitaly s L padmi)',
+	arguments: [
+		{
+			name: 'system',
+			description: 'Východzí systém (systém v ktorom sa nachádzaš)',
+		},
+	],
 	async execute(message, args) {
 		try {
 			if (!validateArgs(args, message)) return

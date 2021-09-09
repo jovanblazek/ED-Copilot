@@ -1,22 +1,13 @@
 require('dotenv').config()
-const fs = require('fs')
 const Discord = require('discord.js')
 const { prefix } = require('./config.json')
 const { replyError } = require('./helpers/error')
 const { getRandomActivity } = require('./helpers/activityChanger')
 const { init } = require('./helpers/init')
+const { initCommands } = require('./data/Commands')
 
 const client = new Discord.Client()
-client.commands = new Discord.Collection()
-const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'))
-commandFiles.forEach((file) => {
-	// eslint-disable-next-line import/no-dynamic-require
-	const command = require(`./commands/${file}`)
-
-	// set a new item in the Collection
-	// with the key as the command name and the value as the exported module
-	client.commands.set(command.name, command)
-})
+client.commands = initCommands(client)
 
 client.once('ready', async () => {
 	await init()
