@@ -5,9 +5,12 @@ module.exports = {
 		if (command.getSyntax) {
 			return command.getSyntax()
 		}
-		return `\`${prefix}${command.name} ${command.arguments
-			.map((arg) => `<${arg.name}>`)
-			.join(' ')}\``
+		if (command.arguments) {
+			return `\`${prefix}${command.name} ${command.arguments
+				.map((arg) => `<${arg.name}>`)
+				.join(' ')}\``
+		}
+		return `\`${prefix}${command.name}\``
 	},
 	getArgumentInfo(argument) {
 		return `\`<${argument.name}>\` - ${argument.description}\n`

@@ -51,15 +51,19 @@ module.exports = {
 					.setTitle(`${prefix}${command.name} command`)
 					.setDescription(`${command.description}\n`)
 
-				embed.addField('✏️ Syntax', getCommandSyntax(command))
+				embed.addField('✏️ Syntax', `${getCommandSyntax(command)}\n`)
 
-				command.arguments.forEach((el) => {
-					const argumentOptions = getArgumentOptions(el)
-					embed.addField('🔨 Arguments', `${getArgumentInfo(el)}`)
-					if (argumentOptions !== null) {
-						embed.addField('\u200B', argumentOptions)
-					}
-				})
+				if (command.arguments) {
+					command.arguments.forEach((el) => {
+						const argumentOptions = getArgumentOptions(el)
+						embed.addField('🔨 Arguments', `${getArgumentInfo(el)}`)
+						if (argumentOptions !== null) {
+							embed.addField('\u200B', argumentOptions)
+						}
+					})
+				}
+
+				// TODO \n formatting
 
 				message.channel.send(embed)
 			} catch (error) {

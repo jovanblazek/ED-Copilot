@@ -6,7 +6,6 @@ const { systemError, tickError, displayError } = require('../helpers/error')
 const { parseSystemName } = require('../helpers/systemName')
 const { wasAfterTick, getTickTime } = require('../helpers/tick')
 const { validateArgs } = require('../helpers/arguments')
-const { prefix } = require('../config.json')
 
 moment.locale('sk')
 
