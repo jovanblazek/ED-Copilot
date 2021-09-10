@@ -53,7 +53,7 @@ const generateEmbed = (url, data) => {
 
 module.exports = {
 	name: 'trader',
-	description: 'Vypíše 5 najbližších Material Traderov',
+	description: 'Vypíše 5 najbližších **Material Traderov**',
 	arguments: [
 		{
 			name: 'system',

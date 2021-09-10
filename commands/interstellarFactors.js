@@ -47,7 +47,7 @@ const generateEmbed = (url, data) => {
 
 module.exports = {
 	name: 'factors',
-	description: 'Vypíše 5 najbližších Interstellar Factors (len Orbitaly s L padmi)',
+	description: 'Vypíše 5 najbližších **Interstellar Factors** (len Orbitaly s L padmi)',
 	arguments: [
 		{
 			name: 'system',

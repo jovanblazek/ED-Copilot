@@ -10,7 +10,7 @@ const { JSDOM } = jsdom
 
 module.exports = {
 	name: 'broker',
-	description: 'Vypíše 5 najbližších Tech Brokerov',
+	description: 'Vypíše 5 najbližších **Tech Brokerov**',
 	arguments: [
 		{
 			name: 'system',

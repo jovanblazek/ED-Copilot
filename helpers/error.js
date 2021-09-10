@@ -1,6 +1,8 @@
-function replyError(text, discordMessage) {
-	return discordMessage.channel.reply(`${text}`)
-}
+/* Not working in discord-js v12
+	function replyError(text, discordMessage) {
+		return discordMessage.channel.reply(`${text}`)
+	}
+*/
 
 function displayError(text, discordMessage) {
 	return discordMessage.channel.send(`${text}, ${discordMessage.author}!`)
@@ -20,4 +22,4 @@ function tickError(discordMessage) {
 	)
 }
 
-module.exports = { replyError, displayError, systemError, argsError, tickError }
+module.exports = { displayError, systemError, argsError, tickError }

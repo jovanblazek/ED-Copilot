@@ -13,7 +13,7 @@ const { JSDOM } = jsdom
 
 module.exports = {
 	name: 'itrc',
-	description: 'Vypíše konflikty ITRC',
+	description: 'Vypíše rôzne informácie o ITRC ako napríklad stav konfliktov.',
 	arguments: [
 		{
 			name: 'argument',
@@ -21,30 +21,26 @@ module.exports = {
 			options: [
 				{
 					name: 'conflicts',
-					description: 'Vypíše konflikty ITRC',
+					description: 'Vypíše **konflikty** ITRC',
 				},
 				{
 					name: 'stations',
-					description: 'Vypíše stanice pod kontrolou ITRC',
+					description: 'Vypíše **stanice** pod kontrolou ITRC',
 				},
 				{
 					name: 'systems',
-					description: 'Vypíše systémy, v ktorých je ITRC prítomná',
+					description: 'Vypíše **systémy**, v ktorých je ITRC',
 				},
 			],
 		},
 	],
 	execute(message, args) {
-		try {
-			if (!validateArgs(args, message, 1)) return
+		if (!validateArgs(args, message, 1, 1)) return
 
-			if (args[0] === 'conflicts') this.conflicts(message)
-			else if (args[0] === 'stations') this.stations(message)
-			else if (args[0] === 'systems') this.systems(message)
-			else displayError(`Neznámy argument ${args[0]}`, message)
-		} catch (error) {
-			console.log(error)
-		}
+		if (args[0] === 'conflicts') this.conflicts(message)
+		else if (args[0] === 'stations') this.stations(message)
+		else if (args[0] === 'systems') this.systems(message)
+		else displayError(`Neznámy argument ${args[0]}`, message)
 	},
 	async conflicts(message) {
 		try {

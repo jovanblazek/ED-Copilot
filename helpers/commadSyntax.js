@@ -7,7 +7,12 @@ module.exports = {
 		}
 		if (command.arguments) {
 			return `\`${prefix}${command.name} ${command.arguments
-				.map((arg) => `<${arg.name}>`)
+				.map((arg) => {
+					if (arg.optional) {
+						return `[${arg.name}]`
+					}
+					return `<${arg.name}>`
+				})
 				.join(' ')}\``
 		}
 		return `\`${prefix}${command.name}\``

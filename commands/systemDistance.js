@@ -5,7 +5,7 @@ const { argsError, systemError } = require('../helpers/error')
 
 module.exports = {
 	name: 'dis',
-	description: 'Vyráta vzdialenosť medzi dvoma systémami',
+	description: 'Vypočíta **vzdialenosť** medzi dvoma systémami',
 	arguments: [
 		{
 			name: 'system1',
@@ -17,7 +17,7 @@ module.exports = {
 		},
 	],
 	getSyntax() {
-		return `${prefix}${this.name} <${this.arguments[0].name}> : <${this.arguments[1].name}>`
+		return `\`${prefix}${this.name} <${this.arguments[0].name}> : <${this.arguments[1].name}>\``
 	},
 	async execute(message, args) {
 		try {

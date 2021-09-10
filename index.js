@@ -1,7 +1,7 @@
 require('dotenv').config()
 const Discord = require('discord.js')
 const { prefix } = require('./config.json')
-const { replyError } = require('./helpers/error')
+const { displayError } = require('./helpers/error')
 const { getRandomActivity } = require('./helpers/activityChanger')
 const { init } = require('./helpers/init')
 const { initCommands } = require('./data/Commands')
@@ -35,8 +35,8 @@ client.on('message', async (message) => {
 	try {
 		client.commands.get(commandName).execute(message, args)
 	} catch (error) {
-		console.error(error)
-		replyError('Pri vykonávaní príkazu sa vyskytla chyba!', message)
+		console.error('Index error handler\n\n', error)
+		displayError('Pri vykonávaní príkazu sa vyskytla chyba!', message)
 	}
 })
 

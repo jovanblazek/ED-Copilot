@@ -75,7 +75,7 @@ const generateEmbed = (system) => {
 
 module.exports = {
 	name: 'inf',
-	description: 'Vypíše influence frakcií v systéme',
+	description: 'Vypíše **influence** a stavy frakcíí v systéme',
 	arguments: [
 		{
 			name: 'system',
