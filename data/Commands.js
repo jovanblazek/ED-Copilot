@@ -15,6 +15,15 @@ exports.initCommands = (client) => {
 		// with the key as the command name and the value as the exported module
 		commands.set(command.name, command)
 	})
+	commands.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1
+		}
+		if (a.name > b.name) {
+			return 1
+		}
+		return 0
+	})
 	return commands
 }
 

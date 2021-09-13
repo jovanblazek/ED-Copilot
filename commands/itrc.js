@@ -154,7 +154,7 @@ module.exports = {
 			const systemsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${getFactionEddbId()}&systemDetails=true&count=2`
 			const fetchedData = await got(systemsUrl).json()
 			const parsedData = this.parseSystemsData(fetchedData.docs[0].faction_presence)
-			this.calculateInfluenceHistory(parsedData, fetchedData.docs[0].history)
+			this.calculateInfluenceTrend(parsedData, fetchedData.docs[0].history)
 
 			const tickTime = await getTickTime()
 			if (tickTime == null) {
@@ -186,7 +186,7 @@ module.exports = {
 		}
 		return shortValue + suffixes[suffixNum]
 	},
-	calculateInfluenceHistory(data, history) {
+	calculateInfluenceTrend(data, history) {
 		const dataLength = data.length
 		const historyLength = history.length
 		for (let i = 0; i < dataLength; i++) {
