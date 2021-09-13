@@ -1,11 +1,24 @@
 const got = require('got')
 const Discord = require('discord.js')
-const { embedColor } = require('../config.json')
+const { embedColor, prefix } = require('../config.json')
 const { argsError, systemError } = require('../helpers/error')
 
 module.exports = {
 	name: 'dis',
-	description: 'Vyráta vzdialenosť medzi dvoma systémami',
+	description: 'Vypočíta **vzdialenosť** medzi dvoma systémami',
+	arguments: [
+		{
+			name: 'system1',
+			description: 'Východzí systém (systém v ktorom sa nachádzaš)',
+		},
+		{
+			name: 'system2',
+			description: 'Cieľový systém',
+		},
+	],
+	getSyntax() {
+		return `\`${prefix}${this.name} <${this.arguments[0].name}> : <${this.arguments[1].name}>\``
+	},
 	async execute(message, args) {
 		try {
 			if (!args.length) {

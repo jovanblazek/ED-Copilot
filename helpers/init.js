@@ -15,6 +15,10 @@ exports.init = async () => {
 
 		console.log('Bot initialized')
 	} catch (err) {
-		console.log('Initialization error', err)
+		console.error(
+			`Initialization error. You probably entered wrong faction name in config.json\n\n`,
+			err
+		)
+		process.exit(1)
 	}
 }

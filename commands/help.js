@@ -1,41 +1,70 @@
 const Discord = require('discord.js')
-const { divider, embedColor } = require('../config.json')
+const { validateArgs } = require('../helpers/arguments')
+const { divider, embedColor, prefix } = require('../config.json')
+const { getCommands } = require('../data/Commands')
+const { getCommandSyntax, getArgumentOptions, getArgumentInfo } = require('../helpers/commadSyntax')
 
 module.exports = {
 	name: 'help',
-	description: 'Help!',
-	execute(message) {
-		/* message.channel.send(`**Podporované príkazy:**\n
-\`?help\` - Vypíše zoznam podporovaných príkazov
-\`?inf <system>\` - Vypíše influence a stavy frakcíí v systéme
-\`?itrc <argument>\`
-		- \`stations\` - Vypíše všetky stanice pod kontrolou ITRC
-		- \`conflicts\` - Vypíše všetky konflikty ITRC
-\`?trader <system>\` - Vypíše 5 najbližších Material Traderov
-\`?broker <system>\` - Vypíše 5 najbližších Technology Brokerov
-\`?factors <system>\` - Vypíše 5 najbližších Interstellar Factors (len Orbitaly s L padmi)
-			`); */
+	description: 'Somebody get help!',
+	arguments: [
+		{
+			name: 'command',
+			description: 'Príkaz, ktorého informácie chceš vedieť',
+			optional: true,
+		},
+	],
+	execute(message, args) {
+		const commands = getCommands()
 
-		const outputEmbed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle('🔨 Podporované príkazy')
-			.setDescription(
-				`${divider}\n\`?help\` - Vypíše **zoznam** podporovaných príkazov \n\n\
-			\`?dis <system1> : <system2>\` - Vypočíta **vzdialenosť** medzi 2 systémami \n\n\
-			\`?inf <system>\` - Vypíše **influence** a stavy frakcíí v systéme \n\n\
-			\`?itrc <argument>\` \n\
-			\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \
-			\`systems\` - Vypíše všetky **systémy**, v ktorých je ITRC \n\
-			\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \
-				\`stations\` - Vypíše všetky **stanice** pod kontrolou ITRC \n\
-			\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \
-				\`conflicts\` - Vypíše všetky **konflikty** ITRC \n\n\
-			\`?tick\` - Vypíše čas posledného BGS **ticku** \n\n\
-			\`?trader <system>\` - Vypíše 5 najbližších **Material Traderov** \n\n\
-			\`?broker <system>\` - Vypíše 5 najbližších **Technology Brokerov** \n\n\
-			\`?factors <system>\` - Vypíše 5 najbližších **Interstellar Factors** (len Orbitaly s L padmi)`
-			)
+		// basic help command
+		if (args.length === 0) {
+			let defaultHelp = `Pre viac info použi príkaz \`?help <command>\`\n${divider}\n`
 
-		message.channel.send({ embed: outputEmbed })
+			commands.forEach((command) => {
+				defaultHelp += `${getCommandSyntax(command)} - ${command.description}\n\n`
+			})
+
+			const outputEmbed = new Discord.MessageEmbed()
+				.setColor(embedColor)
+				.setTitle('🔨 Podporované príkazy')
+				.setDescription(defaultHelp)
+
+			message.channel.send({ embed: outputEmbed })
+			return
+		}
+
+		// if have more args than one, don't do anything
+		if (!validateArgs(args, message, 1)) {
+			return
+		}
+
+		const inputCommand = args[0]
+
+		if (commands.has(inputCommand)) {
+			const command = commands.get(inputCommand)
+
+			const embed = new Discord.MessageEmbed()
+				.setColor(embedColor)
+				.setTitle(`${prefix}${command.name} command`)
+				.setDescription(`${command.description}`)
+
+			embed.addField('\u200B\n✏️ Syntax', `${getCommandSyntax(command)}`)
+
+			if (command.arguments) {
+				let output = ''
+				command.arguments.forEach((el) => {
+					output += getArgumentInfo(el)
+
+					const argumentOptions = getArgumentOptions(el)
+					if (argumentOptions !== null) {
+						output += `\n${argumentOptions}\n\n`
+					}
+				})
+				embed.addField('\u200B\n🔨 Arguments', output)
+			}
+
+			message.channel.send(embed)
+		}
 	},
 }

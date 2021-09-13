@@ -8,9 +8,52 @@ const { validateArgs } = require('../helpers/arguments')
 
 const { JSDOM } = jsdom
 
+const parseData = (rows) => {
+	const data = []
+	for (let i = 1; i < 6; i++) {
+		const object = {}
+		const links = rows[i].querySelectorAll('td a.inverse')
+
+		let j = 0
+		links.forEach((element) => {
+			if (j === 0) object.station = element.textContent
+			else object.system = element.textContent
+			j++
+		})
+
+		const distance = rows[i].querySelector('td:nth-last-child(2)')
+		if (distance !== null) {
+			object.distanceLs = distance.previousElementSibling.textContent
+			object.distance = distance.textContent
+		}
+
+		data.push(object)
+	}
+	return data
+}
+
+const generateEmbed = (url, data) => {
+	const embed = new Discord.MessageEmbed()
+		.setColor(embedColor)
+		.setTitle(`Interstellar Factors`)
+		.setDescription(`[INARA](${url})\n${divider}`)
+
+	data.forEach((el) => {
+		embed.addField(`${el.system}`, `${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`)
+	})
+
+	return embed
+}
+
 module.exports = {
 	name: 'factors',
-	description: 'Vypíše 5 najbližších Interstellar Factors (len Orbitaly s L padmi)',
+	description: 'Vypíše 5 najbližších **Interstellar Factors** (len Orbitaly s L padmi)',
+	arguments: [
+		{
+			name: 'system',
+			description: 'Východzí systém (systém v ktorom sa nachádzaš)',
+		},
+	],
 	async execute(message, args) {
 		try {
 			if (!validateArgs(args, message)) return
@@ -27,48 +70,13 @@ module.exports = {
 				return
 			}
 
-			const parsedData = this.parseData(rows)
+			const parsedData = parseData(rows)
 
 			message.channel.send({
-				embed: this.generateEmbed(url, parsedData),
+				embed: generateEmbed(url, parsedData),
 			})
 		} catch (error) {
 			console.log(error)
 		}
-	},
-	parseData(rows) {
-		const data = []
-		for (let i = 1; i < 6; i++) {
-			const object = {}
-			const links = rows[i].querySelectorAll('td a.inverse')
-
-			let j = 0
-			links.forEach((element) => {
-				if (j === 0) object.station = element.textContent
-				else object.system = element.textContent
-				j++
-			})
-
-			const distance = rows[i].querySelector('td:nth-last-child(2)')
-			if (distance !== null) {
-				object.distanceLs = distance.previousElementSibling.textContent
-				object.distance = distance.textContent
-			}
-
-			data.push(object)
-		}
-		return data
-	},
-	generateEmbed(url, data) {
-		const embed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle(`Interstellar Factors`)
-			.setDescription(`[INARA](${url})\n${divider}`)
-
-		data.forEach((el) => {
-			embed.addField(`${el.system}`, `${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`)
-		})
-
-		return embed
 	},
 }

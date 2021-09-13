@@ -9,9 +9,79 @@ const { validateArgs } = require('../helpers/arguments')
 
 moment.locale('sk')
 
+const processFetchedData = (response) => {
+	const { factions } = response
+	if (factions == null || factions.length === 0) return null
+
+	const systemData = []
+	const lastUpdate = moment.unix(factions[0].lastUpdate).utc()
+
+	factions.forEach((faction) => {
+		if (faction.influence * 100 > 0) {
+			const object = {}
+			object.name = faction.name
+			object.influence = Math.round(faction.influence * 1000) / 10
+			object.activeStates = faction.activeStates
+			object.pendingStates = faction.pendingStates
+			systemData.push(object)
+		}
+	})
+
+	return { systemData, lastUpdate }
+}
+
+const reduceStatesArray = (array) => {
+	return array.reduce((accumulator, currentValue, currentIndex, currentArray) => {
+		accumulator += currentValue.state
+		if (currentIndex < currentArray.length - 1) {
+			accumulator += ', '
+		}
+		return accumulator
+	}, '')
+}
+
+const getStates = (faction) => {
+	const pending = reduceStatesArray(faction.pendingStates)
+	const active = reduceStatesArray(faction.activeStates)
+
+	if (pending === '' && active === '') return '\u200b'
+
+	let output = ''
+	if (pending !== '') output += `🟠 ${pending}`
+	if (active !== '') output += `\n🟢 ${active}`
+
+	return (output += `\n\u200b`)
+}
+
+const generateEmbed = (system) => {
+	const embed = new Discord.MessageEmbed()
+		.setColor(embedColor)
+		.setTitle(`Frakcie v systéme ${system.name[0].toUpperCase() + system.name.slice(1)}`)
+		.setDescription(
+			`[INARA](https://inara.cz/starsystem/?search=${system.webName})\n${divider}`
+		)
+		.setFooter(
+			`Last update: ${system.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')} ${
+				system.isUpdated ? `✅` : `❌`
+			}`
+		)
+
+	system.data.forEach((el) => {
+		embed.addField(`${el.influence}% - ${el.name}`, `${getStates(el)}`, false)
+	})
+
+	return embed
+}
+
 module.exports = {
 	name: 'inf',
-	description: 'Vypíše influence frakcií v systéme',
+	description: 'Vypíše **influence** a stavy frakcíí v systéme',
+	arguments: [
+		{
+			name: 'system',
+			description: 'Systém pre výpis',
+		},
+	],
 	async execute(message, args) {
 		try {
 			if (!validateArgs(args, message)) return
@@ -25,7 +95,7 @@ module.exports = {
 				return
 			}
 
-			const { systemData, lastUpdate } = this.processFetchedData(fetchedData)
+			const { systemData, lastUpdate } = processFetchedData(fetchedData)
 			if (systemData == null) {
 				displayError(`Chyba pri spracovaní dát systému`, message)
 				return
@@ -38,7 +108,7 @@ module.exports = {
 			}
 
 			message.channel.send({
-				embed: this.generateEmbed({
+				embed: generateEmbed({
 					name: systemName,
 					webName: systemNameWeb,
 					lastUpdate,
@@ -49,65 +119,5 @@ module.exports = {
 		} catch (error) {
 			console.log(error)
 		}
-	},
-	processFetchedData(response) {
-		const { factions } = response
-		if (factions == null || factions.length === 0) return null
-
-		const systemData = []
-		const lastUpdate = moment.unix(factions[0].lastUpdate).utc()
-
-		factions.forEach((faction) => {
-			if (faction.influence * 100 > 0) {
-				const object = {}
-				object.name = faction.name
-				object.influence = Math.round(faction.influence * 1000) / 10
-				object.activeStates = faction.activeStates
-				object.pendingStates = faction.pendingStates
-				systemData.push(object)
-			}
-		})
-
-		return { systemData, lastUpdate }
-	},
-	getStates(faction) {
-		const pending = this.reduceStatesArray(faction.pendingStates)
-		const active = this.reduceStatesArray(faction.activeStates)
-
-		if (pending === '' && active === '') return '\u200b'
-
-		let output = ''
-		if (pending !== '') output += `🟠 ${pending}`
-		if (active !== '') output += `\n🟢 ${active}`
-
-		return (output += `\n\u200b`)
-	},
-	reduceStatesArray(array) {
-		return array.reduce((accumulator, currentValue, currentIndex, currentArray) => {
-			accumulator += currentValue.state
-			if (currentIndex < currentArray.length - 1) {
-				accumulator += ', '
-			}
-			return accumulator
-		}, '')
-	},
-	generateEmbed(system) {
-		const embed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle(`Frakcie v systéme ${system.name[0].toUpperCase() + system.name.slice(1)}`)
-			.setDescription(
-				`[INARA](https://inara.cz/starsystem/?search=${system.webName})\n${divider}`
-			)
-			.setFooter(
-				`Last update: ${system.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')} ${
-					system.isUpdated ? `✅` : `❌`
-				}`
-			)
-
-		system.data.forEach((el) => {
-			embed.addField(`${el.influence}% - ${el.name}`, `${this.getStates(el)}`, false)
-		})
-
-		return embed
 	},
 }

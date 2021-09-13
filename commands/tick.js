@@ -9,7 +9,7 @@ moment.locale('sk')
 
 module.exports = {
 	name: 'tick',
-	description: 'Vypíše dátum a čas posledného ticku',
+	description: 'Vypíše dátum a čas posledného BGS **ticku**',
 	async execute(message, args, client = null) {
 		try {
 			if (!validateArgs(args, message, 0)) return

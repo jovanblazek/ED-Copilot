@@ -13,18 +13,34 @@ const { JSDOM } = jsdom
 
 module.exports = {
 	name: 'itrc',
-	description: 'Vypíše konflikty ITRC',
+	description: 'Vypíše rôzne informácie o ITRC ako napríklad stav konfliktov.',
+	arguments: [
+		{
+			name: 'argument',
+			description: 'Východzí systém (systém v ktorom sa nachádzaš)',
+			options: [
+				{
+					name: 'conflicts',
+					description: 'Vypíše **konflikty** ITRC',
+				},
+				{
+					name: 'stations',
+					description: 'Vypíše **stanice** pod kontrolou ITRC',
+				},
+				{
+					name: 'systems',
+					description: 'Vypíše **systémy**, v ktorých je ITRC',
+				},
+			],
+		},
+	],
 	execute(message, args) {
-		try {
-			if (!validateArgs(args, message, 1)) return
+		if (!validateArgs(args, message, 1, 1)) return
 
-			if (args[0] === 'conflicts') this.conflicts(message)
-			else if (args[0] === 'stations') this.stations(message)
-			else if (args[0] === 'systems') this.systems(message)
-			else displayError(`Neznámy argument ${args[0]}`, message)
-		} catch (error) {
-			console.log(error)
-		}
+		if (args[0] === 'conflicts') this.conflicts(message)
+		else if (args[0] === 'stations') this.stations(message)
+		else if (args[0] === 'systems') this.systems(message)
+		else displayError(`Neznámy argument ${args[0]}`, message)
 	},
 	async conflicts(message) {
 		try {
@@ -138,7 +154,7 @@ module.exports = {
 			const systemsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${getFactionEddbId()}&systemDetails=true&count=2`
 			const fetchedData = await got(systemsUrl).json()
 			const parsedData = this.parseSystemsData(fetchedData.docs[0].faction_presence)
-			this.calculateInfluenceHistory(parsedData, fetchedData.docs[0].history)
+			this.calculateInfluenceTrend(parsedData, fetchedData.docs[0].history)
 
 			const tickTime = await getTickTime()
 			if (tickTime == null) {
@@ -170,7 +186,7 @@ module.exports = {
 		}
 		return shortValue + suffixes[suffixNum]
 	},
-	calculateInfluenceHistory(data, history) {
+	calculateInfluenceTrend(data, history) {
 		const dataLength = data.length
 		const historyLength = history.length
 		for (let i = 0; i < dataLength; i++) {
