@@ -2,9 +2,7 @@ const got = require('got')
 const jsdom = require('jsdom')
 const { divider } = require('../config.json')
 const { systemError } = require('../helpers/error')
-const { parseSystemName } = require('../helpers/systemName')
-const { validateArgs } = require('../helpers/arguments')
-const { createEmbed } = require('../helpers/embed')
+const { createEmbed, validateArgs, parseSystemName } = require('../helpers')
 
 const { JSDOM } = jsdom
 

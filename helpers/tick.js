@@ -5,7 +5,7 @@ const momenttz = require('moment-timezone')
 
 moment.locale('sk')
 
-function wasAfterTick(lastUpdate, tickTime) {
+exports.wasAfterTick = (lastUpdate, tickTime) => {
 	const tickTimeLocal = tickTime.tz('Europe/Berlin')
 
 	const difference = (lastUpdate - tickTimeLocal) / 1000 / 60
@@ -15,7 +15,7 @@ function wasAfterTick(lastUpdate, tickTime) {
 }
 
 // eslint-disable-next-line consistent-return
-async function getTickTime() {
+exports.getTickTime = async () => {
 	try {
 		const timeToday = Math.floor(new Date().getTime() / 1000.0)
 		let timeYesterday = new Date()
@@ -31,5 +31,3 @@ async function getTickTime() {
 		console.log(error)
 	}
 }
-
-module.exports = { wasAfterTick, getTickTime }

@@ -1,7 +1,7 @@
 const got = require('got')
 const { prefix } = require('../config.json')
 const { argsError, systemError } = require('../helpers/error')
-const { createEmbed } = require('../helpers/embed')
+const { createEmbed } = require('../helpers')
 
 module.exports = {
 	name: 'dis',

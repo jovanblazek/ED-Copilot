@@ -1,8 +1,12 @@
-const { validateArgs } = require('../helpers/arguments')
 const { divider, prefix } = require('../config.json')
 const { getCommands } = require('../data/Commands')
-const { getCommandSyntax, getArgumentOptions, getArgumentInfo } = require('../helpers/commadSyntax')
-const { createEmbed } = require('../helpers/embed')
+const {
+	getCommandSyntax,
+	getArgumentOptions,
+	getArgumentInfo,
+	createEmbed,
+	validateArgs,
+} = require('../helpers')
 
 module.exports = {
 	name: 'help',

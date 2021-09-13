@@ -1,12 +1,10 @@
 const got = require('got')
 const jsdom = require('jsdom')
 const moment = require('moment')
-const { displayError, tickError } = require('../helpers/error')
 const { divider, tickReportChannel } = require('../config.json')
-const { wasAfterTick, getTickTime } = require('../helpers/tick')
-const { validateArgs } = require('../helpers/arguments')
 const { getFactionInaraUrl, getFactionEddbId, getFactionId } = require('../data/Faction')
-const { createEmbed } = require('../helpers/embed')
+const { createEmbed, validateArgs, wasAfterTick, getTickTime } = require('../helpers')
+const { displayError, tickError } = require('../helpers/error')
 
 moment.locale('sk')
 const { JSDOM } = jsdom
@@ -34,7 +32,7 @@ module.exports = {
 			],
 		},
 	],
-	execute(message, args) {
+	async execute(message, args) {
 		if (!validateArgs(args, message, 1, 1)) return
 
 		if (args[0] === 'conflicts') this.conflicts(message)

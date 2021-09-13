@@ -1,4 +1,4 @@
-function parseSystemName(args) {
+exports.parseSystemName = (args) => {
 	const argsLength = args.length
 	let systemName = ''
 	let systemNameWeb = ''
@@ -10,5 +10,3 @@ function parseSystemName(args) {
 
 	return { systemName, systemNameWeb }
 }
-
-module.exports = { parseSystemName }

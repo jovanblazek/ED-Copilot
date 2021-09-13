@@ -2,10 +2,13 @@ const got = require('got')
 const moment = require('moment')
 const { divider } = require('../config.json')
 const { systemError, tickError, displayError } = require('../helpers/error')
-const { parseSystemName } = require('../helpers/systemName')
-const { wasAfterTick, getTickTime } = require('../helpers/tick')
-const { validateArgs } = require('../helpers/arguments')
-const { createEmbed } = require('../helpers/embed')
+const {
+	createEmbed,
+	validateArgs,
+	wasAfterTick,
+	getTickTime,
+	parseSystemName,
+} = require('../helpers')
 
 moment.locale('sk')
 

@@ -1,9 +1,7 @@
 const moment = require('moment')
 const { tickError } = require('../helpers/error')
-const { getTickTime } = require('../helpers/tick')
 const { tickReportChannel } = require('../config.json')
-const { validateArgs } = require('../helpers/arguments')
-const { createEmbed } = require('../helpers/embed')
+const { createEmbed, validateArgs, getTickTime } = require('../helpers')
 
 moment.locale('sk')
 

@@ -1,6 +1,6 @@
 const { argsError } = require('./error')
 
-function validateArgs(args, message, maxLength = 5, expectedLength = null) {
+exports.validateArgs = (args, message, maxLength = 5, expectedLength = null) => {
 	if (!args) {
 		argsError(message)
 		return false
@@ -17,5 +17,3 @@ function validateArgs(args, message, maxLength = 5, expectedLength = null) {
 	}
 	return true
 }
-
-module.exports = { validateArgs }
