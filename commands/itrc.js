@@ -1,12 +1,12 @@
 const got = require('got')
 const jsdom = require('jsdom')
-const Discord = require('discord.js')
 const moment = require('moment')
 const { displayError, tickError } = require('../helpers/error')
-const { divider, embedColor, tickReportChannel } = require('../config.json')
+const { divider, tickReportChannel } = require('../config.json')
 const { wasAfterTick, getTickTime } = require('../helpers/tick')
 const { validateArgs } = require('../helpers/arguments')
 const { getFactionInaraUrl, getFactionEddbId, getFactionId } = require('../data/Faction')
+const { createEmbed } = require('../helpers/embed')
 
 moment.locale('sk')
 const { JSDOM } = jsdom
@@ -75,7 +75,8 @@ module.exports = {
 				return
 			}
 
-			const parsedData = this.parseStationData(rows)
+			// Save only important stations (starports, outposts, planetary ports)
+			const parsedData = this.parseStationData(rows).filter((station) => station.priority < 4)
 
 			// sort by system name
 			parsedData.sort((a, b) => {
@@ -251,10 +252,10 @@ module.exports = {
 		return data
 	},
 	generateStationsEmbed(data) {
-		const embed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle(`ITRC Stations`)
-			.setDescription(`[INARA](${getFactionInaraUrl()})\n${divider}`)
+		const embed = createEmbed({
+			title: `ITRC Stations`,
+			description: `[INARA](${getFactionInaraUrl()})\n${divider}`,
+		})
 
 		data.forEach((outputEl) => {
 			embed.addField(`${outputEl.system}`, `${divider}`)
@@ -297,10 +298,10 @@ module.exports = {
 		return data
 	},
 	generateConflictsEmbed(data) {
-		const embed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle(`ITRC Conflicts`)
-			.setDescription(`[INARA](${getFactionInaraUrl()})\n${divider}`)
+		const embed = createEmbed({
+			title: `ITRC Conflicts`,
+			description: `[INARA](${getFactionInaraUrl()})\n${divider}`,
+		})
 
 		if (!data.length) {
 			embed.addField(`Žiadne konflikty 🎉`, '\u200B')
@@ -354,10 +355,10 @@ module.exports = {
 		return data
 	},
 	generateSystemsEmbed(data) {
-		const embed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle(`ITRC Systems`)
-			.setDescription(`[INARA](${getFactionInaraUrl()})\n${divider}`)
+		const embed = createEmbed({
+			title: `ITRC Systems`,
+			description: `[INARA](${getFactionInaraUrl()})\n${divider}`,
+		})
 
 		data.forEach((el) => {
 			embed.addField(

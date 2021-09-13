@@ -1,8 +1,8 @@
-const Discord = require('discord.js')
 const { validateArgs } = require('../helpers/arguments')
-const { divider, embedColor, prefix } = require('../config.json')
+const { divider, prefix } = require('../config.json')
 const { getCommands } = require('../data/Commands')
 const { getCommandSyntax, getArgumentOptions, getArgumentInfo } = require('../helpers/commadSyntax')
+const { createEmbed } = require('../helpers/embed')
 
 module.exports = {
 	name: 'help',
@@ -25,12 +25,9 @@ module.exports = {
 				defaultHelp += `${getCommandSyntax(command)} - ${command.description}\n\n`
 			})
 
-			const outputEmbed = new Discord.MessageEmbed()
-				.setColor(embedColor)
-				.setTitle('🔨 Podporované príkazy')
-				.setDescription(defaultHelp)
-
-			message.channel.send({ embed: outputEmbed })
+			message.channel.send({
+				embed: createEmbed({ title: '🔨 Podporované príkazy', description: defaultHelp }),
+			})
 			return
 		}
 
@@ -44,10 +41,10 @@ module.exports = {
 		if (commands.has(inputCommand)) {
 			const command = commands.get(inputCommand)
 
-			const embed = new Discord.MessageEmbed()
-				.setColor(embedColor)
-				.setTitle(`${prefix}${command.name} command`)
-				.setDescription(`${command.description}`)
+			const embed = createEmbed({
+				title: `${prefix}${command.name} command`,
+				description: command.description,
+			})
 
 			embed.addField('\u200B\n✏️ Syntax', `${getCommandSyntax(command)}`)
 

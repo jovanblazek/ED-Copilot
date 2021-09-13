@@ -1,9 +1,9 @@
-const Discord = require('discord.js')
 const moment = require('moment')
 const { tickError } = require('../helpers/error')
 const { getTickTime } = require('../helpers/tick')
 const { tickReportChannel } = require('../config.json')
 const { validateArgs } = require('../helpers/arguments')
+const { createEmbed } = require('../helpers/embed')
 
 moment.locale('sk')
 
@@ -22,19 +22,19 @@ module.exports = {
 
 			const difference = tickTime.tz('Europe/Berlin').from(moment.tz('Europe/Berlin'))
 
-			const outputEmbed = new Discord.MessageEmbed()
-				.setColor('#ffa500')
-				.setTitle(`Posledný TICK`)
-				.setDescription(
-					`**${tickTime.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')}**
-                        ${difference}\n
-                        Dnes: ${this.wasTickToday(tickTime) ? '✅' : '❌'}\n
-                        [HISTÓRIA](https://elitebgs.app/tick)`
-				)
+			const embed = createEmbed({
+				title: `Posledný TICK`,
+				description: `**${tickTime.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')}**
+				${difference}\n
+				Dnes: ${this.wasTickToday(tickTime) ? '✅' : '❌'}\n
+				[HISTÓRIA](https://elitebgs.app/tick)`,
+			})
 
-			if (client != null)
-				client.channels.cache.get(tickReportChannel).send({ embed: outputEmbed })
-			else message.channel.send({ embed: outputEmbed })
+			if (client != null) {
+				client.channels.cache.get(tickReportChannel).send({ embed })
+			} else {
+				message.channel.send({ embed })
+			}
 		} catch (error) {
 			console.log(error)
 		}

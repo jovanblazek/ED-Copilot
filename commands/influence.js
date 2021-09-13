@@ -1,11 +1,11 @@
 const got = require('got')
-const Discord = require('discord.js')
 const moment = require('moment')
-const { divider, embedColor } = require('../config.json')
+const { divider } = require('../config.json')
 const { systemError, tickError, displayError } = require('../helpers/error')
 const { parseSystemName } = require('../helpers/systemName')
 const { wasAfterTick, getTickTime } = require('../helpers/tick')
 const { validateArgs } = require('../helpers/arguments')
+const { createEmbed } = require('../helpers/embed')
 
 moment.locale('sk')
 
@@ -54,17 +54,13 @@ const getStates = (faction) => {
 }
 
 const generateEmbed = (system) => {
-	const embed = new Discord.MessageEmbed()
-		.setColor(embedColor)
-		.setTitle(`Frakcie v systéme ${system.name[0].toUpperCase() + system.name.slice(1)}`)
-		.setDescription(
-			`[INARA](https://inara.cz/starsystem/?search=${system.webName})\n${divider}`
-		)
-		.setFooter(
-			`Last update: ${system.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')} ${
-				system.isUpdated ? `✅` : `❌`
-			}`
-		)
+	const embed = createEmbed({
+		title: `Frakcie v systéme ${system.name[0].toUpperCase() + system.name.slice(1)}`,
+		description: `[INARA](https://inara.cz/starsystem/?search=${system.webName})\n${divider}`,
+		footer: `Last update: ${system.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')} ${
+			system.isUpdated ? `✅` : `❌`
+		}`,
+	})
 
 	system.data.forEach((el) => {
 		embed.addField(`${el.influence}% - ${el.name}`, `${getStates(el)}`, false)

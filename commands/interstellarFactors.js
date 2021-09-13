@@ -1,10 +1,10 @@
 const got = require('got')
 const jsdom = require('jsdom')
-const Discord = require('discord.js')
-const { divider, embedColor } = require('../config.json')
+const { divider } = require('../config.json')
 const { systemError } = require('../helpers/error')
 const { parseSystemName } = require('../helpers/systemName')
 const { validateArgs } = require('../helpers/arguments')
+const { createEmbed } = require('../helpers/embed')
 
 const { JSDOM } = jsdom
 
@@ -33,10 +33,10 @@ const parseData = (rows) => {
 }
 
 const generateEmbed = (url, data) => {
-	const embed = new Discord.MessageEmbed()
-		.setColor(embedColor)
-		.setTitle(`Interstellar Factors`)
-		.setDescription(`[INARA](${url})\n${divider}`)
+	const embed = createEmbed({
+		title: `Interstellar Factors`,
+		description: `[INARA](${url})\n${divider}`,
+	})
 
 	data.forEach((el) => {
 		embed.addField(`${el.system}`, `${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`)
