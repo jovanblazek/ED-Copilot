@@ -30,19 +30,6 @@ const parseData = (rows) => {
 	return data
 }
 
-const generateEmbed = (url, data) => {
-	const embed = createEmbed({
-		title: `Interstellar Factors`,
-		description: `[INARA](${url})\n${divider}`,
-	})
-
-	data.forEach((el) => {
-		embed.addField(`${el.system}`, `${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`)
-	})
-
-	return embed
-}
-
 module.exports = {
 	name: 'factors',
 	description: 'Vypíše 5 najbližších **Interstellar Factors** (len Orbitaly s L padmi)',
@@ -70,9 +57,19 @@ module.exports = {
 
 			const parsedData = parseData(rows)
 
-			message.channel.send({
-				embed: generateEmbed(url, parsedData),
+			const embed = createEmbed({
+				title: `Interstellar Factors`,
+				description: `[INARA](${url})\n${divider}`,
 			})
+
+			parsedData.forEach((el) => {
+				embed.addField(
+					`${el.system}`,
+					`${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`
+				)
+			})
+
+			message.channel.send({ embed })
 		} catch (error) {
 			console.log(error)
 		}

@@ -257,7 +257,6 @@ module.exports = {
 			const tickTime = await getTickTime()
 			if (tickTime == null) {
 				tickError(message)
-				return
 			}
 
 			const parsedData = parseConflictsData(fetchedData.docs[0].faction_presence, tickTime)
@@ -363,7 +362,6 @@ module.exports = {
 			const tickTime = await getTickTime()
 			if (tickTime == null) {
 				tickError(message)
-				return
 			}
 
 			parsedData.forEach((data) => {

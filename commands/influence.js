@@ -56,22 +56,6 @@ const getStates = (faction) => {
 	return (output += `\n\u200b`)
 }
 
-const generateEmbed = (system) => {
-	const embed = createEmbed({
-		title: `Frakcie v systéme ${system.name[0].toUpperCase() + system.name.slice(1)}`,
-		description: `[INARA](https://inara.cz/starsystem/?search=${system.webName})\n${divider}`,
-		footer: `Last update: ${system.lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')} ${
-			system.isUpdated ? `✅` : `❌`
-		}`,
-	})
-
-	system.data.forEach((el) => {
-		embed.addField(`${el.influence}% - ${el.name}`, `${getStates(el)}`, false)
-	})
-
-	return embed
-}
-
 module.exports = {
 	name: 'inf',
 	description: 'Vypíše **influence** a stavy frakcíí v systéme',
@@ -101,19 +85,30 @@ module.exports = {
 			}
 
 			const tickTime = await getTickTime()
-			if (tickTime == null) {
+			if (tickTime === null) {
 				tickError(message)
-				return
 			}
 
+			const embed = createEmbed({
+				title: `Frakcie v systéme ${systemName[0].toUpperCase() + systemName.slice(1)}`,
+				description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${divider}`,
+				footer: `Last update: ${lastUpdate
+					.tz('Europe/Berlin')
+					.format('DD.MM.YYYY HH:mm')} ${
+					wasAfterTick(lastUpdate, tickTime) ? `✅` : `❌`
+				}`,
+			})
+
+			systemData.forEach((faction) => {
+				embed.addField(
+					`${faction.influence}% - ${faction.name}`,
+					`${getStates(faction)}`,
+					false
+				)
+			})
+
 			message.channel.send({
-				embed: generateEmbed({
-					name: systemName,
-					webName: systemNameWeb,
-					lastUpdate,
-					isUpdated: wasAfterTick(lastUpdate, tickTime),
-					data: systemData,
-				}),
+				embed,
 			})
 		} catch (error) {
 			console.log(error)
