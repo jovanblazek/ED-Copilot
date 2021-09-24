@@ -4,6 +4,7 @@
 	"embedColor": "#ffa500",
 	"tickReportChannel": "615874591948275724",
 	"factionName": "Interstellar Technology Research Corporation",
+	"factionNameShort": "ITRC",
 	"activities": [
 		"Waiting for tick ⏱",
 		"Reading elitehub.eu 📕",

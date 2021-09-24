@@ -1,7 +1,7 @@
 const got = require('got')
-const Discord = require('discord.js')
-const { embedColor, prefix } = require('../config.json')
+const { prefix } = require('../config.json')
 const { argsError, systemError } = require('../helpers/error')
+const { createEmbed } = require('../helpers')
 
 module.exports = {
 	name: 'dis',
@@ -57,22 +57,17 @@ module.exports = {
 			const distance = Math.sqrt(a * a + b * b + c * c).toFixed(2)
 
 			message.channel.send({
-				embed: this.generateEmbed(systemName1, systemName2, distance),
+				embed: createEmbed({
+					title: `${
+						systemName1[0].toUpperCase() + systemName1.slice(1)
+					}  <- ${distance} ly ->  ${
+						systemName2[0].toUpperCase() + systemName2.slice(1)
+					}`,
+				}),
 			})
 		} catch (error) {
 			console.log(error)
 		}
-	},
-	generateEmbed(systemName1, systemName2, distance) {
-		const embed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle(
-				`${systemName1[0].toUpperCase() + systemName1.slice(1)}  <- ${distance} ly ->  ${
-					systemName2[0].toUpperCase() + systemName2.slice(1)
-				}`
-			)
-
-		return embed
 	},
 	async getSystemCoords(systemName) {
 		const systemNameWeb = encodeURIComponent(systemName)

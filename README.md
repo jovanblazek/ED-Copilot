@@ -10,6 +10,7 @@ Made specifically for our player faction, although it is possible to change fact
 - Get nearest Tech Brokers, Material Traders or Interstellar factors
 - Calculate distance between two systems
 - Report to chosen channel when tick happens. (requires manual config)
+- Dynamic help command
 
 #### Faction specific:
 
@@ -25,12 +26,14 @@ Default prefix: `?`
 
 List of commands: `?help`
 
+Use `?help [command]` to get more info about specific command.
+
 ## Setup
 
 1. Clone repo
 2. Run `npm install`
-3. Replace `factionName` value in `config.js` with your faction name
-4. Replace `tickReportChannel` value with id of your discord text channel, where you want to get messages when tick happens.
+3. Replace `factionName` and `factionNameShort` values in `config.js` with your faction name and shorthand respectively
+4. Replace `tickReportChannel` value with id of your discord text channel, where you want to get messages when tick happens
 5. Rename `.env.example` to `.env`, then paste here your discord bot token
 6. Run `node index.js` to start the bot
 
@@ -38,7 +41,7 @@ List of commands: `?help`
 
 ## Changing the commands
 
-To change the command name, rename `name` property in the command file.
+To change the command name or description, change `name` or `description` property respectively in the command file.
 
 
 ## Contributing

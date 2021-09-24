@@ -1,12 +1,37 @@
 const got = require('got')
 const jsdom = require('jsdom')
-const Discord = require('discord.js')
-const { divider, embedColor } = require('../config.json')
+const { divider } = require('../config.json')
 const { systemError } = require('../helpers/error')
-const { parseSystemName } = require('../helpers/systemName')
-const { validateArgs } = require('../helpers/arguments')
+const { createEmbed, validateArgs, parseSystemName } = require('../helpers')
 
 const { JSDOM } = jsdom
+
+const parseData = (rows) => {
+	const data = []
+	for (let i = 1; i < 6; i++) {
+		const object = {}
+		const links = rows[i].querySelectorAll('td a.inverse')
+
+		let j = 0
+		links.forEach((element) => {
+			if (j === 0) object.station = element.textContent
+			else object.system = element.textContent
+			j++
+		})
+
+		const distance = rows[i].querySelector('td:nth-last-child(2)')
+		if (distance != null) {
+			object.distanceLs = distance.previousElementSibling.textContent
+			object.distance = distance.textContent
+		}
+
+		const type = rows[i].querySelector('td:first-child')
+		if (type != null) object.type = type.textContent
+
+		data.push(object)
+	}
+	return data
+}
 
 module.exports = {
 	name: 'broker',
@@ -33,54 +58,23 @@ module.exports = {
 				return
 			}
 
-			const parsedData = this.parseData(rows)
+			const parsedData = parseData(rows)
 
-			message.channel.send({
-				embed: this.generateEmbed(url, parsedData),
+			const embed = createEmbed({
+				title: `Technology Brokers`,
+				description: `[INARA](${url})\n${divider}`,
 			})
+
+			parsedData.forEach((el) => {
+				embed.addField(
+					`${el.type} - ${el.system}`,
+					`${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`
+				)
+			})
+
+			message.channel.send({ embed })
 		} catch (error) {
 			console.log(error)
 		}
-	},
-	parseData(rows) {
-		const data = []
-		for (let i = 1; i < 6; i++) {
-			const object = {}
-			const links = rows[i].querySelectorAll('td a.inverse')
-
-			let j = 0
-			links.forEach((element) => {
-				if (j === 0) object.station = element.textContent
-				else object.system = element.textContent
-				j++
-			})
-
-			const distance = rows[i].querySelector('td:nth-last-child(2)')
-			if (distance != null) {
-				object.distanceLs = distance.previousElementSibling.textContent
-				object.distance = distance.textContent
-			}
-
-			const type = rows[i].querySelector('td:first-child')
-			if (type != null) object.type = type.textContent
-
-			data.push(object)
-		}
-		return data
-	},
-	generateEmbed(url, data) {
-		const embed = new Discord.MessageEmbed()
-			.setColor(embedColor)
-			.setTitle(`Technology Brokers`)
-			.setDescription(`[INARA](${url})\n${divider}`)
-
-		data.forEach((el) => {
-			embed.addField(
-				`${el.type} - ${el.system}`,
-				`${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`
-			)
-		})
-
-		return embed
 	},
 }

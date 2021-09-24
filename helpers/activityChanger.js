@@ -1,6 +1,6 @@
 const { prefix, activities } = require('../config.json')
 
-function getRandomActivity() {
+exports.getRandomActivity = () => {
 	const randomIndex = Math.floor(Math.random() * activities.length)
 	const newActivity = activities[randomIndex]
 
@@ -12,5 +12,3 @@ function getRandomActivity() {
 		},
 	}
 }
-
-module.exports = { getRandomActivity }

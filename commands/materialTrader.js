@@ -1,10 +1,8 @@
 const got = require('got')
 const jsdom = require('jsdom')
-const Discord = require('discord.js')
-const { divider, embedColor } = require('../config.json')
+const { divider } = require('../config.json')
 const { systemError } = require('../helpers/error')
-const { parseSystemName } = require('../helpers/systemName')
-const { validateArgs } = require('../helpers/arguments')
+const { createEmbed, validateArgs, parseSystemName } = require('../helpers')
 
 const { JSDOM } = jsdom
 
@@ -35,22 +33,6 @@ const parseData = (rows) => {
 	return data
 }
 
-const generateEmbed = (url, data) => {
-	const embed = new Discord.MessageEmbed()
-		.setColor(embedColor)
-		.setTitle(`Material Traders`)
-		.setDescription(`[INARA](${url})\n${divider}`)
-
-	data.forEach((el) => {
-		embed.addField(
-			`${el.type} - ${el.system}`,
-			`${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`
-		)
-	})
-
-	return embed
-}
-
 module.exports = {
 	name: 'trader',
 	description: 'Vypíše 5 najbližších **Material Traderov**',
@@ -78,9 +60,19 @@ module.exports = {
 
 			const parsedData = parseData(rows)
 
-			message.channel.send({
-				embed: generateEmbed(url, parsedData),
+			const embed = createEmbed({
+				title: `Material Traders`,
+				description: `[INARA](${url})\n${divider}`,
 			})
+
+			parsedData.forEach((el) => {
+				embed.addField(
+					`${el.type} - ${el.system}`,
+					`${el.station} - ${el.distanceLs}\n\`${el.distance}\`\n`
+				)
+			})
+
+			message.channel.send({ embed })
 		} catch (error) {
 			console.log(error)
 		}
