@@ -1,3 +1,5 @@
+const i18next = require('i18next')
+
 module.exports = {
 	name: 'ping',
 	description: 'Ping!',
@@ -6,6 +8,6 @@ module.exports = {
 			message.channel.send('Pong BITCH!')
 			return
 		}
-		message.channel.send('Pong.')
+		message.channel.send(i18next.t('key'))
 	},
 }
