@@ -1,7 +1,13 @@
 {
 	"sk": {
 		"translation": {
-			"key": "ahoj svet"
+			"key": "ahoj svet",
+			"commands": {
+				"influence": {
+					"embedTitle": "Frakcie v systéme {{system}}",
+					"embedFooter": "Last update: {{time}}"
+				}
+			}
 		}
 	}
 }

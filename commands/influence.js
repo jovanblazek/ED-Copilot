@@ -1,5 +1,6 @@
 const got = require('got')
 const moment = require('moment')
+const i18next = require('i18next')
 const { divider } = require('../config.json')
 const { systemError, tickError, displayError } = require('../helpers/error')
 const {
@@ -90,13 +91,15 @@ module.exports = {
 			}
 
 			const embed = createEmbed({
-				title: `Frakcie v systéme ${systemName[0].toUpperCase() + systemName.slice(1)}`,
+				title: `${i18next.t('commands.influence.embedTitle', {
+					system: systemName[0].toUpperCase() + systemName.slice(1),
+				})}`,
 				description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${divider}`,
-				footer: `Last update: ${lastUpdate
-					.tz('Europe/Berlin')
-					.format('DD.MM.YYYY HH:mm')} ${
-					wasAfterTick(lastUpdate, tickTime) ? `✅` : `❌`
-				}`,
+				footer: `${i18next.t('commands.influence.embedFooter', {
+					time: `${lastUpdate.tz('Europe/Berlin').format('DD.MM.YYYY HH:mm')} ${
+						wasAfterTick(lastUpdate, tickTime) ? `✅` : `❌`
+					}`,
+				})}`,
 			})
 
 			systemData.forEach((faction) => {

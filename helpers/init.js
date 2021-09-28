@@ -23,7 +23,6 @@ exports.init = async () => {
 		const inaraUrl = `https://inara.cz/minorfaction/?search=${factionNameEncoded}`
 
 		const { docs } = await got(url).json()
-
 		setFactionData(docs[0]._id, docs[0].eddb_id, inaraUrl)
 
 		i18next.init({
