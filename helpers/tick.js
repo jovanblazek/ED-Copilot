@@ -2,6 +2,7 @@ const got = require('got')
 const moment = require('moment')
 // eslint-disable-next-line no-unused-vars
 const momenttz = require('moment-timezone')
+const { getTickTime, setTickTime } = require('../data/Tick')
 
 moment.locale('sk')
 
@@ -21,15 +22,23 @@ exports.wasAfterTick = (lastUpdate, tickTime) => {
 }
 
 // eslint-disable-next-line consistent-return
-exports.getTickTime = async () => {
+exports.fetchTickTime = async () => {
+	// Return saved value if it's not null, otherwise, fetch it and save
+	const savedTickTime = getTickTime()
+	if (savedTickTime) {
+		return savedTickTime
+	}
 	try {
+		console.log('fetching data')
 		const url = `https://elitebgs.app/api/ebgs/v5/ticks`
 		const fetchedData = await got(url).json()
 
 		if (fetchedData.length === 0) {
 			return null
 		}
-		return moment.utc(fetchedData[0].time)
+		const tickTime = moment.utc(fetchedData[0].time)
+		setTickTime(tickTime)
+		return tickTime
 	} catch (error) {
 		console.log(error)
 	}

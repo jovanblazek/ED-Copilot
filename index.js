@@ -2,7 +2,7 @@ require('dotenv').config()
 const Discord = require('discord.js')
 const { prefix } = require('./config.json')
 const { displayError } = require('./helpers/error')
-const { getRandomActivity, init } = require('./helpers')
+const { getRandomActivity, init, tickDetector } = require('./helpers')
 const { initCommands } = require('./data/Commands')
 
 const client = new Discord.Client()
@@ -12,13 +12,11 @@ client.once('ready', async () => {
 	await init()
 	client.user.setPresence(getRandomActivity())
 	console.log('Bot is online')
+	tickDetector(client)
 
-	// Change status every hour and check for tick
+	// Change status every hour
 	setInterval(() => {
 		client.user.setPresence(getRandomActivity())
-
-		console.log('Cheking tick')
-		client.commands.get('tick').checkTick(client)
 	}, 1000 * 60 * 60)
 })
 

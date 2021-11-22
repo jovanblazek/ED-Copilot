@@ -1,7 +1,7 @@
 const moment = require('moment')
 const { tickError } = require('../helpers/error')
 const { tickReportChannel } = require('../config.json')
-const { createEmbed, validateArgs, getTickTime } = require('../helpers')
+const { createEmbed, validateArgs, fetchTickTime } = require('../helpers')
 
 moment.locale('sk')
 
@@ -12,7 +12,7 @@ module.exports = {
 		try {
 			if (!validateArgs(args, message, 0)) return
 
-			const tickTime = await getTickTime()
+			const tickTime = await fetchTickTime()
 			if (tickTime === null) {
 				tickError(message)
 				return
@@ -33,32 +33,6 @@ module.exports = {
 			} else {
 				message.channel.send({ embed })
 			}
-		} catch (error) {
-			console.log(error)
-		}
-	},
-	async checkTick(client) {
-		try {
-			const tickTime = await getTickTime()
-			if (tickTime === null) {
-				console.log(
-					'Error, getTickTime() returned null in checkTick() method in commands/tick.js'
-				)
-				return
-			}
-
-			if (this.wasTickToday(tickTime)) {
-				let difference = tickTime.tz('Europe/Berlin') - moment.tz('Europe/Berlin')
-				difference = Math.abs(difference / 1000 / 60 / 60)
-				console.log(`Last tick: ${difference} hours ago.`)
-
-				// if tick occured in last hour execute these commands
-				if (difference < 1) {
-					client.commands.get('tick').execute(null, [], client)
-					client.commands.get('itrc').systems(null, client)
-				}
-			}
-			return
 		} catch (error) {
 			console.log(error)
 		}

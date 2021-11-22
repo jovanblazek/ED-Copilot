@@ -1,14 +1,8 @@
 const got = require('got')
 const moment = require('moment')
 const { divider } = require('../config.json')
-const { systemError, tickError, displayError } = require('../helpers/error')
-const {
-	createEmbed,
-	validateArgs,
-	wasAfterTick,
-	getTickTime,
-	parseSystemName,
-} = require('../helpers')
+const { systemError, tickError, displayError, argsError } = require('../helpers/error')
+const { createEmbed, wasAfterTick, fetchTickTime, parseSystemName } = require('../helpers')
 
 moment.locale('sk')
 
@@ -67,7 +61,10 @@ module.exports = {
 	],
 	async execute(message, args) {
 		try {
-			if (!validateArgs(args, message)) return
+			if (!args.length) {
+				argsError(message)
+				return
+			}
 
 			const { systemName, systemNameWeb } = parseSystemName(args)
 			const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`
@@ -84,7 +81,7 @@ module.exports = {
 				return
 			}
 
-			const tickTime = await getTickTime()
+			const tickTime = await fetchTickTime()
 			if (tickTime === null) {
 				tickError(message)
 			}

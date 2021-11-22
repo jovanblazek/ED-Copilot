@@ -1,7 +1,7 @@
 const { argsError } = require('./error')
 
 exports.validateArgs = (args, message, maxLength = 5, expectedLength = null) => {
-	if (!args.length) {
+	if (!args) {
 		argsError(message)
 		return false
 	}

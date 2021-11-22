@@ -18,7 +18,7 @@ function argsError(discordMessage) {
 
 function tickError(discordMessage) {
 	return discordMessage.channel.send(
-		`Nepodarilo sa získať informácie o ticku.\nSkontroluj https://elitebgs.app/tick\nChyba je pravdepodobne na ich strane.`
+		`Nepodarilo sa získať informácie o ticku.\nSkontroluj https://elitebgs.app/tick`
 	)
 }
 
