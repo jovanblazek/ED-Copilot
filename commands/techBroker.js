@@ -1,8 +1,8 @@
 const got = require('got')
 const jsdom = require('jsdom')
 const { divider } = require('../config.json')
-const { systemError } = require('../helpers/error')
-const { createEmbed, validateArgs, parseSystemName } = require('../helpers')
+const { systemError, argsError } = require('../helpers/error')
+const { createEmbed, parseSystemName } = require('../helpers')
 
 const { JSDOM } = jsdom
 
@@ -44,7 +44,10 @@ module.exports = {
 	],
 	async execute(message, args) {
 		try {
-			if (!validateArgs(args, message)) return
+			if (!args.length) {
+				argsError(message)
+				return
+			}
 
 			const { systemName, systemNameWeb } = parseSystemName(args)
 			const url = `https://inara.cz/nearest-stations/?ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=0&pi19=0&pa1%5B26%5D=1&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0`

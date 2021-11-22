@@ -3,7 +3,7 @@ const jsdom = require('jsdom')
 const moment = require('moment')
 const { divider, factionNameShort, tickReportChannel } = require('../config.json')
 const { getFactionInaraUrl, getFactionEddbId, getFactionId } = require('../data/Faction')
-const { createEmbed, validateArgs, wasAfterTick, getTickTime } = require('../helpers')
+const { createEmbed, validateArgs, wasAfterTick, fetchTickTime } = require('../helpers')
 const { displayError, tickError } = require('../helpers/error')
 
 moment.locale('sk')
@@ -254,7 +254,7 @@ module.exports = {
 
 			const fetchedData = await got(conflictsUrl).json()
 
-			const tickTime = await getTickTime()
+			const tickTime = await fetchTickTime()
 			if (tickTime == null) {
 				tickError(message)
 			}
@@ -359,7 +359,7 @@ module.exports = {
 			const parsedData = parseSystemsData(fetchedData.docs[0].faction_presence)
 			calculateInfluenceTrend(parsedData, fetchedData.docs[0].history)
 
-			const tickTime = await getTickTime()
+			const tickTime = await fetchTickTime()
 			if (tickTime == null) {
 				tickError(message)
 			}

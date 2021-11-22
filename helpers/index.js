@@ -2,8 +2,9 @@ const { init } = require('./init')
 const { getRandomActivity } = require('./activityChanger')
 const { validateArgs } = require('./arguments')
 const { parseSystemName } = require('./systemName')
-const { getTickTime, wasAfterTick } = require('./tick')
+const { fetchTickTime, wasAfterTick } = require('./tick')
 const { createEmbed } = require('./embed')
+const { tickDetector } = require('./tickDetector')
 const { getCommandSyntax, getArgumentInfo, getArgumentOptions } = require('./commadSyntax')
 
 module.exports = {
@@ -13,8 +14,9 @@ module.exports = {
 	getArgumentOptions,
 	getCommandSyntax,
 	getRandomActivity,
-	getTickTime,
+	fetchTickTime,
 	parseSystemName,
+	tickDetector,
 	validateArgs,
 	wasAfterTick,
 }

@@ -1,7 +1,7 @@
 const got = require('got')
+const { fetchTickTime } = require('./tick')
 const { factionName } = require('../config.json')
 const { setFactionData } = require('../data/Faction')
-const { tickDetector } = require('./socketTickDetector')
 
 exports.init = async () => {
 	try {
@@ -13,7 +13,7 @@ exports.init = async () => {
 		const { docs } = await got(url).json()
 
 		setFactionData(docs[0]._id, docs[0].eddb_id, inaraUrl)
-		tickDetector()
+		fetchTickTime()
 
 		console.log('Bot initialized')
 	} catch (err) {

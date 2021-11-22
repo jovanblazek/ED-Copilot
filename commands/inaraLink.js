@@ -1,4 +1,5 @@
-const { createEmbed, validateArgs, parseSystemName } = require('../helpers')
+const { createEmbed, parseSystemName } = require('../helpers')
+const { argsError } = require('../helpers/error')
 
 module.exports = {
 	name: 'inara',
@@ -11,7 +12,10 @@ module.exports = {
 	],
 	async execute(message, args) {
 		try {
-			if (!validateArgs(args, message)) return
+			if (!args.length) {
+				argsError(message)
+				return
+			}
 
 			const { systemName, systemNameWeb } = parseSystemName(args)
 			const url = `https://inara.cz/starsystem/?search=${systemNameWeb}`
