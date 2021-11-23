@@ -29,7 +29,6 @@ exports.fetchTickTime = async () => {
 		return savedTickTime
 	}
 	try {
-		console.log('fetching data')
 		const url = `https://elitebgs.app/api/ebgs/v5/ticks`
 		const fetchedData = await got(url).json()
 
