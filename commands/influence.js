@@ -1,26 +1,24 @@
 const got = require('got')
 const moment = require('moment')
 const { divider } = require('../config.json')
-const { systemError, tickError, displayError, argsError } = require('../helpers/error')
-const { createEmbed, wasAfterTick, fetchTickTime, parseSystemName } = require('../helpers')
+const { systemError, tickError, displayError, argsError } = require('../utils/error')
+const { createEmbed, wasAfterTick, fetchTickTime, parseSystemName } = require('../utils')
 
-moment.locale('sk')
-
-const processFetchedData = (response) => {
+const parseSystemData = (response) => {
 	const { factions } = response
 	if (factions == null || factions.length === 0) return null
 
 	const systemData = []
 	const lastUpdate = moment.unix(factions[0].lastUpdate).utc()
 
-	factions.forEach((faction) => {
-		if (faction.influence * 100 > 0) {
-			const object = {}
-			object.name = faction.name
-			object.influence = Math.round(faction.influence * 1000) / 10
-			object.activeStates = faction.activeStates
-			object.pendingStates = faction.pendingStates
-			systemData.push(object)
+	factions.forEach(({ name, influence, activeStates, pendingStates }) => {
+		if (influence * 100 > 0) {
+			systemData.push({
+				name,
+				influence: Math.round(influence * 1000) / 10,
+				activeStates,
+				pendingStates,
+			})
 		}
 	})
 
@@ -75,7 +73,7 @@ module.exports = {
 				return
 			}
 
-			const { systemData, lastUpdate } = processFetchedData(fetchedData)
+			const { systemData, lastUpdate } = parseSystemData(fetchedData)
 			if (systemData == null) {
 				displayError(`Chyba pri spracovaní dát systému`, message)
 				return

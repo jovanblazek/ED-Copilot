@@ -6,7 +6,7 @@ const {
 	getArgumentInfo,
 	createEmbed,
 	validateArgs,
-} = require('../helpers')
+} = require('../utils')
 
 module.exports = {
 	name: 'help',

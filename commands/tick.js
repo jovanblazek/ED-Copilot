@@ -1,9 +1,7 @@
 const moment = require('moment')
-const { tickError } = require('../helpers/error')
+const { tickError } = require('../utils/error')
 const { tickReportChannel } = require('../config.json')
-const { createEmbed, validateArgs, fetchTickTime } = require('../helpers')
-
-moment.locale('sk')
+const { createEmbed, validateArgs, fetchTickTime } = require('../utils')
 
 module.exports = {
 	name: 'tick',
