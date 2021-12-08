@@ -1,8 +1,8 @@
 require('dotenv').config()
 const Discord = require('discord.js')
 const { prefix } = require('./config.json')
-const { displayError } = require('./helpers/error')
-const { getRandomActivity, init, tickDetector } = require('./helpers')
+const { displayError } = require('./utils/error')
+const { getRandomActivity, init, tickDetector } = require('./utils')
 const { initCommands } = require('./data/Commands')
 
 const client = new Discord.Client()

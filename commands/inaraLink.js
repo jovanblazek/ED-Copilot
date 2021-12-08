@@ -1,5 +1,5 @@
-const { createEmbed, parseSystemName } = require('../helpers')
-const { argsError } = require('../helpers/error')
+const { createEmbed, parseSystemName } = require('../utils')
+const { argsError } = require('../utils/error')
 
 module.exports = {
 	name: 'inara',

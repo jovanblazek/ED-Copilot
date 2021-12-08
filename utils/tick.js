@@ -4,6 +4,7 @@ const moment = require('moment')
 const momenttz = require('moment-timezone')
 const { getTickTime, setTickTime } = require('../data/Tick')
 
+// TODO this sets moment locale for entire app, move this somewhere into init sequence
 moment.locale('sk')
 
 exports.wasAfterTick = (lastUpdate, tickTime) => {

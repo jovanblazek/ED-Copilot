@@ -1,10 +1,8 @@
 const got = require('got')
-const jsdom = require('jsdom')
+const { JSDOM } = require('jsdom')
 const { divider } = require('../config.json')
-const { systemError, argsError } = require('../helpers/error')
-const { createEmbed, parseSystemName } = require('../helpers')
-
-const { JSDOM } = jsdom
+const { systemError, argsError } = require('../utils/error')
+const { createEmbed, parseSystemName } = require('../utils')
 
 const parseData = (rows) => {
 	const data = []
