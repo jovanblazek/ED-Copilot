@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build",
+    "noImplicitAny": false,
+    "target": "ES2019",
+    "resolveJsonModule": true
+  },
+  "exclude": ["node_modules", "build"]
+}

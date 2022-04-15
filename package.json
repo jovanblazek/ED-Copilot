@@ -1,43 +1,43 @@
 {
   "name": "elitehub-bot",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Made specifically for our player faction, although it is possible to change faction name in `config.json` to make it work with yours.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jovanblazek/elitehub-bot.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jovanblazek/elitehub-bot/issues"
+  },
+  "homepage": "https://github.com/jovanblazek/elitehub-bot#readme",
   "dependencies": {
-    "discord.js": "^12.5.1",
-    "dotenv": "^10.0.0",
-    "got": "^11.8.2",
-    "jsdom": "^16.5.1",
-    "moment": "^2.29.1",
-    "moment-timezone": "^0.5.33",
-    "node-fetch": "^2.6.1",
-    "socket.io-client": "^4.4.0"
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
+    "discord-api-types": "^0.31.1",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0"
   },
   "devDependencies": {
-    "@sudolabs-io/eslint-config-sudolabs": "^1.4.0",
-    "@typescript-eslint/eslint-plugin": "^4.26.0",
-    "@typescript-eslint/parser": "^4.26.0",
-    "eslint": "^7.28.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-cypress": "^2.11.3",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jest": "^24.3.6",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-lodash": "^7.3.0",
-    "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "@sudolabs-io/eslint-config-sudolabs": "^1.5.2",
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-lodash": "^7.4.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
-    "nodemon": "^2.0.7"
+    "prettier": "^2.6.2",
+    "ts-node": "^10.7.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.6.3"
+  },
+  "engines": {
+    "node": "16.12.0"
   }
 }
