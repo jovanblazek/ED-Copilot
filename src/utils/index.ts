@@ -1,4 +1,5 @@
 export * from './embed'
+export * from './inaraScraper'
 export * from './pagination'
 export * from './registerCommands'
 export * from './translations'

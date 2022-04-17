@@ -5,10 +5,16 @@
 				"systemNotFound": "System `{{systemName}}` not found."
 			},
 			"ping": {
-        "response": "pong"
+        "response": "Pong"
       },
 			"techBroker": {
 				"title": "Technology Brokers"
+			},
+			"materialTrader": {
+				"title": "Material Traders"
+			},
+			"interstellarFactors": {
+				"title": "Interstellar Factors"
 			}
 		}
 	}

@@ -16,10 +16,10 @@ const PAGE_COUNT = 3
 const ROWS_PER_PAGE = 5
 
 export default {
-  name: CommandNames.techBroker,
+  name: CommandNames.materialTrader,
   command: new SlashCommandBuilder()
-    .setName(CommandNames.techBroker)
-    .setDescription('Gets nearest tech brokers')
+    .setName(CommandNames.materialTrader)
+    .setDescription('Gets nearest material traders')
     .addStringOption((option) =>
       option.setName('system').setDescription('Your location').setRequired(true)
     ),
@@ -27,7 +27,7 @@ export default {
     await interaction.deferReply()
     const systemName = interaction.options.getString('system') || 'Sol'
     const systemNameWeb = encodeURIComponent(systemName)
-    const url = `https://inara.cz/nearest-stations/?ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=0&pi19=2000&pa1%5B26%5D=1&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0`
+    const url = `https://inara.cz/nearest-stations/?ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=0&pi19=2000&pa1%5B25%5D=1&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0`
 
     const parsedData = await getInaraData(url, CELLS_PER_ROW)
 
@@ -43,7 +43,7 @@ export default {
     const pagesLength = pages.length
 
     await interaction.editReply({
-      embeds: [generateInaraEmbed(url, pages[0], 'techBroker.title')],
+      embeds: [generateInaraEmbed(url, pages[0], 'materialTrader.title')],
       components: [createPaginationButtons(0, pagesLength)],
     })
 
@@ -53,7 +53,7 @@ export default {
       paginationlenght: pagesLength,
       onPageChange: async (buttonInteraction, activePageIndex) => {
         await buttonInteraction.update({
-          embeds: [generateInaraEmbed(url, pages[activePageIndex], 'techBroker.title')],
+          embeds: [generateInaraEmbed(url, pages[activePageIndex], 'materialTrader.title')],
           components: [createPaginationButtons(activePageIndex, pagesLength)],
         })
       },

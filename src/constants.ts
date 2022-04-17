@@ -1,6 +1,8 @@
 export const CommandNames = {
   ping: 'ping',
   techBroker: 'broker',
+  materialTrader: 'trader',
+  interstellarFactors: 'factors',
 }
 
 export const PaginationButtonNames = {

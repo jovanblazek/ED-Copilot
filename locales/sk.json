@@ -5,10 +5,16 @@
 				"systemNotFound": "Systém `{{systemName}}` neexistuje."
 			},
 			"ping": {
-        "response": "pong po slovensky"
+        "response": "Pong po slovensky"
       },
 			"techBroker": {
 				"title": "Technology Brokeri"
+			},
+			"materialTrader": {
+				"title": "Material Traderi"
+			},
+			"interstellarFactors": {
+				"title": "Interstellar Factors"
 			}
 		}
 	}
