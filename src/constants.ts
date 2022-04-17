@@ -4,6 +4,7 @@ export const CommandNames = {
   materialTrader: 'trader',
   interstellarFactors: 'factors',
   systemDistance: 'distance',
+  tick: 'tick',
 }
 
 export const PaginationButtonNames = {

@@ -2,7 +2,8 @@
 	"sk": {
 		"translation": {
 			"error": {
-				"systemNotFound": "Systém `{{systemName}}` sa nepodarilo nájsť."
+				"systemNotFound": "Systém `{{systemName}}` sa nepodarilo nájsť.",
+				"tickFetchingError": "Nepodarilo sa získať informácie o ticku. \nSkontroluj [túto stránku](https://elitebgs.app/tick)."
 			},
 			"ping": {
         "response": "Pong po slovensky"
@@ -15,6 +16,11 @@
 			},
 			"interstellarFactors": {
 				"title": "Interstellar Factors"
+			},
+			"tick": {
+				"title": "Posledný TICK",
+				"wasToday": "Dnes",
+				"history": "História"
 			}
 		}
 	}

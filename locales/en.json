@@ -2,7 +2,8 @@
 	"en": {
 		"translation": {
 			"error": {
-				"systemNotFound": "Could not find system named `{{systemName}}`."
+				"systemNotFound": "Could not find system named `{{systemName}}`.",
+				"tickFetchingError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick)."
 			},
 			"ping": {
         "response": "Pong"
@@ -15,6 +16,11 @@
 			},
 			"interstellarFactors": {
 				"title": "Interstellar Factors"
+			},
+			"tick": {
+				"title": "Last TICK",
+				"wasToday": "Today",
+				"history": "Tick history"
 			}
 		}
 	}
