@@ -1,12 +1,11 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
 import ping from './ping'
+import techBroker from './techBroker'
 
-export const commandList = [
-  ping.command,
-  new SlashCommandBuilder().setName('server').setDescription('Replies with server info!'),
-  new SlashCommandBuilder().setName('user').setDescription('Replies with user info!'),
-].map((command) => command.toJSON())
+const Commands = [ping, techBroker]
 
-export const commandHandlers = {
-  ping: ping.handler,
-}
+export const CommandList = Commands.map((command) => command.command.toJSON())
+
+export const CommandHandlers = Commands.reduce((acc, command) => {
+  acc[command.name] = command.handler
+  return acc
+}, {})

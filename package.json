@@ -21,10 +21,15 @@
     "@discordjs/rest": "^0.3.0",
     "discord-api-types": "^0.31.1",
     "discord.js": "^13.6.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "got": "^11.8.2",
+    "i18next": "^21.6.16",
+    "jsdom": "^19.0.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@sudolabs-io/eslint-config-sudolabs": "^1.5.2",
+    "@types/jsdom": "^16.2.14",
     "eslint": "^8.13.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",

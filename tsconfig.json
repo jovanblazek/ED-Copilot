@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "build",
     "noImplicitAny": false,
-    "target": "ES2019",
+    "target": "ES2020",
     "resolveJsonModule": true
   },
   "exclude": ["node_modules", "build"]

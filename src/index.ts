@@ -1,31 +1,34 @@
 import { REST } from '@discordjs/rest'
 import { Client, Intents } from 'discord.js'
-import { commandHandlers, commandList } from './commands'
-import { registerCommands } from './utils'
+import { CommandHandlers, CommandList } from './commands'
+import { initTranslations, registerCommands } from './utils'
 import '../config/environment'
 
 const { BOT_TOKEN } = process.env
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
+const BotClient = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
 
-client.once('ready', () => {
+BotClient.once('ready', async () => {
+  await initTranslations()
+
   console.log('Bot is ready!')
 })
 
-client.on('interactionCreate', async (interaction) => {
+BotClient.on('interactionCreate', async (interaction) => {
   if (!interaction.isCommand()) {
     return
   }
 
   const { commandName } = interaction
 
-  const handler = commandHandlers[commandName]
+  const handler = CommandHandlers[commandName]
   if (handler) {
-    await commandHandlers[commandName](interaction)
+    await CommandHandlers[commandName](interaction)
   }
 })
 
-const rest = new REST({ version: '9' }).setToken(BOT_TOKEN)
-void registerCommands(rest, commandList)
+// used for updating server slash commands
+const Rest = new REST({ version: '9' }).setToken(BOT_TOKEN)
+void registerCommands(Rest, CommandList)
 
-void client.login(BOT_TOKEN)
+void BotClient.login(BOT_TOKEN)

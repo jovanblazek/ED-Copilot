@@ -8,6 +8,7 @@
     "require-await": "error",
     "arrow-body-style": ["error", "as-needed"],
     "import/extensions": "off",
+    "no-restricted-syntax": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
@@ -46,6 +47,11 @@
         "modifiers": ["const"],
         "types": ["function"],
         "format": ["PascalCase", "camelCase"]
+      },
+      {
+        "selector": "variable",
+        "modifiers": ["const", "global"],
+        "format": ["PascalCase"]
       },
       {
         "selector": "variable",

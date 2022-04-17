@@ -1,0 +1,15 @@
+{
+	"sk": {
+		"translation": {
+			"error": {
+				"systemNotFound": "Systém `{{systemName}}` neexistuje."
+			},
+			"ping": {
+        "response": "pong po slovensky"
+      },
+			"techBroker": {
+				"title": "Technology Brokeri"
+			}
+		}
+	}
+}

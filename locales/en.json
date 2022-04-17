@@ -1,0 +1,15 @@
+{
+	"en": {
+		"translation": {
+			"error": {
+				"systemNotFound": "System `{{systemName}}` not found."
+			},
+			"ping": {
+        "response": "pong"
+      },
+			"techBroker": {
+				"title": "Technology Brokers"
+			}
+		}
+	}
+}
