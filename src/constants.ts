@@ -3,6 +3,7 @@ export const CommandNames = {
   techBroker: 'broker',
   materialTrader: 'trader',
   interstellarFactors: 'factors',
+  systemDistance: 'distance',
 }
 
 export const PaginationButtonNames = {

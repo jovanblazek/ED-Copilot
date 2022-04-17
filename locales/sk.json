@@ -2,7 +2,7 @@
 	"sk": {
 		"translation": {
 			"error": {
-				"systemNotFound": "Systém `{{systemName}}` neexistuje."
+				"systemNotFound": "Systém `{{systemName}}` sa nepodarilo nájsť."
 			},
 			"ping": {
         "response": "Pong po slovensky"

@@ -2,7 +2,7 @@
 	"en": {
 		"translation": {
 			"error": {
-				"systemNotFound": "System `{{systemName}}` not found."
+				"systemNotFound": "Could not find system named `{{systemName}}`."
 			},
 			"ping": {
         "response": "Pong"
