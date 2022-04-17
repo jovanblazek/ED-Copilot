@@ -25,7 +25,6 @@ const getBrokerData = async (url: string) => {
 
   const tableCells = dom.window.document.querySelectorAll('td')
   if (tableCells.length === 0) {
-    console.log('No table cells found')
     return []
   }
 
