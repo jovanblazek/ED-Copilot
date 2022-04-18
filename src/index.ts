@@ -4,6 +4,7 @@ import { timezone } from '../config.json'
 import { CommandHandlers, CommandList } from './commands'
 import { Tick } from './data/Tick'
 import { fetchTickTime, initTranslations, registerCommands } from './utils'
+import tickDetector from './utils/tickDetector'
 import './utils/environment'
 
 const { BOT_TOKEN } = process.env
@@ -18,6 +19,7 @@ BotClient.once('ready', async () => {
     }
   })
   await initTranslations()
+  tickDetector(BotClient, SavedTick)
 
   console.log('Bot is ready!')
 })
