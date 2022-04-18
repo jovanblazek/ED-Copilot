@@ -1,20 +1,7 @@
 {
-	"prefix": "?",
-	"divider": "━━━━━━━━━━━━━━━━━━━━━━━━━━",
-	"embedColor": "#ffa500",
-	"tickReportChannel": "925481609111670815",
-	"factionName": "Interstellar Technology Research Corporation",
-	"factionNameShort": "ITRC",
-	"activities": [
-		"Waiting for tick ⏱",
-		"Reading elitehub.eu 📕",
-		"Exploring the galaxy 🚀",
-		"Enjoying Lavian Brandy 🍸",
-		"Mining Painite ⛏",
-		"That is a big haul 👀",
-		"Top 1% of all bots!",
-		"Simping for Aisling 😍",
-		"Making ITRC great again!",
-		"Free Conda @ Hutton 😉"
-	]
+  "clientId": "964629014453030992",
+  "guildId": "822375694444134420",
+  "language": "en",
+  "dayjsLanguage": "en",
+  "timezone": "Europe/Berlin"
 }

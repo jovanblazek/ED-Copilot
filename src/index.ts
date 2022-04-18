@@ -1,14 +1,22 @@
 import { REST } from '@discordjs/rest'
 import { Client, Intents } from 'discord.js'
+import { timezone } from '../config.json'
 import { CommandHandlers, CommandList } from './commands'
-import { initTranslations, registerCommands } from './utils'
-import '../config/environment'
+import { Tick } from './data/Tick'
+import { fetchTickTime, initTranslations, registerCommands } from './utils'
+import './utils/environment'
 
 const { BOT_TOKEN } = process.env
 
 const BotClient = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
+const SavedTick = new Tick(null, timezone)
 
 BotClient.once('ready', async () => {
+  await fetchTickTime().then((tickTime) => {
+    if (tickTime) {
+      SavedTick.setTicktime(tickTime)
+    }
+  })
   await initTranslations()
 
   console.log('Bot is ready!')
@@ -23,7 +31,7 @@ BotClient.on('interactionCreate', async (interaction) => {
 
   const handler = CommandHandlers[commandName]
   if (handler) {
-    await CommandHandlers[commandName](interaction)
+    await CommandHandlers[commandName](interaction, SavedTick)
   }
 })
 

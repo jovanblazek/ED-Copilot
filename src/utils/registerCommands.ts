@@ -1,6 +1,6 @@
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
-import { clientId, guildId } from '../../config/config.json'
+import { clientId, guildId } from '../../config.json'
 
 export const registerCommands = async (rest: REST, commands: unknown) => {
   try {

@@ -1,5 +1,5 @@
 import i18next from 'i18next'
-import { language } from '../../config/config.json'
+import { language } from '../../config.json'
 import enLocale from '../../locales/en.json'
 import skLocale from '../../locales/sk.json'
 

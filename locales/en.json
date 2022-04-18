@@ -3,7 +3,8 @@
 		"translation": {
 			"error": {
 				"systemNotFound": "Could not find system named `{{systemName}}`.",
-				"tickFetchingError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick)."
+				"tickFetchingError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).",
+				"timeDifferenceError": "Time difference error."
 			},
 			"ping": {
         "response": "Pong"
