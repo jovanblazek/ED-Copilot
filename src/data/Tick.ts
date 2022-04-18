@@ -52,12 +52,12 @@ export class Tick {
     return tickTime.tz(this.getLocalTimeZone())
   }
 
-  wasAfterTick(lastUpdate: Dayjs): boolean {
+  wasAfterTick(date: Dayjs): boolean {
     const tickTime = this.getLocalTicktime()
     if (!tickTime) {
       return false
     }
-    const difference = lastUpdate.unix() - tickTime.unix()
+    const difference = date.unix() - tickTime.unix()
     console.log('Tick difference', difference)
 
     return difference > 0

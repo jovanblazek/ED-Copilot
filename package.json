@@ -4,7 +4,8 @@
   "description": "Made specifically for our player faction, although it is possible to change faction name in `config.json` to make it work with yours.",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@sudolabs-io/eslint-config-sudolabs": "^1.5.2",
+    "@types/jest": "^27.4.1",
     "@types/jsdom": "^16.2.14",
     "eslint": "^8.13.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -39,7 +41,9 @@
     "eslint-plugin-lodash": "^7.4.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "jest": "^27.5.1",
     "prettier": "^2.6.2",
+    "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.6.3"
