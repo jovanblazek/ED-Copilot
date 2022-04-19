@@ -4,7 +4,8 @@
 			"error": {
 				"systemNotFound": "Systém `{{systemName}}` sa nepodarilo nájsť.",
 				"tickFetchingError": "Nepodarilo sa získať informácie o ticku. \nSkontroluj [túto stránku](https://elitebgs.app/tick).",
-				"timeDifferenceError": "Chyba výpočtu rozdielu časov."
+				"timeDifferenceError": "Chyba výpočtu rozdielu časov.",
+				"parsingError": "Chyba pri spracovaní dát."
 			},
 			"ping": {
         "response": "Pong po slovensky"

@@ -5,6 +5,7 @@ export const CommandNames = {
   interstellarFactors: 'factors',
   systemDistance: 'distance',
   tick: 'tick',
+  systemInfo: 'system',
 }
 
 export const PaginationButtonNames = {
