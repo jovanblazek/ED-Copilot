@@ -8,7 +8,7 @@ import { CommandNames, DIVIDER } from '../constants'
 import { Tick } from '../data/Tick'
 import { createEmbed } from '../utils'
 
-type FactionType = {
+type Faction = {
   name: string
   influence: number
   activeStates: {
@@ -22,7 +22,7 @@ type FactionType = {
 
 type EdsmResponse = {
   name: string
-  factions: FactionType[]
+  factions: Faction[]
 }
 
 const parseSystemData = (response: EdsmResponse) => {
@@ -44,27 +44,20 @@ const parseSystemData = (response: EdsmResponse) => {
   return { systemName, systemData, lastUpdate }
 }
 
-const getStatesString = (array: { state: string }[]) => {
-  if (!array || !array.length) {
-    return ''
-  }
+const getStates = (faction: Omit<Faction, 'lastUpdate'>) => {
+  const pendingStates = faction.pendingStates.map(({ state }) => state).join(', ')
+  const activeStates = faction.activeStates.map(({ state }) => state).join(', ')
 
-  return array.map(({ state }) => state).join(', ')
-}
-const getStates = (faction: Omit<FactionType, 'lastUpdate'>) => {
-  const pending = getStatesString(faction.pendingStates)
-  const active = getStatesString(faction.activeStates)
-
-  if (pending === '' && active === '') {
+  if (pendingStates === '' && activeStates === '') {
     return '\u200b'
   }
 
   let output = ''
-  if (pending !== '') {
-    output += `🟠 ${pending}`
+  if (pendingStates !== '') {
+    output += `🟠 ${pendingStates}`
   }
-  if (active !== '') {
-    output += `\n🟢 ${active}`
+  if (activeStates !== '') {
+    output += `\n🟢 ${activeStates}`
   }
 
   output += `\n\u200b`
@@ -103,22 +96,15 @@ export default {
       return
     }
 
-    const tickTime = SavedTick.getLocalTicktime()
-    if (tickTime === null) {
-      await interaction.editReply({
-        content: i18next.t('error.tickFetchingError'),
-      })
-      return
-    }
+    const localTimeZone = SavedTick.getLocalTimeZone()
 
-    // TODO lastupdate to local tz, debug tick difference, translations, error handler
     const embed = createEmbed({
-      title: `Frakcie v systéme ${parsedData.systemName}`,
+      title: i18next.t('systemInfo.title', { systemName: parsedData.systemName }),
       description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${DIVIDER}`,
     }).setFooter({
-      text: `Last update: ${parsedData.lastUpdate.format('DD.MM.YYYY HH:mm')} ${
-        SavedTick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`
-      }`,
+      text: `${i18next.t('systemInfo.lastUpdate', {
+        time: parsedData.lastUpdate.tz(localTimeZone).format('DD.MM.YYYY HH:mm'),
+      })} ${SavedTick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
     })
 
     parsedData.systemData.forEach((faction) => {

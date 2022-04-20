@@ -28,6 +28,7 @@ export class Tick {
     this.localTimeZone = localTimeZone
   }
 
+  // returns the tick time in the UTC format
   getTicktime(): Dayjs | null {
     return this.ticktime
   }
@@ -36,6 +37,7 @@ export class Tick {
     this.ticktime = ticktime
   }
 
+  // returns timezone set in config.json
   getLocalTimeZone(): string {
     return this.localTimeZone
   }
@@ -53,30 +55,33 @@ export class Tick {
   }
 
   wasAfterTick(date: Dayjs): boolean {
-    const tickTime = this.getLocalTicktime()
+    const tickTime = this.getTicktime()
     if (!tickTime) {
       return false
     }
-    const difference = date.unix() - tickTime.unix()
-    console.log('Tick difference', difference)
+    const difference = date.utc().unix() - tickTime.unix()
 
     return difference > 0
   }
 
   wasTickToday(): boolean {
-    const tickTime = this.getLocalTicktime()
+    const tickTime = this.getTicktime()
     if (!tickTime) {
       return false
     }
-    return tickTime.date() === dayjs().tz(this.getLocalTimeZone()).date()
+    return tickTime.date() === dayjs().utc().date()
   }
 
   // calculates the difference between the tick time and the current time or argument
   differenceFrom(date?: Dayjs): string {
-    const tickTime = this.getLocalTicktime()
+    const tickTime = this.getTicktime()
     if (!tickTime) {
       return i18next.t('error.timeDifferenceError')
     }
-    return tickTime.from(dayjs(date).tz(this.getLocalTimeZone()))
+
+    if (date) {
+      return tickTime.from(date.utc())
+    }
+    return tickTime.from(dayjs().utc())
   }
 }

@@ -3,14 +3,14 @@
 exports[`Inara scraper should return broker data 1`] = `
 Array [
   Object {
-    "distanceLs": "232 Ls",
+    "distanceLs": "233 Ls",
     "distanceLy": "10.52 Ly",
     "station": "Dobrovolskiy Enterprise",
     "system": "WISE 1506+7027",
     "type": "Human",
   },
   Object {
-    "distanceLs": "392 Ls",
+    "distanceLs": "372 Ls",
     "distanceLy": "11.10 Ly",
     "station": "Magnus Gateway",
     "system": "EZ Aquarii",
@@ -24,7 +24,7 @@ Array [
     "type": "Human",
   },
   Object {
-    "distanceLs": "1,370 Ls",
+    "distanceLs": "1,373 Ls",
     "distanceLy": "19.09 Ly",
     "station": "Feynman Terminal",
     "system": "Bhritzameno",
@@ -38,7 +38,7 @@ Array [
     "type": "Guardian",
   },
   Object {
-    "distanceLs": "576 Ls",
+    "distanceLs": "579 Ls",
     "distanceLy": "24.94 Ly",
     "station": "Dunyach Enterprise",
     "system": "Ross 490",
@@ -52,7 +52,7 @@ Array [
     "type": "Guardian",
   },
   Object {
-    "distanceLs": "626 Ls",
+    "distanceLs": "629 Ls",
     "distanceLy": "28.37 Ly",
     "station": "Hurley City",
     "system": "FK Aquarii",
@@ -94,7 +94,7 @@ Array [
     "type": "Human",
   },
   Object {
-    "distanceLs": "106 Ls",
+    "distanceLs": "93 Ls",
     "distanceLy": "32.84 Ly",
     "station": "Aleksandrov Gateway",
     "system": "LHS 115",
@@ -113,14 +113,14 @@ Array [
 exports[`Inara scraper should return trader data 1`] = `
 Array [
   Object {
-    "distanceLs": "1,041 Ls",
+    "distanceLs": "1,042 Ls",
     "distanceLy": "8.59 Ly",
     "station": "Patterson Enterprise",
     "system": "Sirius",
     "type": "Manufactured",
   },
   Object {
-    "distanceLs": "392 Ls",
+    "distanceLs": "372 Ls",
     "distanceLy": "11.10 Ly",
     "station": "Magnus Gateway",
     "system": "EZ Aquarii",
@@ -141,14 +141,14 @@ Array [
     "type": "Encoded",
   },
   Object {
-    "distanceLs": "1,461 Ls",
+    "distanceLs": "1,462 Ls",
     "distanceLy": "13.85 Ly",
     "station": "Qureshi Orbital",
     "system": "LHS 380",
     "type": "Manufactured",
   },
   Object {
-    "distanceLs": "1,370 Ls",
+    "distanceLs": "1,373 Ls",
     "distanceLy": "19.09 Ly",
     "station": "Feynman Terminal",
     "system": "Bhritzameno",
@@ -183,7 +183,7 @@ Array [
     "type": "Raw",
   },
   Object {
-    "distanceLs": "276 Ls",
+    "distanceLs": "278 Ls",
     "distanceLy": "22.18 Ly",
     "station": "Gell-Mann Station",
     "system": "LHS 3836",
@@ -197,14 +197,14 @@ Array [
     "type": "Raw",
   },
   Object {
-    "distanceLs": "576 Ls",
+    "distanceLs": "579 Ls",
     "distanceLy": "24.94 Ly",
     "station": "Dunyach Enterprise",
     "system": "Ross 490",
     "type": "Encoded",
   },
   Object {
-    "distanceLs": "1,931 Ls",
+    "distanceLs": "1,932 Ls",
     "distanceLy": "26.32 Ly",
     "station": "Haber City",
     "system": "Tabit",

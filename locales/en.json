@@ -23,6 +23,10 @@
 				"title": "Last TICK",
 				"wasToday": "Today",
 				"history": "Tick history"
+			},
+			"systemInfo": {
+				"title": "Factions in {{systemName}}",
+				"lastUpdate": "Last update from {{time}}"
 			}
 		}
 	}

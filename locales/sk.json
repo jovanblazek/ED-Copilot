@@ -23,6 +23,10 @@
 				"title": "Posledný TICK",
 				"wasToday": "Dnes",
 				"history": "História"
+			},
+			"systemInfo": {
+				"title": "Frakcie v systéme {{systemName}}",
+				"lastUpdate": "Posledná aktualizácia {{time}}"
 			}
 		}
 	}
