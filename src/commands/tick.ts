@@ -4,6 +4,7 @@ import { CacheType, Client, CommandInteraction, TextChannel } from 'discord.js'
 import i18next from 'i18next'
 import { tickReportChannel } from '../../config.json'
 import { CommandNames } from '../constants'
+import { TickFetchError } from '../data'
 import { Tick } from '../data/Tick'
 import { createEmbed } from '../utils'
 
@@ -26,10 +27,7 @@ export default {
 
     const tickTime = SavedTick.getLocalTicktime()
     if (!tickTime) {
-      await interaction.editReply({
-        content: i18next.t('error.tickFetchingError'),
-      })
-      return
+      throw new TickFetchError()
     }
 
     await interaction.editReply({

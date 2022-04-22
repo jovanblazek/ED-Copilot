@@ -5,6 +5,7 @@ import got from 'got'
 import i18next from 'i18next'
 import { isEmpty } from 'lodash'
 import { CommandNames, DIVIDER } from '../constants'
+import { DataParseError, SystemNotFoundError } from '../data'
 import { Tick } from '../data/Tick'
 import { createEmbed } from '../utils'
 
@@ -82,18 +83,12 @@ export default {
 
     const fetchedData: EdsmResponse = await got(url).json()
     if (isEmpty(fetchedData)) {
-      await interaction.editReply({
-        content: i18next.t('error.systemNotFound', { systemName }),
-      })
-      return
+      throw new SystemNotFoundError(systemName)
     }
 
     const parsedData = parseSystemData(fetchedData)
     if (!parsedData) {
-      await interaction.editReply({
-        content: i18next.t('error.parsingError'),
-      })
-      return
+      throw new DataParseError()
     }
 
     const localTimeZone = SavedTick.getLocalTimeZone()

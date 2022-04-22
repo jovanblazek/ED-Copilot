@@ -3,6 +3,7 @@ import { CacheType, CommandInteraction } from 'discord.js'
 import got from 'got'
 import i18next from 'i18next'
 import { CommandNames } from '../constants'
+import { SystemNotFoundError } from '../data'
 import { createEmbed, toUpperCaseFirstLetter } from '../utils'
 
 type SystemData = {
@@ -48,10 +49,7 @@ export default {
     const coords2 = await getSystemCoords(system2)
 
     if (!coords1 || !coords2) {
-      await interaction.editReply({
-        content: i18next.t('error.systemNotFound', { systemName: !coords1 ? system1 : system2 }),
-      })
-      return
+      throw new SystemNotFoundError(!coords1 ? system1 : system2)
     }
 
     const distance = Math.sqrt(

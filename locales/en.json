@@ -3,9 +3,9 @@
 		"translation": {
 			"error": {
 				"systemNotFound": "Could not find system named `{{systemName}}`.",
-				"tickFetchingError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).",
+				"tickFetchError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).",
 				"timeDifferenceError": "Time difference error.",
-				"parsingError": "Could not parse data."
+				"dataParseError": "Could not parse data."
 			},
 			"ping": {
         "response": "Pong"

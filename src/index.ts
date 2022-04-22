@@ -2,6 +2,7 @@ import { REST } from '@discordjs/rest'
 import { Client, Intents } from 'discord.js'
 import { timezone } from '../config.json'
 import { CommandHandlers, CommandList } from './commands'
+import { DataParseError, SystemNotFoundError, TickFetchError } from './data'
 import { Tick } from './data/Tick'
 import { fetchTickTime, initTranslations, registerCommands } from './utils'
 import tickDetector from './utils/tickDetector'
@@ -32,8 +33,26 @@ BotClient.on('interactionCreate', async (interaction) => {
   const { commandName } = interaction
 
   const handler = CommandHandlers[commandName]
-  if (handler) {
-    await CommandHandlers[commandName](interaction, SavedTick)
+  try {
+    if (handler) {
+      await CommandHandlers[commandName](interaction, SavedTick)
+    }
+  } catch (error) {
+    console.log(error)
+
+    if (error instanceof SystemNotFoundError) {
+      await interaction.editReply({
+        content: error.message,
+      })
+    } else if (error instanceof DataParseError) {
+      await interaction.editReply({
+        content: error.message,
+      })
+    } else if (error instanceof TickFetchError) {
+      await interaction.editReply({
+        content: error.message,
+      })
+    }
   }
 })
 
