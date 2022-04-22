@@ -1,13 +1,16 @@
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import { clientId, guildId } from '../../config.json'
+import { CommandList } from '../commands'
+import './environment'
 
-export const registerCommands = async (rest: REST, commands: unknown) => {
-  try {
-    console.log('Started refreshing application (/) commands.')
-    await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
+const Rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN || '')
+console.log('Started refreshing application (/) commands.')
+
+Rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: CommandList })
+  .then(() => {
     console.log('Successfully reloaded application (/) commands.')
-  } catch (error) {
+  })
+  .catch((error) => {
     console.error(error)
-  }
-}
+  })

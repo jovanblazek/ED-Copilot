@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "register-commands": "ts-node src/utils/registerCommands.ts"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,8 @@
     "i18next": "^21.6.16",
     "jsdom": "^19.0.0",
     "lodash": "^4.17.21",
-    "socket.io-client": "^4.4.1"
+    "socket.io-client": "^4.4.1",
+    "winston": "^3.7.2"
   },
   "devDependencies": {
     "@sudolabs-io/eslint-config-sudolabs": "^1.5.2",

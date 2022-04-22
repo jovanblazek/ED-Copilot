@@ -1,11 +1,11 @@
-import { REST } from '@discordjs/rest'
 import { Client, Intents } from 'discord.js'
 import { timezone } from '../config.json'
-import { CommandHandlers, CommandList } from './commands'
+import { CommandHandlers } from './commands'
 import { DataParseError, SystemNotFoundError, TickFetchError } from './data'
 import { Tick } from './data/Tick'
-import { fetchTickTime, initTranslations, registerCommands } from './utils'
-import tickDetector from './utils/tickDetector'
+import { fetchTickTime, initTranslations } from './utils'
+import logger from './utils/logger'
+import initTickDetector from './utils/tickDetector'
 import './utils/environment'
 
 const { BOT_TOKEN } = process.env
@@ -20,9 +20,9 @@ BotClient.once('ready', async () => {
     }
   })
   await initTranslations()
-  tickDetector(BotClient, SavedTick)
+  initTickDetector(BotClient, SavedTick)
 
-  console.log('Bot is ready!')
+  logger.info('Bot is ready!', 'lmao')
 })
 
 BotClient.on('interactionCreate', async (interaction) => {
@@ -55,9 +55,5 @@ BotClient.on('interactionCreate', async (interaction) => {
     }
   }
 })
-
-// used for updating server slash commands
-const Rest = new REST({ version: '9' }).setToken(BOT_TOKEN)
-void registerCommands(Rest, CommandList)
 
 void BotClient.login(BOT_TOKEN)
