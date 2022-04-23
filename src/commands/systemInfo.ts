@@ -73,7 +73,7 @@ export default {
     .addStringOption((option) =>
       option.setName('system').setDescription('System to lookup').setRequired(true)
     ),
-  handler: async (interaction: CommandInteraction<CacheType>, SavedTick: Tick) => {
+  handler: async (interaction: CommandInteraction<CacheType>, CachedTick: Tick) => {
     await interaction.deferReply()
     const systemName = interaction.options.getString('system') || 'Sol'
     const systemNameWeb = encodeURIComponent(systemName)
@@ -90,7 +90,7 @@ export default {
       throw new DataParseError()
     }
 
-    const localTimeZone = SavedTick.getLocalTimeZone()
+    const localTimeZone = CachedTick.getLocalTimeZone()
 
     const embed = createEmbed({
       title: i18next.t('systemInfo.title', { systemName: parsedData.systemName }),
@@ -98,7 +98,7 @@ export default {
     }).setFooter({
       text: `${i18next.t('systemInfo.lastUpdate', {
         time: parsedData.lastUpdate.tz(localTimeZone).format('DD.MM.YYYY HH:mm'),
-      })} ${SavedTick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
+      })} ${CachedTick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
     })
 
     parsedData.systemData.forEach((faction) => {

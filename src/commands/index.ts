@@ -1,3 +1,4 @@
+import faction from './faction'
 import interstellarFactors from './interstellarFactors'
 import materialTrader from './materialTrader'
 import ping from './ping'
@@ -14,6 +15,7 @@ const Commands = [
   systemDistance,
   tick,
   systemInfo,
+  faction,
 ]
 
 export const CommandList = Commands.map((command) => command.command.toJSON())

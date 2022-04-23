@@ -1,8 +1,8 @@
 import { Client, Intents } from 'discord.js'
-import { timezone } from '../config.json'
-import { Tick } from './classes'
+import { factionName, factionNameShort, timezone } from '../config.json'
+import { Faction, Tick } from './classes'
 import { CommandHandlers } from './commands'
-import { errorHandler, fetchTickTime, initTranslations } from './utils'
+import { errorHandler, initTranslations } from './utils'
 import logger from './utils/logger'
 import initTickDetector from './utils/tickDetector'
 import './utils/environment'
@@ -10,16 +10,14 @@ import './utils/environment'
 const { BOT_TOKEN } = process.env
 
 const BotClient = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
-const SavedTick = new Tick(null, timezone)
+const CachedTick = new Tick(null, timezone)
+const CachedFaction = new Faction(factionName, factionNameShort)
 
 BotClient.once('ready', async () => {
-  await fetchTickTime().then((tickTime) => {
-    if (tickTime) {
-      SavedTick.setTicktime(tickTime)
-    }
-  })
   await initTranslations()
-  initTickDetector(BotClient, SavedTick)
+  await CachedTick.setup()
+  await CachedFaction.setup()
+  initTickDetector(BotClient, CachedTick)
 
   logger.info('Bot is ready!')
 })
@@ -34,7 +32,7 @@ BotClient.on('interactionCreate', async (interaction) => {
 
   try {
     if (handler) {
-      await CommandHandlers[commandName](interaction, SavedTick)
+      await CommandHandlers[commandName](interaction, CachedTick, CachedFaction)
     }
   } catch (error) {
     await errorHandler(error, interaction)

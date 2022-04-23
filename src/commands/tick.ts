@@ -8,12 +8,12 @@ import { CommandNames } from '../constants'
 import { createEmbed } from '../utils'
 import logger from '../utils/logger'
 
-const createTickEmbed = (tickTime: Dayjs, SavedTick: Tick) =>
+const createTickEmbed = (tickTime: Dayjs, CachedTick: Tick) =>
   createEmbed({
     title: i18next.t('tick.title'),
     description: `**${tickTime.format('DD.MM.YYYY HH:mm')}**
-      ${SavedTick.differenceFrom()}\n
-      ${i18next.t('tick.wasToday')}: ${SavedTick.wasTickToday() ? '✅' : '❌'}\n
+      ${CachedTick.differenceFrom()}\n
+      ${i18next.t('tick.wasToday')}: ${CachedTick.wasTickToday() ? '✅' : '❌'}\n
       [${i18next.t('tick.history')}](https://elitebgs.app/tick)`,
   })
 
@@ -22,20 +22,20 @@ export default {
   command: new SlashCommandBuilder()
     .setName(CommandNames.tick)
     .setDescription('Gets latest tick time'),
-  handler: async (interaction: CommandInteraction<CacheType>, SavedTick: Tick) => {
+  handler: async (interaction: CommandInteraction<CacheType>, CachedTick: Tick) => {
     await interaction.deferReply()
 
-    const tickTime = SavedTick.getLocalTicktime()
+    const tickTime = CachedTick.getLocalTicktime()
     if (!tickTime) {
       throw new TickFetchError()
     }
 
     await interaction.editReply({
-      embeds: [createTickEmbed(tickTime, SavedTick)],
+      embeds: [createTickEmbed(tickTime, CachedTick)],
     })
   },
-  reportTick: async (client: Client, SavedTick: Tick) => {
-    const tickTime = SavedTick.getLocalTicktime()
+  reportTick: async (client: Client, CachedTick: Tick) => {
+    const tickTime = CachedTick.getLocalTicktime()
     if (!tickTime) {
       logger.error('Error while trying to report tick')
       return
@@ -46,7 +46,7 @@ export default {
       return
     }
     await channel.send({
-      embeds: [createTickEmbed(tickTime, SavedTick)],
+      embeds: [createTickEmbed(tickTime, CachedTick)],
     })
   },
 }

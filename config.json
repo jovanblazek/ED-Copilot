@@ -4,5 +4,7 @@
 	"tickReportChannel": "964630303450759188",
   "language": "en",
   "dayjsLanguage": "en",
-  "timezone": "Europe/Berlin"
+  "timezone": "Europe/Berlin",
+  "factionName": "Interstellar Technology Research Corporation",
+	"factionNameShort": "ITRC"
 }

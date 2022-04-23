@@ -5,7 +5,7 @@ import { Tick } from '../classes'
 import tickCommand from '../commands/tick'
 import logger from './logger'
 
-export default (client: Client, SavedTick: Tick) => {
+export default (client: Client, CachedTick: Tick) => {
   const socket = io('http://tick.phelbore.com:31173')
 
   socket.on('connect', () => {
@@ -14,7 +14,7 @@ export default (client: Client, SavedTick: Tick) => {
 
   socket.on('tick', (data: string | number | Date) => {
     logger.info('Tick detected', dayjs.utc(data))
-    SavedTick.setTicktime(dayjs.utc(data))
-    void tickCommand.reportTick(client, SavedTick)
+    CachedTick.setTicktime(dayjs.utc(data))
+    void tickCommand.reportTick(client, CachedTick)
   })
 }

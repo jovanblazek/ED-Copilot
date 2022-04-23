@@ -6,6 +6,13 @@ export const CommandNames = {
   systemDistance: 'distance',
   tick: 'tick',
   systemInfo: 'system',
+  faction: 'faction',
+}
+
+export const FactionSubcommands = {
+  systems: 'systems',
+  conflicts: 'conflicts',
+  stations: 'stations',
 }
 
 export const PaginationButtonNames = {

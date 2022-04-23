@@ -3,29 +3,49 @@ import localeData from 'dayjs/plugin/localeData'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import got from 'got'
 import i18next from 'i18next'
 import { dayjsLanguage } from '../../config.json'
+import logger from '../utils/logger'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(relativeTime)
 dayjs.extend(localeData)
 
+type EliteBgsTickResponse = {
+  time: string
+}
+
 void import(`dayjs/locale/${dayjsLanguage}`)
   .then(() => {
     dayjs.locale(dayjsLanguage)
   })
   .catch(() => {
-    console.log('Incorrect dayjs language specified in config.json. Falling back to default.')
+    logger.warn('Incorrect dayjs language specified in config.json. Falling back to default.')
   })
 
 export class Tick {
   ticktime: Dayjs | null
   localTimeZone: string
+  isSetup: boolean
 
   constructor(ticktime: Dayjs | null, localTimeZone = 'Europe/Berlin') {
     this.ticktime = ticktime
     this.localTimeZone = localTimeZone
+    this.isSetup = false
+  }
+
+  async setup() {
+    const url = `https://elitebgs.app/api/ebgs/v5/ticks`
+    const fetchedData: EliteBgsTickResponse[] = await got(url).json()
+
+    if (fetchedData.length !== 0) {
+      this.ticktime = dayjs.utc(fetchedData[0].time)
+      this.isSetup = true
+    } else {
+      logger.error('Error while fetching tick time')
+    }
   }
 
   // returns the tick time in the UTC format
