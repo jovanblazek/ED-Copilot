@@ -2,6 +2,7 @@
 	"en": {
 		"translation": {
 			"error": {
+				"unknown": "Unknown error occurred 😞",
 				"systemNotFound": "Could not find system named `{{systemName}}`.",
 				"tickFetchError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).",
 				"timeDifferenceError": "Time difference error.",

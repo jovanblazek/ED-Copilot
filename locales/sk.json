@@ -2,6 +2,7 @@
 	"sk": {
 		"translation": {
 			"error": {
+				"unknown": "Pri vykonávaní príkazu sa vyskytla neznáma chyba 😞",
 				"systemNotFound": "Systém `{{systemName}}` sa nepodarilo nájsť.",
 				"tickFetchError": "Nepodarilo sa získať informácie o ticku. \nSkontroluj [túto stránku](https://elitebgs.app/tick).",
 				"timeDifferenceError": "Chyba výpočtu rozdielu časov.",

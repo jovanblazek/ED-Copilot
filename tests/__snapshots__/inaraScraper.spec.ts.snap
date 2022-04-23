@@ -1,221 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Inara scraper should return broker data 1`] = `
-Array [
-  Object {
-    "distanceLs": "233 Ls",
-    "distanceLy": "10.52 Ly",
-    "station": "Dobrovolskiy Enterprise",
-    "system": "WISE 1506+7027",
-    "type": "Human",
-  },
-  Object {
-    "distanceLs": "372 Ls",
-    "distanceLy": "11.10 Ly",
-    "station": "Magnus Gateway",
-    "system": "EZ Aquarii",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "666 Ls",
-    "distanceLy": "16.74 Ly",
-    "station": "Solo Orbiter",
-    "system": "Altair",
-    "type": "Human",
-  },
-  Object {
-    "distanceLs": "1,373 Ls",
-    "distanceLy": "19.09 Ly",
-    "station": "Feynman Terminal",
-    "system": "Bhritzameno",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "10 Ls",
-    "distanceLy": "20.19 Ly",
-    "station": "Merbold Ring",
-    "system": "EQ Pegasi",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "579 Ls",
-    "distanceLy": "24.94 Ly",
-    "station": "Dunyach Enterprise",
-    "system": "Ross 490",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "722 Ls",
-    "distanceLy": "26.80 Ly",
-    "station": "Alvarado Ring",
-    "system": "LHS 3885",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "629 Ls",
-    "distanceLy": "28.37 Ly",
-    "station": "Hurley City",
-    "system": "FK Aquarii",
-    "type": "Human",
-  },
-  Object {
-    "distanceLs": "1,145 Ls",
-    "distanceLy": "28.85 Ly",
-    "station": "Bresnik Orbital",
-    "system": "Ross 695",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "309 Ls",
-    "distanceLy": "29.10 Ly",
-    "station": "Shatalov Gateway",
-    "system": "LHS 235",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "9 Ls",
-    "distanceLy": "30.31 Ly",
-    "station": "Carey Station",
-    "system": "LHS 3549",
-    "type": "Human",
-  },
-  Object {
-    "distanceLs": "1,743 Ls",
-    "distanceLy": "30.59 Ly",
-    "station": "Spring Gateway",
-    "system": "LHS 215",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "616 Ls",
-    "distanceLy": "32.64 Ly",
-    "station": "Alas City",
-    "system": "LHS 134",
-    "type": "Human",
-  },
-  Object {
-    "distanceLs": "93 Ls",
-    "distanceLy": "32.84 Ly",
-    "station": "Aleksandrov Gateway",
-    "system": "LHS 115",
-    "type": "Guardian",
-  },
-  Object {
-    "distanceLs": "137 Ls",
-    "distanceLy": "33.98 Ly",
-    "station": "Willis Port",
-    "system": "Wolf 124",
-    "type": "Human",
-  },
-]
+exports[`Inara scraper should return broker data: Tech broker data snapshot 1`] = `
+Object {
+  "distanceLs": StringContaining "Ls",
+  "distanceLy": StringContaining "Ly",
+  "station": "Dobrovolskiy Enterprise",
+  "system": "WISE 1506+7027",
+  "type": "Human",
+}
 `;
 
-exports[`Inara scraper should return trader data 1`] = `
-Array [
-  Object {
-    "distanceLs": "1,042 Ls",
-    "distanceLy": "8.59 Ly",
-    "station": "Patterson Enterprise",
-    "system": "Sirius",
-    "type": "Manufactured",
-  },
-  Object {
-    "distanceLs": "372 Ls",
-    "distanceLy": "11.10 Ly",
-    "station": "Magnus Gateway",
-    "system": "EZ Aquarii",
-    "type": "Encoded",
-  },
-  Object {
-    "distanceLs": "24 Ls",
-    "distanceLy": "11.37 Ly",
-    "station": "Broglie Terminal",
-    "system": "61 Cygni",
-    "type": "Raw",
-  },
-  Object {
-    "distanceLs": "1,215 Ls",
-    "distanceLy": "12.07 Ly",
-    "station": "Clement Orbital",
-    "system": "YZ Ceti",
-    "type": "Encoded",
-  },
-  Object {
-    "distanceLs": "1,462 Ls",
-    "distanceLy": "13.85 Ly",
-    "station": "Qureshi Orbital",
-    "system": "LHS 380",
-    "type": "Manufactured",
-  },
-  Object {
-    "distanceLs": "1,373 Ls",
-    "distanceLy": "19.09 Ly",
-    "station": "Feynman Terminal",
-    "system": "Bhritzameno",
-    "type": "Encoded",
-  },
-  Object {
-    "distanceLs": "94 Ls",
-    "distanceLy": "19.71 Ly",
-    "station": "Bresnik Port",
-    "system": "82 Eridani",
-    "type": "Raw",
-  },
-  Object {
-    "distanceLs": "195 Ls",
-    "distanceLy": "19.93 Ly",
-    "station": "Hooper Relay",
-    "system": "Delta Pavonis",
-    "type": "Raw",
-  },
-  Object {
-    "distanceLs": "10 Ls",
-    "distanceLy": "20.19 Ly",
-    "station": "Merbold Ring",
-    "system": "EQ Pegasi",
-    "type": "Encoded",
-  },
-  Object {
-    "distanceLs": "390 Ls",
-    "distanceLy": "20.24 Ly",
-    "station": "Horowitz Hub",
-    "system": "LTT 3572",
-    "type": "Raw",
-  },
-  Object {
-    "distanceLs": "278 Ls",
-    "distanceLy": "22.18 Ly",
-    "station": "Gell-Mann Station",
-    "system": "LHS 3836",
-    "type": "Raw",
-  },
-  Object {
-    "distanceLs": "45 Ls",
-    "distanceLy": "24.59 Ly",
-    "station": "Zamka Platform",
-    "system": "George Pantazis",
-    "type": "Raw",
-  },
-  Object {
-    "distanceLs": "579 Ls",
-    "distanceLy": "24.94 Ly",
-    "station": "Dunyach Enterprise",
-    "system": "Ross 490",
-    "type": "Encoded",
-  },
-  Object {
-    "distanceLs": "1,932 Ls",
-    "distanceLy": "26.32 Ly",
-    "station": "Haber City",
-    "system": "Tabit",
-    "type": "Manufactured",
-  },
-  Object {
-    "distanceLs": "722 Ls",
-    "distanceLy": "26.80 Ly",
-    "station": "Alvarado Ring",
-    "system": "LHS 3885",
-    "type": "Encoded",
-  },
-]
+exports[`Inara scraper should return factors data: Interstellar factors data snapshot 1`] = `
+Object {
+  "distanceLs": StringContaining "Ls",
+  "distanceLy": StringContaining "Ly",
+  "station": Any<String>,
+  "system": Any<String>,
+  "type": null,
+}
+`;
+
+exports[`Inara scraper should return trader data: Material trader data snapshot 1`] = `
+Object {
+  "distanceLs": StringContaining "Ls",
+  "distanceLy": StringContaining "Ly",
+  "station": "Patterson Enterprise",
+  "system": "Sirius",
+  "type": "Manufactured",
+}
 `;

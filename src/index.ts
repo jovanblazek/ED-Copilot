@@ -1,9 +1,8 @@
 import { Client, Intents } from 'discord.js'
 import { timezone } from '../config.json'
+import { Tick } from './classes'
 import { CommandHandlers } from './commands'
-import { DataParseError, SystemNotFoundError, TickFetchError } from './data'
-import { Tick } from './data/Tick'
-import { fetchTickTime, initTranslations } from './utils'
+import { errorHandler, fetchTickTime, initTranslations } from './utils'
 import logger from './utils/logger'
 import initTickDetector from './utils/tickDetector'
 import './utils/environment'
@@ -22,7 +21,7 @@ BotClient.once('ready', async () => {
   await initTranslations()
   initTickDetector(BotClient, SavedTick)
 
-  logger.info('Bot is ready!', 'lmao')
+  logger.info('Bot is ready!')
 })
 
 BotClient.on('interactionCreate', async (interaction) => {
@@ -31,28 +30,14 @@ BotClient.on('interactionCreate', async (interaction) => {
   }
 
   const { commandName } = interaction
-
   const handler = CommandHandlers[commandName]
+
   try {
     if (handler) {
       await CommandHandlers[commandName](interaction, SavedTick)
     }
   } catch (error) {
-    console.log(error)
-
-    if (error instanceof SystemNotFoundError) {
-      await interaction.editReply({
-        content: error.message,
-      })
-    } else if (error instanceof DataParseError) {
-      await interaction.editReply({
-        content: error.message,
-      })
-    } else if (error instanceof TickFetchError) {
-      await interaction.editReply({
-        content: error.message,
-      })
-    }
+    await errorHandler(error, interaction)
   }
 })
 

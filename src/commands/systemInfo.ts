@@ -4,9 +4,8 @@ import { CacheType, CommandInteraction } from 'discord.js'
 import got from 'got'
 import i18next from 'i18next'
 import { isEmpty } from 'lodash'
+import { DataParseError, SystemNotFoundError, Tick } from '../classes'
 import { CommandNames, DIVIDER } from '../constants'
-import { DataParseError, SystemNotFoundError } from '../data'
-import { Tick } from '../data/Tick'
 import { createEmbed } from '../utils'
 
 type Faction = {

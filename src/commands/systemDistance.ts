@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CacheType, CommandInteraction } from 'discord.js'
 import got from 'got'
-import i18next from 'i18next'
+import { SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
-import { SystemNotFoundError } from '../data'
 import { createEmbed, toUpperCaseFirstLetter } from '../utils'
 
 type SystemData = {

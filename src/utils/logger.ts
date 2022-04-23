@@ -41,8 +41,8 @@ const logger = initLogger()
 export default {
   /* eslint-disable */
   debug: (message: string, ...args: any) => logger.debug(message, ...args),
-  info: (message: string, info?: Object, ...args: any) => logger.info(message, info, ...args),
+  info: (message: string, info?: Object | unknown, ...args: any) => logger.info(message, info, ...args),
   warn: (message: string, ...args: any) => logger.warn(message, ...args),
-  error: (message: string, error?: Object, ...args: any) => logger.error(message, error, ...args),
+  error: (message: string, error?: Object | unknown, ...args: any) => logger.error(message, error, ...args),
   /* eslint-enable */
 }

@@ -1,6 +1,7 @@
 import dayjs, { Dayjs } from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import got from 'got'
+import logger from './logger'
 
 dayjs.extend(utc)
 
@@ -15,7 +16,7 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
 
     return fetchedData.length === 0 ? null : dayjs.utc(fetchedData[0].time)
   } catch (error) {
-    console.log('Error while fetching tick time', error)
+    logger.error('Error while fetching tick time', error)
     return null
   }
 }

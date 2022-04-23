@@ -3,10 +3,10 @@ import { Dayjs } from 'dayjs'
 import { CacheType, Client, CommandInteraction, TextChannel } from 'discord.js'
 import i18next from 'i18next'
 import { tickReportChannel } from '../../config.json'
+import { Tick, TickFetchError } from '../classes'
 import { CommandNames } from '../constants'
-import { TickFetchError } from '../data'
-import { Tick } from '../data/Tick'
 import { createEmbed } from '../utils'
+import logger from '../utils/logger'
 
 const createTickEmbed = (tickTime: Dayjs, SavedTick: Tick) =>
   createEmbed({
@@ -37,7 +37,7 @@ export default {
   reportTick: async (client: Client, SavedTick: Tick) => {
     const tickTime = SavedTick.getLocalTicktime()
     if (!tickTime) {
-      console.log('Error while trying to report tick')
+      logger.error('Error while trying to report tick')
       return
     }
 
