@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CacheType, CommandInteraction } from 'discord.js'
 import got from 'got'
-import { SystemNotFoundError } from '../classes'
+import { Command, SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
 import { createEmbed, toUpperCaseFirstLetter } from '../utils'
 
@@ -27,9 +26,11 @@ const getSystemCoords = async (systemName: string) => {
   return fetchedData.coords
 }
 
-export default {
-  name: CommandNames.systemDistance,
-  command: new SlashCommandBuilder()
+export default new Command(
+  {
+    name: CommandNames.systemDistance,
+  },
+  new SlashCommandBuilder()
     .setName(CommandNames.systemDistance)
     .setDescription('Gets distance between two systems')
     .addStringOption((option) =>
@@ -38,7 +39,7 @@ export default {
     .addStringOption((option) =>
       option.setName('to').setDescription('System #2').setRequired(true)
     ),
-  handler: async (interaction: CommandInteraction<CacheType>) => {
+  async ({ interaction }) => {
     await interaction.deferReply()
 
     const system1 = interaction.options.getString('from')!
@@ -64,5 +65,5 @@ export default {
     await interaction.editReply({
       embeds: [embed],
     })
-  },
-}
+  }
+)

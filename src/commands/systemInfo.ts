@@ -1,10 +1,9 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import dayjs from 'dayjs'
-import { CacheType, CommandInteraction } from 'discord.js'
 import got from 'got'
 import i18next from 'i18next'
 import { isEmpty } from 'lodash'
-import { DataParseError, SystemNotFoundError, Tick } from '../classes'
+import { Command, DataParseError, SystemNotFoundError } from '../classes'
 import { CommandNames, DIVIDER } from '../constants'
 import { createEmbed } from '../utils'
 
@@ -65,15 +64,17 @@ const getStates = (faction: Omit<Faction, 'lastUpdate'>) => {
   return output
 }
 
-export default {
-  name: CommandNames.systemInfo,
-  command: new SlashCommandBuilder()
+export default new Command(
+  {
+    name: CommandNames.systemInfo,
+  },
+  new SlashCommandBuilder()
     .setName(CommandNames.systemInfo)
     .setDescription('Get system BGS info')
     .addStringOption((option) =>
       option.setName('system').setDescription('System to lookup').setRequired(true)
     ),
-  handler: async (interaction: CommandInteraction<CacheType>, CachedTick: Tick) => {
+  async ({ interaction, tick }) => {
     await interaction.deferReply()
     const systemName = interaction.options.getString('system') || 'Sol'
     const systemNameWeb = encodeURIComponent(systemName)
@@ -90,7 +91,7 @@ export default {
       throw new DataParseError()
     }
 
-    const localTimeZone = CachedTick.getLocalTimeZone()
+    const localTimeZone = tick.getLocalTimeZone()
 
     const embed = createEmbed({
       title: i18next.t('systemInfo.title', { systemName: parsedData.systemName }),
@@ -98,7 +99,7 @@ export default {
     }).setFooter({
       text: `${i18next.t('systemInfo.lastUpdate', {
         time: parsedData.lastUpdate.tz(localTimeZone).format('DD.MM.YYYY HH:mm'),
-      })} ${CachedTick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
+      })} ${tick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
     })
 
     parsedData.systemData.forEach((faction) => {
@@ -108,5 +109,5 @@ export default {
     await interaction.editReply({
       embeds: [embed],
     })
-  },
-}
+  }
+)

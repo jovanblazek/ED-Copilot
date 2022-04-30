@@ -32,7 +32,11 @@ BotClient.on('interactionCreate', async (interaction) => {
 
   try {
     if (handler) {
-      await CommandHandlers[commandName](interaction, CachedTick, CachedFaction)
+      await handler({
+        interaction,
+        tick: CachedTick,
+        faction: CachedFaction,
+      })
     }
   } catch (error) {
     await errorHandler(error, interaction)

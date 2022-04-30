@@ -1,41 +1,41 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Dayjs } from 'dayjs'
-import { CacheType, Client, CommandInteraction, TextChannel } from 'discord.js'
+import { Client, TextChannel } from 'discord.js'
 import i18next from 'i18next'
 import { tickReportChannel } from '../../config.json'
-import { Tick, TickFetchError } from '../classes'
+import { Tick, TickCommand, TickFetchError } from '../classes'
 import { CommandNames } from '../constants'
 import { createEmbed } from '../utils'
 import logger from '../utils/logger'
 
-const createTickEmbed = (tickTime: Dayjs, CachedTick: Tick) =>
+const createTickEmbed = (tickTime: Dayjs, tick: Tick) =>
   createEmbed({
     title: i18next.t('tick.title'),
     description: `**${tickTime.format('DD.MM.YYYY HH:mm')}**
-      ${CachedTick.differenceFrom()}\n
-      ${i18next.t('tick.wasToday')}: ${CachedTick.wasTickToday() ? '✅' : '❌'}\n
+      ${tick.differenceFrom()}\n
+      ${i18next.t('tick.wasToday')}: ${tick.wasTickToday() ? '✅' : '❌'}\n
       [${i18next.t('tick.history')}](https://elitebgs.app/tick)`,
   })
 
-export default {
-  name: CommandNames.tick,
-  command: new SlashCommandBuilder()
-    .setName(CommandNames.tick)
-    .setDescription('Gets latest tick time'),
-  handler: async (interaction: CommandInteraction<CacheType>, CachedTick: Tick) => {
+export default new TickCommand(
+  {
+    name: CommandNames.tick,
+  },
+  new SlashCommandBuilder().setName(CommandNames.tick).setDescription('Gets latest tick time'),
+  async ({ interaction, tick }) => {
     await interaction.deferReply()
 
-    const tickTime = CachedTick.getLocalTicktime()
+    const tickTime = tick.getLocalTicktime()
     if (!tickTime) {
       throw new TickFetchError()
     }
 
     await interaction.editReply({
-      embeds: [createTickEmbed(tickTime, CachedTick)],
+      embeds: [createTickEmbed(tickTime, tick)],
     })
   },
-  reportTick: async (client: Client, CachedTick: Tick) => {
-    const tickTime = CachedTick.getLocalTicktime()
+  async (client: Client, tick: Tick) => {
+    const tickTime = tick.getLocalTicktime()
     if (!tickTime) {
       logger.error('Error while trying to report tick')
       return
@@ -46,7 +46,7 @@ export default {
       return
     }
     await channel.send({
-      embeds: [createTickEmbed(tickTime, CachedTick)],
+      embeds: [createTickEmbed(tickTime, tick)],
     })
-  },
-}
+  }
+)

@@ -1,3 +1,5 @@
+import { map, reduce } from 'lodash'
+import { CommandCallbackArgs } from '../classes'
 import faction from './faction'
 import interstellarFactors from './interstellarFactors'
 import materialTrader from './materialTrader'
@@ -7,7 +9,11 @@ import systemInfo from './systemInfo'
 import techBroker from './techBroker'
 import tick from './tick'
 
-const Commands = [
+type CommandHandlersType = {
+  [key: string]: (args: CommandCallbackArgs) => Promise<void>
+}
+
+export const Commands = {
   ping,
   techBroker,
   materialTrader,
@@ -16,11 +22,15 @@ const Commands = [
   tick,
   systemInfo,
   faction,
-]
+}
 
-export const CommandList = Commands.map((command) => command.command.toJSON())
+export const CommandBuilders = map(Commands, (command) => command.builder.toJSON())
 
-export const CommandHandlers = Commands.reduce((acc, command) => {
-  acc[command.name] = command.handler
-  return acc
-}, {})
+export const CommandHandlers: CommandHandlersType = reduce(
+  Commands,
+  (commandHandlers, command) => ({
+    ...commandHandlers,
+    [command.params.name]: command.callback,
+  }),
+  {}
+)

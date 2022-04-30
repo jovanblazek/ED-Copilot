@@ -1,17 +1,20 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CacheType, CommandInteraction, Message, MessageActionRow, MessageButton } from 'discord.js'
+import { Message, MessageActionRow, MessageButton } from 'discord.js'
 import i18next from 'i18next'
+import { Command } from '../classes'
 import { CommandNames } from '../constants'
 
-export default {
-  name: CommandNames.ping,
-  command: new SlashCommandBuilder()
+export default new Command(
+  {
+    name: CommandNames.ping,
+  },
+  new SlashCommandBuilder()
     .setName(CommandNames.ping)
     .setDescription('Replies with pong!')
     .addNumberOption((option) =>
       option.setName('number').setDescription('The number to ping').setRequired(true)
     ),
-  handler: async (interaction: CommandInteraction<CacheType>) => {
+  async ({ interaction }) => {
     const row = new MessageActionRow().addComponents(
       new MessageButton().setCustomId('left').setLabel('Left').setStyle('PRIMARY'),
       new MessageButton().setCustomId('right').setLabel('Right').setStyle('PRIMARY')
@@ -51,5 +54,5 @@ export default {
         components: [],
       })
     })
-  },
-}
+  }
+)

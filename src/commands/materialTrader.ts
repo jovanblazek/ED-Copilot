@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CacheType, CommandInteraction, Message } from 'discord.js'
+import { Message } from 'discord.js'
 import i18next from 'i18next'
 import { chunk } from 'lodash'
+import { Command } from '../classes'
 import { CommandNames } from '../constants'
 import {
   createPaginationButtons,
@@ -15,15 +16,17 @@ const CELLS_PER_ROW = 8
 const PAGE_COUNT = 3
 const ROWS_PER_PAGE = 5
 
-export default {
-  name: CommandNames.materialTrader,
-  command: new SlashCommandBuilder()
+export default new Command(
+  {
+    name: CommandNames.materialTrader,
+  },
+  new SlashCommandBuilder()
     .setName(CommandNames.materialTrader)
     .setDescription('Gets nearest material traders')
     .addStringOption((option) =>
       option.setName('system').setDescription('Your location').setRequired(true)
     ),
-  handler: async (interaction: CommandInteraction<CacheType>) => {
+  async ({ interaction }) => {
     await interaction.deferReply()
     const systemName = interaction.options.getString('system') || 'Sol'
     const systemNameWeb = encodeURIComponent(systemName)
@@ -58,5 +61,5 @@ export default {
         })
       },
     })
-  },
-}
+  }
+)

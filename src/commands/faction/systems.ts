@@ -53,16 +53,16 @@ import logger from '../../utils/logger'
 
 export const factionSystemsHandler = async (
   interaction: CommandInteraction<CacheType>,
-  CachedTick: Tick,
-  CachedFaction: Faction
+  tick: Tick,
+  faction: Faction
 ) => {
-  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${CachedFaction.getEddbId()}&systemDetails=true&count=2`
+  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.getEddbId()}&systemDetails=true&count=2`
   const fetchedData = await got(url).json()
   console.log('fetchedData', fetchedData)
   // const parsedData = parseSystemsData(fetchedData.docs[0].faction_presence)
   // calculateInfluenceTrend(parsedData, fetchedData.docs[0].history)
 
-  const tickTime = CachedTick.getLocalTicktime()
+  const tickTime = tick.getLocalTicktime()
   if (!tickTime) {
     throw new TickFetchError()
   }

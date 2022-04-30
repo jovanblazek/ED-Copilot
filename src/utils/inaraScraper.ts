@@ -25,7 +25,7 @@ export const getInaraData = async (url: string, cellsPerRow: number) => {
     return []
   }
 
-  const rows: NodeListOf<HTMLTableCellElement>[] = chunk(tableCells, cellsPerRow)
+  const rows = chunk(tableCells, cellsPerRow)
 
   const data: InaraData[] = rows.map((row) => ({
     type: cellsPerRow === 8 ? row[0].textContent : null,

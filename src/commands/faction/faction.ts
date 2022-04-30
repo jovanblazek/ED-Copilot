@@ -1,12 +1,13 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { CacheType, CommandInteraction } from 'discord.js'
-import { Faction, Tick } from '../../classes'
+import { Command } from '../../classes'
 import { CommandNames, FactionSubcommands } from '../../constants'
 import { factionSystemsHandler } from './systems'
 
-export default {
-  name: CommandNames.faction,
-  command: new SlashCommandBuilder()
+export default new Command(
+  {
+    name: CommandNames.faction,
+  },
+  new SlashCommandBuilder()
     .setName(CommandNames.faction)
     .setDescription('Get information about your faction')
     .addSubcommand((subcommand) =>
@@ -24,15 +25,11 @@ export default {
         .setName(FactionSubcommands.stations)
         .setDescription('Get information about stations of your faction')
     ),
-  handler: async (
-    interaction: CommandInteraction<CacheType>,
-    CachedTick: Tick,
-    CachedFaction: Faction
-  ) => {
+  async ({ interaction, tick, faction }) => {
     await interaction.deferReply()
     const subcommand = interaction.options.getSubcommand()
     if (subcommand === FactionSubcommands.systems) {
-      await factionSystemsHandler(interaction, CachedTick, CachedFaction)
+      await factionSystemsHandler(interaction, tick, faction)
     }
-  },
-}
+  }
+)

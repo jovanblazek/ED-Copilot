@@ -1,14 +1,14 @@
 import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9'
 import { clientId, guildId } from '../../config.json'
-import { CommandList } from '../commands'
+import { CommandBuilders } from '../commands'
 import logger from './logger'
 import './environment'
 
 const Rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN || '')
 logger.info('Started refreshing application slash commands.')
 
-Rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: CommandList })
+Rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: CommandBuilders })
   .then(() => {
     logger.info('Successfully reloaded application slash commands.')
   })
