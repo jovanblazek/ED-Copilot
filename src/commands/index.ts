@@ -1,5 +1,6 @@
 import { map, reduce } from 'lodash'
 import { CommandCallbackArgs } from '../classes'
+import commanderProfile from './commanderProfile'
 import faction from './faction'
 import interstellarFactors from './interstellarFactors'
 import materialTrader from './materialTrader'
@@ -22,6 +23,7 @@ export const Commands = {
   tick,
   systemInfo,
   faction,
+  commanderProfile,
 }
 
 export const CommandBuilders = map(Commands, (command) => command.builder.toJSON())

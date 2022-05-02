@@ -1,6 +1,7 @@
 export * from './embed'
 export * from './errorHandler'
 export * from './inaraScraper'
+export * from './mongo'
 export * from './pagination'
 export * from './textFormatters'
 export * from './tick'

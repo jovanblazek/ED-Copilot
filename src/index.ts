@@ -2,7 +2,7 @@ import { Client, Intents } from 'discord.js'
 import { factionName, factionNameShort, timezone } from '../config.json'
 import { Faction, Tick } from './classes'
 import { CommandHandlers } from './commands'
-import { errorHandler, initTranslations } from './utils'
+import { connectToMongo, errorHandler, initTranslations } from './utils'
 import logger from './utils/logger'
 import initTickDetector from './utils/tickDetector'
 import './utils/environment'
@@ -14,6 +14,7 @@ const CachedTick = new Tick(null, timezone)
 const CachedFaction = new Faction(factionName, factionNameShort)
 
 BotClient.once('ready', async () => {
+  await connectToMongo()
   await initTranslations()
   await CachedTick.setup()
   await CachedFaction.setup()

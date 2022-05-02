@@ -7,6 +7,7 @@ export const CommandNames = {
   tick: 'tick',
   systemInfo: 'system',
   faction: 'faction',
+  commanderProfile: 'me',
 }
 
 export const FactionSubcommands = {
