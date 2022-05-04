@@ -3,6 +3,7 @@
 		"translation": {
 			"error": {
 				"unknown": "Unknown error occurred 😞",
+				"general": "Something went wrong. Try again later.",
 				"systemNotFound": "Could not find system named `{{systemName}}`.",
 				"tickFetchError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).",
 				"timeDifferenceError": "Time difference error.",
@@ -30,7 +31,8 @@
 				"lastUpdate": "Last update from {{time}}"
 			},
 			"commanderProfile": {
-				"notFound": "Could not find commander profile for `{{user}}`.\nAdd your EDSM API key first."
+				"notFound": "Could not find commander profile.\nAdd your CMDR name and EDSM API key first.",
+				"saved": "API key saved."
 			}
 		}
 	}

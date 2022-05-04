@@ -1,3 +1,5 @@
+import { Emojis } from '../constants'
+
 export const toUpperCaseFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1)
 
 export const getStationTypeWithIcon = (stationType: string) => {
@@ -7,20 +9,20 @@ export const getStationTypeWithIcon = (stationType: string) => {
     case 1:
     case 12:
     case 13:
-      type = '<:coriolis:822765325350076426> Starport'
+      type = `${Emojis.coriolis} Station`
       priority = 1
       break
     case 3:
-      type = '<:outpost:822765313870397460> Outpost'
+      type = `${Emojis.coriolis} Outpost`
       priority = 2
       break
     case 14:
     case 15:
-      type = '<:surface:822765337548029962> Planetary port'
+      type = `${Emojis.surfacePort} Planetary port`
       priority = 3
       break
     default:
-      type = '<:other:822765350536871946> Other'
+      type = `${Emojis.other} Other`
       priority = 4
       break
   }
@@ -31,3 +33,6 @@ export const getTrendPercentage = (trend: string | number) =>
   trend < 0
     ? `<:arrow_red:842824890918764544> ${trend}%`
     : `<:arrow_green:842824851072614487> +${trend}%`
+
+export const addCommasToNumber = (x: number): string =>
+  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
