@@ -7,7 +7,18 @@
 				"systemNotFound": "Could not find system named `{{systemName}}`.",
 				"tickFetchError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).",
 				"timeDifferenceError": "Time difference error.",
-				"dataParseError": "Could not parse data."
+				"dataParseError": "Could not parse data.",
+				"adminOnly": "This command is only available to admins."
+			},
+			"setup": {
+				"faction": {
+					"notFound": "Could not find any factions with that name.",
+					"confirm": {
+						"title": "Is this information correct?",
+						"description": "Name: {{factionName}}\nShorthand: {{factionShorthand}}\nAllegiance: {{allegiance}}\nPresent in {{systemsCount}} systems."
+					},
+					"saved": "Faction saved."
+				}
 			},
 			"ping": {
         "response": "Pong"

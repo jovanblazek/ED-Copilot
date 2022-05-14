@@ -8,12 +8,18 @@ export const CommandNames = {
   systemInfo: 'system',
   faction: 'faction',
   commanderProfile: 'me',
+  setup: 'setup',
 }
 
 export const FactionSubcommands = {
   systems: 'systems',
   conflicts: 'conflicts',
   stations: 'stations',
+}
+
+export const SetupSubcommands = {
+  faction: 'faction',
+  tick: 'tick',
 }
 
 export const PaginationButtonNames = {

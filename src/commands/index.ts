@@ -5,6 +5,7 @@ import faction from './faction'
 import interstellarFactors from './interstellarFactors'
 import materialTrader from './materialTrader'
 import ping from './ping'
+import setup from './setup'
 import systemDistance from './systemDistance'
 import systemInfo from './systemInfo'
 import techBroker from './techBroker'
@@ -24,6 +25,7 @@ export const Commands = {
   systemInfo,
   faction,
   commanderProfile,
+  setup,
 }
 
 export const CommandBuilders = map(Commands, (command) => command.builder.toJSON())
