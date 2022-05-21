@@ -81,3 +81,20 @@ export const fetchEDSMProfile = async (
     return null
   }
 }
+
+export const fetchCommanderCredits = (commanderName: string, apiKey: string | null) => {
+  try {
+    if (!apiKey) {
+      return null
+    }
+    return got(CREDITS_URL, {
+      searchParams: {
+        commanderName,
+        apiKey,
+      },
+    }).json<CreditsResponse>()
+  } catch (error) {
+    logger.warn(`Error fetching EDSM credits for ${commanderName}`, error)
+    return null
+  }
+}

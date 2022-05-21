@@ -1,9 +1,16 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import i18next from 'i18next'
 import { Command } from '../classes'
-import { CommandNames, Emojis } from '../constants'
+import { CommandNames } from '../constants'
 import User from '../schemas/User'
-import { addCommasToNumber, createEmbed, fetchEDSMProfile } from '../utils'
+import {
+  addCommasToNumber,
+  createEmbed,
+  fetchCommanderCredits,
+  InaraProfile,
+  inaraRequest,
+  parseInaraRanks,
+} from '../utils'
 
 export default new Command(
   {
@@ -11,78 +18,58 @@ export default new Command(
   },
   new SlashCommandBuilder()
     .setName(CommandNames.commanderProfile)
-    .setDescription('Get your commander profile')
-    .addStringOption((option) =>
-      option.setName('name').setDescription('CMDR name').setRequired(false)
-    )
-    .addStringOption((option) =>
-      option
-        .setName('edsm_api_key')
-        .setDescription('https://www.edsm.net/en/settings/api')
-        .setRequired(false)
-    ),
+    .setDescription('Get your commander profile'),
   async ({ interaction }) => {
-    const cmdrName = interaction.options.getString('name')
-    const edsmApiKey = interaction.options.getString('edsm_api_key')
+    await interaction.deferReply()
 
-    /**
-     * IF User did not provide an EDSM API key
-     *  - Get it from the database
-     *  - If the user has an EDSM API key, use it to get the commander profile
-     * ---
-     * ELSE User provided an EDSM API key
-     * - Update user with key if exists
-     * - If not, create new user with the key
-     */
-    if (!edsmApiKey && !cmdrName) {
-      await interaction.deferReply()
-      const foundUser = await User.findOne({ userId: interaction.user.id })
-      if (foundUser) {
-        const profile = await fetchEDSMProfile(foundUser.cmdrName, foundUser.edsmApiKey)
-        if (!profile) {
-          await interaction.editReply(i18next.t('error.general'))
-          return
-        }
-
-        const {
-          commanderName,
-          credits: { credits },
-          position,
-          ranks: { progress, ranksVerbose: ranks },
-        } = profile
-
-        const embed = createEmbed({
-          title: `CMDR ${commanderName}`,
-        })
-        embed.addField('Last position', `${Emojis.system} ${position.system}`)
-        embed.addField('Balance', `${addCommasToNumber(credits[0].balance)} Cr`)
-        embed.addField('Combat', `${ranks.Combat} (${progress.Combat}%)`)
-        embed.addField('Trade', `${ranks.Trade} (${progress.Trade}%)`)
-        embed.addField('Explore', `${ranks.Explore} (${progress.Explore}%)`)
-        embed.addField('Mercenary', `${ranks.Soldier} (${progress.Soldier}%)`)
-        embed.addField('Exobiologist', `${ranks.Exobiologist} (${progress.Exobiologist}%)`)
-        embed.addField('CQC', `${ranks.CQC} (${progress.CQC}%)`)
-        embed.addField('Federation', `${ranks.Federation} (${progress.Federation}%)`)
-        embed.addField('Empire', `${ranks.Empire} (${progress.Empire}%)`)
-        await interaction.editReply({
-          embeds: [embed],
-        })
-      } else {
-        await interaction.editReply(i18next.t('commanderProfile.notFound'))
-      }
-    } else if (edsmApiKey && cmdrName) {
-      await interaction.deferReply({ ephemeral: true })
-      const foundUser = await User.findOneAndUpdate(
-        { userId: interaction.user.id },
-        { edsmApiKey, cmdrName }
-      )
-      if (!foundUser) {
-        await User.create({ userId: interaction.user.id, edsmApiKey, cmdrName })
-      }
-      await interaction.editReply(i18next.t('commanderProfile.saved'))
-    } else {
-      await interaction.deferReply({ ephemeral: true })
+    const user = await User.findOne({ userId: interaction.user.id })
+    if (!user) {
       await interaction.editReply(i18next.t('commanderProfile.notFound'))
+      return
     }
+
+    const inaraResponse = await inaraRequest<InaraProfile>([
+      {
+        eventName: 'getCommanderProfile',
+        eventData: {
+          searchName: user.cmdrName,
+        },
+      },
+    ])
+
+    if (!inaraResponse || inaraResponse.header.eventStatus !== 200) {
+      await interaction.editReply(i18next.t('error.general'))
+      return
+    }
+    if (inaraResponse.events[0].eventStatus === 204) {
+      await interaction.editReply(i18next.t('commanderProfile.notFound'))
+      return
+    }
+    const inaraProfile = inaraResponse.events[0].eventData
+    const ranks = parseInaraRanks(inaraProfile.commanderRanksPilot)
+    const rankEmbedFields = ranks.map((rank) => ({
+      ...rank,
+      inline: true,
+    }))
+
+    const cmdrCredits = await fetchCommanderCredits(user.cmdrName, user.edsmApiKey)
+
+    const embed = createEmbed({
+      title: `CMDR ${inaraProfile.userName}`,
+    })
+    embed.setURL(inaraProfile.inaraURL)
+    embed.addFields(rankEmbedFields)
+    if (cmdrCredits) {
+      embed.addField('Balance', `${addCommasToNumber(cmdrCredits.credits[0].balance)} Cr`, true)
+    }
+    // TODO use image from CDN, or local image
+    embed.setThumbnail(
+      inaraProfile?.avatarImageURL || 'https://inara.cz/data/users/131/131443x1830.jpg'
+    )
+    // TODO rework this after adding timezone to DB
+    // embed.setFooter(`Inara & EDSM - ${format(new Date(), 'yyyy-MM-dd HH:mm:ss')}`)
+    await interaction.editReply({
+      embeds: [embed],
+    })
   }
 )

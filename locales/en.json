@@ -18,6 +18,9 @@
 						"description": "Name: {{factionName}}\nShorthand: {{factionShorthand}}\nAllegiance: {{allegiance}}\nPresent in {{systemsCount}} systems."
 					},
 					"saved": "Faction saved."
+				},
+				"profile": {
+					"saved": "Profile settings saved."
 				}
 			},
 			"ping": {
@@ -42,8 +45,7 @@
 				"lastUpdate": "Last update from {{time}}"
 			},
 			"commanderProfile": {
-				"notFound": "Could not find commander profile.\nAdd your CMDR name and EDSM API key first.",
-				"saved": "API key saved."
+				"notFound": "Could not find commander profile.\nAdd your CMDR name and EDSM API key using `/setup profile` command."
 			}
 		}
 	}

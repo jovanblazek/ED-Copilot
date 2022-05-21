@@ -1,4 +1,4 @@
-import { getInaraData } from '../src/utils'
+import { scrapeInara } from '../src/utils'
 
 const NO_RECORDS_URL =
   'https://inara.cz/nearest-stations/?ps1=sol&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=0&pi19=2000&pi17=0&ps2=&pi8=&pi9=0&pa2%5B20%5D=1&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0'
@@ -20,13 +20,13 @@ const URLS = {
 
 describe('Inara scraper', () => {
   it('should return empty array if no data is found', async () => {
-    const data = await getInaraData(NO_RECORDS_URL, 8)
+    const data = await scrapeInara(NO_RECORDS_URL, 8)
     expect(data.length).toBe(0)
     expect(data).toEqual([])
   })
 
   it('should return broker data', async () => {
-    const data = await getInaraData(URLS.broker.url, URLS.broker.cellsPerRow)
+    const data = await scrapeInara(URLS.broker.url, URLS.broker.cellsPerRow)
     expect(data.length).toBeGreaterThan(0)
     expect(data[0]).toMatchSnapshot(
       {
@@ -38,7 +38,7 @@ describe('Inara scraper', () => {
   })
 
   it('should return trader data', async () => {
-    const data = await getInaraData(URLS.trader.url, URLS.trader.cellsPerRow)
+    const data = await scrapeInara(URLS.trader.url, URLS.trader.cellsPerRow)
     expect(data.length).toBeGreaterThan(0)
     expect(data[0]).toMatchSnapshot(
       {
@@ -51,7 +51,7 @@ describe('Inara scraper', () => {
 
   // Interstellar factors avaliablity changes over time due to BGS
   it('should return factors data', async () => {
-    const data = await getInaraData(URLS.factors.url, URLS.factors.cellsPerRow)
+    const data = await scrapeInara(URLS.factors.url, URLS.factors.cellsPerRow)
     expect(data.length).toBeGreaterThan(0)
     expect(data[0]).toMatchSnapshot(
       {

@@ -3,6 +3,7 @@ import i18next from 'i18next'
 import { Command } from '../../classes'
 import { CommandNames, SetupSubcommands } from '../../constants'
 import { setupFactionHandler } from './faction'
+import { setupProfileHandler } from './profile'
 
 export default new Command(
   {
@@ -25,8 +26,26 @@ export default new Command(
     )
     .addSubcommand((subcommand) =>
       subcommand.setName(SetupSubcommands.tick).setDescription('Set tick report channel')
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName(SetupSubcommands.profile)
+        .setDescription('Setup your commander profile')
+        .addStringOption((option) =>
+          option.setName('name').setDescription('CMDR name').setRequired(true)
+        )
+        .addStringOption((option) =>
+          option.setName('edsm_api_key').setDescription('EDSM API key').setRequired(false)
+        )
     ),
   async ({ interaction }) => {
+    await interaction.deferReply()
+    const subcommand = interaction.options.getSubcommand()
+    if (subcommand === SetupSubcommands.profile) {
+      await setupProfileHandler(interaction)
+      return
+    }
+
     if (!interaction.memberPermissions?.has('ADMINISTRATOR')) {
       await interaction.reply({
         content: i18next.t('error.adminOnly'),
@@ -34,8 +53,6 @@ export default new Command(
       })
       return
     }
-    await interaction.deferReply()
-    const subcommand = interaction.options.getSubcommand()
     if (subcommand === SetupSubcommands.faction) {
       await setupFactionHandler(interaction)
     }
