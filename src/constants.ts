@@ -21,6 +21,7 @@ export const SetupSubcommands = {
   faction: 'faction',
   tick: 'tick',
   profile: 'profile',
+  language: 'language',
 }
 
 export const PaginationButtonNames = {
@@ -38,6 +39,11 @@ export const Emojis = {
   outpost: '<:outpost:822765313870397460>',
   surfacePort: '<:surface:822765337548029962>',
   other: '<:other:822765350536871946>',
+}
+
+export const Languages = {
+  english: 'en',
+  slovak: 'sk',
 }
 
 export const RankNames = {

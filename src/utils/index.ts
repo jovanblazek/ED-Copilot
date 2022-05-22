@@ -1,6 +1,7 @@
 export * from './edsm'
 export * from './embed'
 export * from './errorHandler'
+export * from './guild'
 export * from './inara'
 export * from './mongo'
 export * from './pagination'

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 interface IFaction {
-  discordGuildId: string
+  discordGuildId: string // TODO rename to guildId
   name: string
   shorthand: string
   ebgsId: string

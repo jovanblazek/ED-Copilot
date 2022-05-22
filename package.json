@@ -29,6 +29,7 @@
     "got": "^11.8.2",
     "i18next": "^21.6.16",
     "jsdom": "^19.0.0",
+    "keyv": "^4.2.9",
     "lodash": "^4.17.21",
     "mongoose": "^6.3.2",
     "mongoose-field-encryption": "5.0.2",
