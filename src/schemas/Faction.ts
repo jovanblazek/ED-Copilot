@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 interface IFaction {
-  discordGuildId: string // TODO rename to guildId
+  guildId: string
   name: string
   shorthand: string
   ebgsId: string
@@ -9,6 +9,11 @@ interface IFaction {
 }
 
 const FactionSchema = new mongoose.Schema<IFaction>({
+  guildId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   name: {
     type: String,
     required: true,

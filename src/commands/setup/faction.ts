@@ -1,4 +1,4 @@
-import { CacheType, CommandInteraction } from 'discord.js'
+import { CacheType, CommandInteraction, Message, MessageActionRow, MessageButton } from 'discord.js'
 import got from 'got'
 import i18next from 'i18next'
 import Faction from '../../schemas/Faction'
@@ -8,25 +8,31 @@ import logger from '../../utils/logger'
 type EliteBgsResponse = {
   docs: {
     _id: string
+    name: string
     eddb_id: number
     allegiance: string
     faction_presence: object[]
   }[]
 }
 
+const BUTTON_INTERACTION_TIME = 20000
+const ButtonNames = {
+  YES: 'yes',
+  NO: 'no',
+}
+
 export const setupFactionHandler = async (interaction: CommandInteraction<CacheType>) => {
-  const discordGuildId = interaction.guildId
-  if (!discordGuildId) {
+  const { guildId } = interaction
+  if (!guildId) {
     logger.warn('Discord guild id not found while setting up faction.')
     return
   }
 
-  const factionName = interaction.options.getString('name')!
+  const factionNameInput = interaction.options.getString('name')!
   const factionShorthand = interaction.options.getString('shorthand')!
+  const factionNameEncoded = encodeURIComponent(factionNameInput)
 
-  logger.info(`Setting up faction for guild ${discordGuildId}, ${factionName}, ${factionShorthand}`)
-
-  const factionNameEncoded = encodeURIComponent(factionName)
+  logger.info(`Setting up faction for guild ${guildId}, ${factionNameInput}, ${factionShorthand}`)
 
   const url = `https://elitebgs.app/api/ebgs/v5/factions?name=${factionNameEncoded}`
   const { docs } = await got(url).json<EliteBgsResponse>()
@@ -36,9 +42,15 @@ export const setupFactionHandler = async (interaction: CommandInteraction<CacheT
     return
   }
 
-  const { _id: ebgsId, eddb_id: eddbId, allegiance, faction_presence: factionPresence } = docs[0]
+  const {
+    _id: ebgsId,
+    eddb_id: eddbId,
+    allegiance,
+    faction_presence: factionPresence,
+    name: factionName,
+  } = docs[0]
 
-  // TODO add buttons to respond
+  // Create confirmation embed with buttons
   await interaction.editReply({
     embeds: [
       createEmbed({
@@ -51,25 +63,63 @@ export const setupFactionHandler = async (interaction: CommandInteraction<CacheT
         }),
       }),
     ],
+    components: [
+      new MessageActionRow().addComponents(
+        new MessageButton().setCustomId(ButtonNames.YES).setLabel('✔').setStyle('SUCCESS'),
+        new MessageButton().setCustomId(ButtonNames.NO).setLabel('✘').setStyle('DANGER')
+      ),
+    ],
   })
 
-  // TODO if response is not yes, cancel setup
+  // Add collector
+  const reply = (await interaction.fetchReply()) as Message
+  const collector = reply.createMessageComponentCollector({
+    componentType: 'BUTTON',
+    time: BUTTON_INTERACTION_TIME,
+  })
 
-  const savedFaction = await Faction.findOneAndUpdate(
-    { discordGuildId },
-    { ebgsId, eddbId, name: factionName, shorthand: factionShorthand }
-  )
-  if (!savedFaction) {
-    await Faction.create({
-      discordGuildId,
-      ebgsId,
-      eddbId,
-      name: factionName,
-      shorthand: factionShorthand,
+  collector.on('collect', async (buttonInteraction) => {
+    if (buttonInteraction.user.id === interaction.user.id) {
+      // If user clicked yes, create faction in DB
+      if (buttonInteraction.customId === ButtonNames.YES) {
+        const savedFaction = await Faction.findOneAndUpdate(
+          { guildId },
+          { ebgsId, eddbId, name: factionName, shorthand: factionShorthand }
+        )
+        if (!savedFaction) {
+          await Faction.create({
+            guildId,
+            ebgsId,
+            eddbId,
+            name: factionName,
+            shorthand: factionShorthand,
+          })
+        }
+        await buttonInteraction.update({
+          content: i18next.t('setup.faction.saved'),
+          embeds: [],
+          components: [],
+        })
+      } else {
+        await buttonInteraction.update({
+          content: i18next.t('setup.faction.canceled'),
+          embeds: [],
+          components: [],
+        })
+      }
+    } else {
+      await buttonInteraction.reply({
+        content: i18next.t('error.buttonsDisabled'),
+        ephemeral: true,
+      })
+    }
+  })
+
+  collector.on('end', async () => {
+    const { embeds } = await interaction.fetchReply()
+    await interaction.editReply({
+      embeds,
+      components: [],
     })
-  }
-  await interaction.editReply({
-    content: i18next.t('setup.faction.saved'),
-    embeds: [],
   })
 }

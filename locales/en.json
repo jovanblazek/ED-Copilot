@@ -8,16 +8,18 @@
 				"tickFetchError": "Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).",
 				"timeDifferenceError": "Time difference error.",
 				"dataParseError": "Could not parse data.",
-				"adminOnly": "This command is only available to admins."
+				"adminOnly": "This command is only available to admins.",
+				"buttonsDisabled": "These buttons aren't for you!"
 			},
 			"setup": {
 				"faction": {
 					"notFound": "Could not find any factions with that name.",
 					"confirm": {
 						"title": "Is this information correct?",
-						"description": "Name: {{factionName}}\nShorthand: {{factionShorthand}}\nAllegiance: {{allegiance}}\nPresent in {{systemsCount}} systems."
+						"description": "Name: {{factionName}}\nShorthand: {{factionShorthand}}\nAllegiance: {{allegiance}}\nSystems present: {{systemsCount}}."
 					},
-					"saved": "Faction saved."
+					"saved": "Faction saved.",
+					"canceled": "Faction setup canceled."
 				},
 				"profile": {
 					"saved": "Profile settings saved."

@@ -6,6 +6,7 @@ import {
   MessageActionRow,
   MessageButton,
 } from 'discord.js'
+import i18next from 'i18next'
 import { PAGINATION_COLLECTION_TIME, PaginationButtonNames } from '../constants'
 
 interface IUsePagination {
@@ -46,7 +47,7 @@ export const usePagination = ({
       await onPageChange(buttonInteraction, activePageIndex)
     } else {
       await buttonInteraction.reply({
-        content: `These buttons aren't for you!`,
+        content: i18next.t('error.buttonsDisabled'),
         ephemeral: true,
       })
     }
