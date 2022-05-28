@@ -1,8 +1,9 @@
 import { CacheType, CommandInteraction, Message, MessageActionRow, MessageButton } from 'discord.js'
 import got from 'got'
 import i18next from 'i18next'
+import Keyv from 'keyv'
 import Faction from '../../schemas/Faction'
-import { createEmbed } from '../../utils'
+import { createEmbed, refreshGuildFactionCache } from '../../utils'
 import logger from '../../utils/logger'
 
 type EliteBgsResponse = {
@@ -21,7 +22,10 @@ const ButtonNames = {
   NO: 'no',
 }
 
-export const setupFactionHandler = async (interaction: CommandInteraction<CacheType>) => {
+export const setupFactionHandler = async (
+  interaction: CommandInteraction<CacheType>,
+  cache: Keyv
+) => {
   const { guildId } = interaction
   if (!guildId) {
     logger.warn('Discord guild id not found while setting up faction.')
@@ -95,6 +99,7 @@ export const setupFactionHandler = async (interaction: CommandInteraction<CacheT
             shorthand: factionShorthand,
           })
         }
+        await refreshGuildFactionCache(cache)
         await buttonInteraction.update({
           content: i18next.t('setup.faction.saved'),
           embeds: [],

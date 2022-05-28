@@ -46,6 +46,11 @@ export const Languages = {
   slovak: 'sk',
 }
 
+export const CacheNames = {
+  guildPreferences: 'preferences',
+  guildFactions: 'factions',
+}
+
 export const RankNames = {
   combat: 'Combat',
   trade: 'Trade',

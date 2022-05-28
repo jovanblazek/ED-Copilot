@@ -67,7 +67,7 @@ export default new Command(
     }
 
     if (subcommand === SetupSubcommands.faction) {
-      await setupFactionHandler(interaction)
+      await setupFactionHandler(interaction, cache)
       return
     }
     if (subcommand === SetupSubcommands.language) {

@@ -1,5 +1,13 @@
 import mongoose from 'mongoose'
 
+export type FactionType = {
+  guildId: string
+  name: string
+  shorthand: string
+  ebgsId: string
+  eddbId: number
+}
+
 interface IFaction {
   guildId: string
   name: string

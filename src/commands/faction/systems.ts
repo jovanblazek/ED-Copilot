@@ -1,7 +1,7 @@
 import { CacheType, CommandInteraction } from 'discord.js'
 import got from 'got'
-import { Faction, Tick, TickFetchError } from '../../classes'
-import logger from '../../utils/logger'
+import { Tick, TickFetchError } from '../../classes'
+import { FactionType } from '../../schemas/Faction'
 
 // const calculateInfluenceTrend = (data, history) => {
 //   const dataLength = data.length
@@ -51,12 +51,16 @@ import logger from '../../utils/logger'
 //   return data
 // }
 
-export const factionSystemsHandler = async (
-  interaction: CommandInteraction<CacheType>,
-  tick: Tick,
-  faction: Faction
-) => {
-  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.getEddbId()}&systemDetails=true&count=2`
+export const factionSystemsHandler = async ({
+  interaction,
+  tick,
+  faction,
+}: {
+  interaction: CommandInteraction<CacheType>
+  tick: Tick
+  faction: FactionType
+}) => {
+  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true&count=2`
   const fetchedData = await got(url).json()
   console.log('fetchedData', fetchedData)
   // const parsedData = parseSystemsData(fetchedData.docs[0].faction_presence)

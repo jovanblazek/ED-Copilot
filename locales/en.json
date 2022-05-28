@@ -28,6 +28,9 @@
 					"saved": "Language settings saved."
 				}
 			},
+			"faction": {
+				"notSetup": "Faction is not setup."
+			},
 			"ping": {
         "response": "Pong"
       },

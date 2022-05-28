@@ -11,7 +11,8 @@ const replyToError = async (interaction: CommandInteraction<CacheType>, msgConte
 
 export const errorHandler = async (
   error: Error | unknown,
-  interaction: CommandInteraction<CacheType>
+  interaction: CommandInteraction<CacheType>,
+  commandName: string
 ) => {
   if (error instanceof SystemNotFoundError) {
     logger.info(`System not found error`)
@@ -23,7 +24,7 @@ export const errorHandler = async (
     logger.info(`Tick fetch error`)
     await replyToError(interaction, error.message)
   } else {
-    logger.error('Error while handling command', error)
+    logger.error(`Error while handling command ${commandName}`, error)
     await replyToError(interaction, i18next.t('error.unknown'))
   }
 }
