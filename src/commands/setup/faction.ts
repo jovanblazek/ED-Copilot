@@ -54,6 +54,7 @@ export const setupFactionHandler = async (
     name: factionName,
   } = docs[0]
 
+  // TODO rework to useConfirmation()
   // Create confirmation embed with buttons
   await interaction.editReply({
     embeds: [

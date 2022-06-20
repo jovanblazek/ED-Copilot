@@ -5,6 +5,7 @@ import { CommandNames, Languages, SetupSubcommands } from '../../constants'
 import { setupFactionHandler } from './faction'
 import { setupLanguagenHandler } from './language'
 import { setupProfileHandler } from './profile'
+import { setupTimezoneHandler } from './timezone'
 
 export default new Command(
   {
@@ -41,6 +42,14 @@ export default new Command(
     )
     .addSubcommand((subcommand) =>
       subcommand
+        .setName(SetupSubcommands.timezone)
+        .setDescription('Set bot timezone')
+        .addStringOption((option) =>
+          option.setName('timezone').setDescription('Timezone name').setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
         .setName(SetupSubcommands.profile)
         .setDescription('Setup your commander profile')
         .addStringOption((option) =>
@@ -72,6 +81,9 @@ export default new Command(
     }
     if (subcommand === SetupSubcommands.language) {
       await setupLanguagenHandler(interaction, cache)
+    }
+    if (subcommand === SetupSubcommands.timezone) {
+      await setupTimezoneHandler(interaction, cache)
     }
   }
 )

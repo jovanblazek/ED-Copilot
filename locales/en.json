@@ -26,6 +26,15 @@
 				},
 				"language": {
 					"saved": "Language settings saved."
+				},
+				"timezone": {
+					"saved": "Timezone settings saved.",
+					"canceled": "Timezone setup canceled. If you are having trouble setting up timezone, try to find your timezone on [this site](https://gist.github.com/diogocapela/12c6617fc87607d11fd62d2a4f42b02a).",
+					"notFound": "Could not find timezone with that name. Try to find your timezone on [this site](https://gist.github.com/diogocapela/12c6617fc87607d11fd62d2a4f42b02a).",
+					"confirm": {
+						"title": "Is this information correct?",
+						"description": "Current time: {{currentTime}}"
+					}
 				}
 			},
 			"faction": {
@@ -53,7 +62,8 @@
 				"lastUpdate": "Last update from {{time}}"
 			},
 			"commanderProfile": {
-				"notFound": "Could not find commander profile.\nAdd your CMDR name and EDSM API key using `/setup profile` command."
+				"notFound": "Could not find commander profile.\nAdd your CMDR name and EDSM API key using `/setup profile` command.",
+				"missingEdsmKey": "To see account balance, you need to add your EDSM API key using `/setup profile` command."
 			}
 		}
 	}

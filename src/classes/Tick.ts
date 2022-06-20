@@ -25,6 +25,7 @@ void import(`dayjs/locale/${dayjsLanguage}`)
     logger.warn('Incorrect dayjs language specified in config.json. Falling back to default.')
   })
 
+// TODO refactor -  move to cache and add user set timezone
 export class Tick {
   ticktime: Dayjs | null
   localTimeZone: string

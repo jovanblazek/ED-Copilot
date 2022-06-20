@@ -22,6 +22,7 @@ export const SetupSubcommands = {
   tick: 'tick',
   profile: 'profile',
   language: 'language',
+  timezone: 'timezone',
 }
 
 export const PaginationButtonNames = {

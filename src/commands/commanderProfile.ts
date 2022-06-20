@@ -12,6 +12,9 @@ import {
   parseInaraRanks,
 } from '../utils'
 
+// TODO use image from CDN, or local image
+const FALLBACK_CMDR_AVATAR_URL = 'https://inara.cz/data/users/131/131443x1830.jpg'
+
 export default new Command(
   {
     name: CommandNames.commanderProfile,
@@ -58,14 +61,13 @@ export default new Command(
       title: `CMDR ${inaraProfile.userName}`,
     })
     embed.setURL(inaraProfile.inaraURL)
+    embed.setThumbnail(inaraProfile?.avatarImageURL || FALLBACK_CMDR_AVATAR_URL)
     embed.addFields(rankEmbedFields)
     if (cmdrCredits) {
       embed.addField('Balance', `${addCommasToNumber(cmdrCredits.credits[0].balance)} Cr`, true)
+    } else {
+      embed.setFooter(i18next.t('commanderProfile.missingEdsmKey'))
     }
-    // TODO use image from CDN, or local image
-    embed.setThumbnail(
-      inaraProfile?.avatarImageURL || 'https://inara.cz/data/users/131/131443x1830.jpg'
-    )
     // TODO rework this after adding timezone to DB
     // embed.setFooter(`Inara & EDSM - ${format(new Date(), 'yyyy-MM-dd HH:mm:ss')}`)
     await interaction.editReply({

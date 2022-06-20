@@ -4,12 +4,14 @@ export type PreferencesType = {
   guildId: string
   tickReportChannelId: string | null
   language: string
+  timezone: string
 }
 
 interface IPreferences {
   guildId: string
   tickReportChannelId: string | null
   language: string
+  timezone: string
 }
 
 const PreferencesSchema = new mongoose.Schema<IPreferences>({
@@ -24,6 +26,10 @@ const PreferencesSchema = new mongoose.Schema<IPreferences>({
     default: null,
   },
   language: {
+    type: String,
+    required: true,
+  },
+  timezone: {
     type: String,
     required: true,
   },
