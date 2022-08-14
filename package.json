@@ -4,7 +4,7 @@
   "description": "Made specifically for our player faction, although it is possible to change faction name in `config.json` to make it work with yours.",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only --exit-child src/index.ts",
     "test": "jest",
     "register-commands": "ts-node src/utils/registerCommands.ts"
   },
@@ -21,6 +21,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.3.0",
+    "@prisma/client": "^4.2.1",
     "date-fns": "^2.28.0",
     "dayjs": "^1.11.1",
     "discord-api-types": "^0.31.1",
@@ -50,6 +51,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "jest": "^27.5.1",
     "prettier": "^2.6.2",
+    "prisma": "^4.2.1",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
     "ts-node-dev": "^1.1.8",

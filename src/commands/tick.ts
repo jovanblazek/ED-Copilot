@@ -1,13 +1,13 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Dayjs } from 'dayjs'
-import { Client, TextChannel } from 'discord.js'
+import { Client } from 'discord.js'
 import i18next from 'i18next'
-import { tickReportChannel } from '../../config.json'
 import { Tick, TickCommand, TickFetchError } from '../classes'
 import { CommandNames } from '../constants'
 import { createEmbed } from '../utils'
 import logger from '../utils/logger'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createTickEmbed = (tickTime: Dayjs, tick: Tick) =>
   createEmbed({
     title: i18next.t('tick.title'),
@@ -22,31 +22,32 @@ export default new TickCommand(
     name: CommandNames.tick,
   },
   new SlashCommandBuilder().setName(CommandNames.tick).setDescription('Gets latest tick time'),
-  async ({ interaction, tick }) => {
+  async ({ interaction }) => {
     await interaction.deferReply()
 
-    const tickTime = tick.getLocalTicktime()
+    const tickTime = null
     if (!tickTime) {
       throw new TickFetchError()
     }
 
-    await interaction.editReply({
-      embeds: [createTickEmbed(tickTime, tick)],
-    })
+    // await interaction.editReply({
+    //   embeds: [createTickEmbed(tickTime)],
+    // })
   },
-  async (client: Client, tick: Tick) => {
-    const tickTime = tick.getLocalTicktime()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await, require-await
+  async (client: Client) => {
+    const tickTime = null
     if (!tickTime) {
       logger.error('Error while trying to report tick')
-      return
+      // return
     }
 
-    const channel = client.channels.cache.get(tickReportChannel) as TextChannel
-    if (!channel) {
-      return
-    }
-    await channel.send({
-      embeds: [createTickEmbed(tickTime, tick)],
-    })
+    // const channel = client.channels.cache.get(tickReportChannel) as TextChannel
+    // if (!channel) {
+    //   return
+    // }
+    // await channel.send({
+    //   embeds: [createTickEmbed(tickTime, tick)],
+    // })
   }
 )

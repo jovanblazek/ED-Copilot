@@ -53,7 +53,6 @@ import { FactionType } from '../../schemas/Faction'
 
 export const factionSystemsHandler = async ({
   interaction,
-  tick,
   faction,
 }: {
   interaction: CommandInteraction<CacheType>
@@ -66,7 +65,7 @@ export const factionSystemsHandler = async ({
   // const parsedData = parseSystemsData(fetchedData.docs[0].faction_presence)
   // calculateInfluenceTrend(parsedData, fetchedData.docs[0].history)
 
-  const tickTime = tick.getLocalTicktime()
+  const tickTime = null
   if (!tickTime) {
     throw new TickFetchError()
   }

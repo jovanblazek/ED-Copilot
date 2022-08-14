@@ -3,21 +3,15 @@ import advancedFormatPlugin from 'dayjs/plugin/advancedFormat'
 import timezonePlugin from 'dayjs/plugin/timezone'
 import { CacheType, CommandInteraction } from 'discord.js'
 import i18next from 'i18next'
-import Keyv from 'keyv'
-import Preferences from '../../schemas/Preferences'
-import { createEmbed, refreshGuildPreferencesCache, useConfirmation } from '../../utils'
+import { createEmbed, Prisma, useConfirmation } from '../../utils'
 
 dayjs.extend(timezonePlugin)
 dayjs.extend(advancedFormatPlugin)
 
-export const setupTimezoneHandler = async (
-  interaction: CommandInteraction<CacheType>,
-  cache: Keyv
-) => {
+export const setupTimezoneHandler = async (interaction: CommandInteraction<CacheType>) => {
   const timezone = interaction.options.getString('timezone')!
 
   try {
-    const dummy = dayjs().tz(timezone)
     void useConfirmation({
       interaction,
       confirmation: {
@@ -25,14 +19,16 @@ export const setupTimezoneHandler = async (
           createEmbed({
             title: i18next.t('setup.timezone.confirm.title'),
             description: i18next.t('setup.timezone.confirm.description', {
-              currentTime: dummy.format('YYYY-MM-DD HH:mm:ss'),
+              currentTime: dayjs().tz(timezone).format('YYYY-MM-DD HH:mm:ss'),
             }),
           }),
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        await Preferences.findOneAndUpdate({ guildId: interaction.guildId }, { timezone })
-        await refreshGuildPreferencesCache(cache)
+        await Prisma.preferences.update({
+          where: { guildId: interaction.guildId! },
+          data: { timezone },
+        })
 
         await buttonInteraction.update({
           content: i18next.t('setup.timezone.saved'),

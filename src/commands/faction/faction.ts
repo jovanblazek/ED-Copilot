@@ -2,8 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import i18next from 'i18next'
 import { Command } from '../../classes'
 import { CommandNames, FactionSubcommands } from '../../constants'
-import { getCachedFaction } from '../../utils'
-import { factionSystemsHandler } from './systems'
+// import { factionSystemsHandler } from './systems'
 
 export default new Command(
   {
@@ -27,22 +26,23 @@ export default new Command(
         .setName(FactionSubcommands.stations)
         .setDescription('Get information about stations of your faction')
     ),
-  async ({ interaction, tick, cache }) => {
+  async ({ interaction }) => {
     await interaction.deferReply()
     const { guildId } = interaction
     if (!guildId) {
       throw new Error('Discord guild id not found while processing faction command.')
     }
-    const faction = await getCachedFaction(cache, guildId)
+    // const faction = await getCachedFaction(cache, guildId)
+    const faction = null
     if (!faction) {
       await interaction.editReply({
         content: i18next.t('faction.notSetup'),
       })
     }
 
-    const subcommand = interaction.options.getSubcommand()
-    if (subcommand === FactionSubcommands.systems) {
-      await factionSystemsHandler({ interaction, tick, faction })
-    }
+    // const subcommand = interaction.options.getSubcommand()
+    // if (subcommand === FactionSubcommands.systems) {
+    //   await factionSystemsHandler({ interaction })
+    // }
   }
 )

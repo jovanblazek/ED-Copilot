@@ -30,8 +30,7 @@ export default new Command(
     await interaction.deferReply()
     const systemName = interaction.options.getString('system') || 'Sol'
     const systemNameWeb = encodeURIComponent(systemName)
-    const url = `https://inara.cz/nearest-stations/?ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=0&pi19=2000&pa1%5B25%5D=1&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0`
-
+    const url = `https://inara.cz/elite/nearest-stations/?formbrief=1&ps1=${systemNameWeb}&pi13=&pi14=0&pi15=0&pi16=&pi1=0&pi18=0&pi19=2000&pi17=2&pi2=1&pa1%5B%5D=25&ps2=&pi8=&pi9=0&pi3=&pi4=0&pi5=0&pi6=0&pi7=0&pi23=0&ps3=`
     const parsedData = await scrapeInara(url, CELLS_PER_ROW)
 
     if (parsedData.length === 0) {

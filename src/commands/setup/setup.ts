@@ -59,7 +59,7 @@ export default new Command(
           option.setName('edsm_api_key').setDescription('EDSM API key').setRequired(false)
         )
     ),
-  async ({ interaction, cache }) => {
+  async ({ interaction }) => {
     await interaction.deferReply()
     const subcommand = interaction.options.getSubcommand()
     if (subcommand === SetupSubcommands.profile) {
@@ -76,14 +76,14 @@ export default new Command(
     }
 
     if (subcommand === SetupSubcommands.faction) {
-      await setupFactionHandler(interaction, cache)
+      await setupFactionHandler(interaction)
       return
     }
     if (subcommand === SetupSubcommands.language) {
-      await setupLanguagenHandler(interaction, cache)
+      await setupLanguagenHandler(interaction)
     }
     if (subcommand === SetupSubcommands.timezone) {
-      await setupTimezoneHandler(interaction, cache)
+      await setupTimezoneHandler(interaction)
     }
   }
 )

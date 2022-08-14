@@ -1,7 +1,5 @@
 import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders'
 import { CacheType, CommandInteraction } from 'discord.js'
-import Keyv from 'keyv'
-import { Tick } from './Tick'
 
 export type CommandParameters = {
   name: string
@@ -9,8 +7,6 @@ export type CommandParameters = {
 
 export type CommandCallbackArgs = {
   interaction: CommandInteraction<CacheType>
-  tick: Tick
-  cache: Keyv
 }
 
 export class Command {

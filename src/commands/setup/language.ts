@@ -1,16 +1,15 @@
 import { CacheType, CommandInteraction } from 'discord.js'
 import i18next from 'i18next'
-import Keyv from 'keyv'
-import Preferences from '../../schemas/Preferences'
-import { refreshGuildPreferencesCache } from '../../utils'
+import { Prisma } from '../../utils'
 
-export const setupLanguagenHandler = async (
-  interaction: CommandInteraction<CacheType>,
-  cache: Keyv
-) => {
+export const setupLanguagenHandler = async (interaction: CommandInteraction<CacheType>) => {
+  const { guildId } = interaction
+  if (!guildId) {
+    throw new Error('Guild ID not found in interaction')
+  }
+
   const language = interaction.options.getString('language')!
-  await Preferences.findOneAndUpdate({ guildId: interaction.guildId }, { language })
-  await refreshGuildPreferencesCache(cache)
+  await Prisma.preferences.update({ where: { guildId }, data: { language } })
   await i18next.changeLanguage(language)
   await interaction.editReply(i18next.t('setup.language.saved'))
 }

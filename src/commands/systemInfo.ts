@@ -1,11 +1,9 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import dayjs from 'dayjs'
 import got from 'got'
-import i18next from 'i18next'
 import { isEmpty } from 'lodash'
 import { Command, DataParseError, SystemNotFoundError } from '../classes'
-import { CommandNames, DIVIDER } from '../constants'
-import { createEmbed } from '../utils'
+import { CommandNames } from '../constants'
 
 type Faction = {
   name: string
@@ -43,6 +41,7 @@ const parseSystemData = (response: EdsmResponse) => {
   return { systemName, systemData, lastUpdate }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getStates = (faction: Omit<Faction, 'lastUpdate'>) => {
   const pendingStates = faction.pendingStates.map(({ state }) => state).join(', ')
   const activeStates = faction.activeStates.map(({ state }) => state).join(', ')
@@ -74,9 +73,10 @@ export default new Command(
     .addStringOption((option) =>
       option.setName('system').setDescription('System to lookup').setRequired(true)
     ),
-  async ({ interaction, tick }) => {
+  async ({ interaction }) => {
     await interaction.deferReply()
     const systemName = interaction.options.getString('system') || 'Sol'
+    throw new SystemNotFoundError(systemName) // TODO remove after tick command is implemented
     const systemNameWeb = encodeURIComponent(systemName)
 
     const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`
@@ -91,23 +91,23 @@ export default new Command(
       throw new DataParseError()
     }
 
-    const localTimeZone = tick.getLocalTimeZone()
+    // const localTimeZone = tick.getLocalTimeZone()
 
-    const embed = createEmbed({
-      title: i18next.t('systemInfo.title', { systemName: parsedData.systemName }),
-      description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${DIVIDER}`,
-    }).setFooter({
-      text: `${i18next.t('systemInfo.lastUpdate', {
-        time: parsedData.lastUpdate.tz(localTimeZone).format('DD.MM.YYYY HH:mm'),
-      })} ${tick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
-    })
+    // const embed = createEmbed({
+    //   title: i18next.t('systemInfo.title', { systemName: parsedData.systemName }),
+    //   description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${DIVIDER}`,
+    // }).setFooter({
+    //   text: `${i18next.t('systemInfo.lastUpdate', {
+    //     time: parsedData.lastUpdate.tz(localTimeZone).format('DD.MM.YYYY HH:mm'),
+    //   })} ${tick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
+    // })
 
-    parsedData.systemData.forEach((faction) => {
-      embed.addField(`${faction.influence}% - ${faction.name}`, `${getStates(faction)}`, false)
-    })
+    // parsedData.systemData.forEach((faction) => {
+    //   embed.addField(`${faction.influence}% - ${faction.name}`, `${getStates(faction)}`, false)
+    // })
 
-    await interaction.editReply({
-      embeds: [embed],
-    })
+    // await interaction.editReply({
+    //   embeds: [embed],
+    // })
   }
 )

@@ -1,10 +1,8 @@
 import i18next from 'i18next'
-import Keyv from 'keyv'
 import enLocale from '../../locales/en.json'
 import skLocale from '../../locales/sk.json'
-import { CacheNames, Languages } from '../constants'
-import Preferences, { PreferencesType } from '../schemas/Preferences'
-import logger from './logger'
+import { Languages } from '../constants'
+import { Prisma } from './prismaClient'
 
 export const initTranslations = async () => {
   await i18next.init({
@@ -18,19 +16,11 @@ export const initTranslations = async () => {
   })
 }
 
-export const changeLanguage = async (guildId: string | null, cache: Keyv) => {
+export const changeLanguage = async (guildId: string | null) => {
   let botLanguage = Languages.english
   if (guildId) {
-    const preferences = (await cache.get(CacheNames.guildPreferences)) as {
-      [guildId: string]: PreferencesType
-    }
-    if (preferences[guildId] === undefined) {
-      logger.info(`No cached preferences found for guild ${guildId}`)
-      const guildPreferences = await Preferences.findOne({ guildId })
-      botLanguage = guildPreferences?.language || Languages.english
-    } else {
-      botLanguage = preferences[guildId].language
-    }
+    const preferences = await Prisma.preferences.findFirst({ where: { guildId } })
+    botLanguage = preferences?.language || Languages.english
   }
 
   if (botLanguage !== i18next.language) {
