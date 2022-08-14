@@ -1,22 +1,26 @@
 import { CacheType, CommandInteraction } from 'discord.js'
 import i18next from 'i18next'
-import User from '../../schemas/User'
+import { encrypt, Prisma } from '../../utils'
 
 export const setupProfileHandler = async (interaction: CommandInteraction<CacheType>) => {
   const cmdrName = interaction.options.getString('name')!
-  const edsmApiKey = interaction.options.getString('edsm_api_key') || null
+  const edsmApiKeyRaw = interaction.options.getString('edsm_api_key') || null
+  const edsmApiKey = edsmApiKeyRaw ? encrypt(edsmApiKeyRaw) : null
 
-  const foundUser = await User.findOne({ userId: interaction.user.id })
-  if (foundUser) {
-    foundUser.cmdrName = cmdrName
-    foundUser.edsmApiKey = edsmApiKey
-    await foundUser.save()
-  } else {
-    await User.create({
+  await Prisma.user.upsert({
+    where: {
+      userId: interaction.user.id,
+    },
+    create: {
       userId: interaction.user.id,
       cmdrName,
       edsmApiKey,
-    })
-  }
+    },
+    update: {
+      cmdrName,
+      edsmApiKey,
+    },
+  })
+
   await interaction.editReply(i18next.t('setup.profile.saved'))
 }

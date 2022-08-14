@@ -2,7 +2,6 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import i18next from 'i18next'
 import { Command } from '../classes'
 import { CommandNames } from '../constants'
-import User from '../schemas/User'
 import {
   addCommasToNumber,
   createEmbed,
@@ -10,6 +9,7 @@ import {
   InaraProfile,
   inaraRequest,
   parseInaraRanks,
+  Prisma,
 } from '../utils'
 
 // TODO use image from CDN, or local image
@@ -25,7 +25,11 @@ export default new Command(
   async ({ interaction }) => {
     await interaction.deferReply()
 
-    const user = await User.findOne({ userId: interaction.user.id })
+    const user = await Prisma.user.findFirst({
+      where: {
+        userId: interaction.user.id,
+      },
+    })
     if (!user) {
       await interaction.editReply(i18next.t('commanderProfile.notFound'))
       return

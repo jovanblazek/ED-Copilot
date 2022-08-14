@@ -1,4 +1,5 @@
 import got from 'got'
+import { decrypt } from './encryption'
 import logger from './logger'
 
 type Ranks = {
@@ -90,7 +91,7 @@ export const fetchCommanderCredits = (commanderName: string, apiKey: string | nu
     return got(CREDITS_URL, {
       searchParams: {
         commanderName,
-        apiKey,
+        apiKey: decrypt(apiKey),
       },
     }).json<CreditsResponse>()
   } catch (error) {
