@@ -4,10 +4,14 @@ const { setTickTime } = require('../data/Tick')
 
 exports.tickDetector = (client) => {
 	const _client = client
-	const socket = io('http://tick.phelbore.com:31173')
+	const socket = io('https://tick.edcd.io/')
 
 	socket.on('connect', () => {
 		console.log('Connected to Tick Detector')
+	})
+
+	socket.on('connect_error', (error) => {
+		console.log('Tick Detector connection error', error)
 	})
 
 	socket.on('tick', (data) => {
