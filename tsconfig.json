@@ -1,10 +1,28 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "noImplicitAny": false,
-    "target": "ES2020",
-    "resolveJsonModule": true
+    "lib": [
+      "ESNext",
+    ],
+    "outDir": "build",
+    "removeComments": true,
+    "target": "ES6",
+    "resolveJsonModule": true,
+    // "baseUrl": "./src",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "paths": {}, // A series of entries which re-map imports to lookup locations relative to the baseUrl
+    "alwaysStrict": true,
+    "allowUnreachableCode": false,
+    "noImplicitAny": false, // TODO change in the future
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
   },
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "build"
+  ]
 }

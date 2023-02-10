@@ -1,5 +1,9 @@
-import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders'
-import { CacheType, CommandInteraction } from 'discord.js'
+import {
+  CacheType,
+  CommandInteraction,
+  SlashCommandBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
+} from 'discord.js'
 
 export type CommandParameters = {
   name: string

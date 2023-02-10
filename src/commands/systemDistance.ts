@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
+import { SlashCommandBuilder } from 'discord.js'
 import got from 'got'
 import { Command, SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
@@ -42,8 +42,12 @@ export default new Command(
   async ({ interaction }) => {
     await interaction.deferReply()
 
-    const system1 = interaction.options.getString('from')!
-    const system2 = interaction.options.getString('to')!
+    // FIXME
+    // @ts-ignore
+    const system1 = interaction.options.getString('from')! as string
+    // FIXME
+    // @ts-ignore
+    const system2 = interaction.options.getString('to')! as string
 
     const coords1 = await getSystemCoords(system1)
     const coords2 = await getSystemCoords(system2)

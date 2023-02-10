@@ -5,7 +5,6 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import got from 'got'
 import i18next from 'i18next'
-import { dayjsLanguage } from '../../config.json'
 import logger from '../utils/logger'
 
 dayjs.extend(utc)
@@ -17,13 +16,15 @@ type EliteBgsTickResponse = {
   time: string
 }
 
-void import(`dayjs/locale/${dayjsLanguage}`)
-  .then(() => {
-    dayjs.locale(dayjsLanguage)
-  })
-  .catch(() => {
-    logger.warn('Incorrect dayjs language specified in config.json. Falling back to default.')
-  })
+// FIXME
+// void import(`dayjs/locale/${dayjsLanguage}`)
+// .then(() => {
+//   dayjs.locale(dayjsLanguage)
+// })
+// .catch(() => {
+//   logger.warn('Incorrect dayjs language specified in config.json. Falling back to default.')
+// })
+dayjs.locale('en')
 
 // TODO refactor -  move to cache and add user set timezone
 export class Tick {

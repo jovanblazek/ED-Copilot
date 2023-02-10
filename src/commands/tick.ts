@@ -1,6 +1,5 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
 import { Dayjs } from 'dayjs'
-import { Client } from 'discord.js'
+import { Client, SlashCommandBuilder } from 'discord.js'
 import i18next from 'i18next'
 import { Tick, TickCommand, TickFetchError } from '../classes'
 import { CommandNames } from '../constants'

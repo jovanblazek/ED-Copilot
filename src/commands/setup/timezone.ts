@@ -9,7 +9,8 @@ dayjs.extend(timezonePlugin)
 dayjs.extend(advancedFormatPlugin)
 
 export const setupTimezoneHandler = async (interaction: CommandInteraction<CacheType>) => {
-  const timezone = interaction.options.getString('timezone')!
+  // @ts-ignore
+  const timezone = interaction.options.getString('timezone')! as string
 
   try {
     void useConfirmation({
@@ -18,9 +19,10 @@ export const setupTimezoneHandler = async (interaction: CommandInteraction<Cache
         embeds: [
           createEmbed({
             title: i18next.t('setup.timezone.confirm.title'),
-            description: i18next.t('setup.timezone.confirm.description', {
-              currentTime: dayjs().tz(timezone).format('YYYY-MM-DD HH:mm:ss'),
-            }),
+            description:
+              i18next.t('setup.timezone.confirm.description', {
+                currentTime: dayjs().tz(timezone).format('YYYY-MM-DD HH:mm:ss'),
+              }) || '', // FIXME remove this when i18next is fixed,
           }),
         ],
       },

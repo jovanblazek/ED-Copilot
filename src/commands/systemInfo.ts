@@ -1,5 +1,5 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
 import dayjs from 'dayjs'
+import { SlashCommandBuilder } from 'discord.js'
 import got from 'got'
 import { isEmpty } from 'lodash'
 import { Command, DataParseError, SystemNotFoundError } from '../classes'
@@ -75,7 +75,9 @@ export default new Command(
     ),
   async ({ interaction }) => {
     await interaction.deferReply()
-    const systemName = interaction.options.getString('system') || 'Sol'
+    // FIXME
+    // @ts-ignore
+    const systemName = (interaction.options.getString('system') as string) || 'Sol'
     throw new SystemNotFoundError(systemName) // TODO remove after tick command is implemented
     const systemNameWeb = encodeURIComponent(systemName)
 

@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
+import { SlashCommandBuilder } from 'discord.js'
 import i18next from 'i18next'
 import { Command } from '../classes'
 import { CommandNames } from '../constants'
@@ -68,7 +68,13 @@ export default new Command(
     embed.setThumbnail(inaraProfile?.avatarImageURL || FALLBACK_CMDR_AVATAR_URL)
     embed.addFields(rankEmbedFields)
     if (cmdrCredits) {
-      embed.addField('Balance', `${addCommasToNumber(cmdrCredits.credits[0].balance)} Cr`, true)
+      embed.addFields([
+        {
+          name: 'Balance',
+          value: `${addCommasToNumber(cmdrCredits.credits[0].balance)} Cr`,
+          inline: true,
+        },
+      ])
     } else {
       embed.setFooter(i18next.t('commanderProfile.missingEdsmKey'))
     }

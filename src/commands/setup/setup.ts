@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
+import { SlashCommandBuilder } from 'discord.js'
 import i18next from 'i18next'
 import { Command } from '../../classes'
 import { CommandNames, Languages, SetupSubcommands } from '../../constants'
@@ -37,7 +37,7 @@ export default new Command(
             .setName('language')
             .setDescription('Language')
             .setRequired(true)
-            .addChoices(Object.entries(Languages))
+            .addChoices(...Object.entries(Languages).map(([key, value]) => ({ name: key, value })))
         )
     )
     .addSubcommand((subcommand) =>
@@ -61,13 +61,14 @@ export default new Command(
     ),
   async ({ interaction }) => {
     await interaction.deferReply()
+    // @ts-ignore
     const subcommand = interaction.options.getSubcommand()
     if (subcommand === SetupSubcommands.profile) {
       await setupProfileHandler(interaction)
       return
     }
 
-    if (!interaction.memberPermissions?.has('ADMINISTRATOR')) {
+    if (!interaction.memberPermissions?.has('Administrator')) {
       await interaction.reply({
         content: i18next.t('error.adminOnly'),
         ephemeral: true,

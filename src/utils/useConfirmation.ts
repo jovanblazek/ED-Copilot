@@ -1,10 +1,12 @@
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
   ButtonInteraction,
+  ButtonStyle,
   CacheType,
   CommandInteraction,
-  Message,
-  MessageActionRow,
-  MessageButton,
+  ComponentType,
+  MessageActionRowComponentBuilder,
   WebhookEditMessageOptions,
 } from 'discord.js'
 import i18next from 'i18next'
@@ -16,9 +18,9 @@ const ButtonNames = {
 }
 
 const createConfirmationButtons = () =>
-  new MessageActionRow().addComponents(
-    new MessageButton().setCustomId(ButtonNames.YES).setLabel('✔').setStyle('SUCCESS'),
-    new MessageButton().setCustomId(ButtonNames.NO).setLabel('✘').setStyle('DANGER')
+  new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+    new ButtonBuilder().setCustomId(ButtonNames.YES).setLabel('✔').setStyle(ButtonStyle.Success),
+    new ButtonBuilder().setCustomId(ButtonNames.NO).setLabel('✘').setStyle(ButtonStyle.Danger)
   )
 
 interface IUseConfirmation {
@@ -34,13 +36,13 @@ export const useConfirmation = async ({
   onConfirm,
   onCancel,
 }: IUseConfirmation) => {
-  const reply = (await interaction.editReply({
+  const reply = await interaction.editReply({
     ...confirmation,
     components: [createConfirmationButtons()],
-  })) as Message
+  })
 
   const collector = reply.createMessageComponentCollector({
-    componentType: 'BUTTON',
+    componentType: ComponentType.Button,
     time: BUTTON_INTERACTION_TIME,
   })
 

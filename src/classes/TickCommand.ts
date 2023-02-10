@@ -1,5 +1,4 @@
-import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders'
-import { Client } from 'discord.js'
+import { Client, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from 'discord.js'
 import { Command, CommandCallbackArgs, CommandParameters } from './Command'
 
 export class TickCommand extends Command {

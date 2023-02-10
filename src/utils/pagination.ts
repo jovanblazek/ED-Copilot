@@ -1,10 +1,13 @@
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
   ButtonInteraction,
+  ButtonStyle,
   CacheType,
   CommandInteraction,
+  ComponentType,
   Message,
-  MessageActionRow,
-  MessageButton,
+  MessageActionRowComponentBuilder,
 } from 'discord.js'
 import i18next from 'i18next'
 import { PAGINATION_COLLECTION_TIME, PaginationButtonNames } from '../constants'
@@ -31,7 +34,7 @@ export const usePagination = ({
 }: IUsePagination) => {
   let activePageIndex = 0
   const collector = reply.createMessageComponentCollector({
-    componentType: 'BUTTON',
+    componentType: ComponentType.Button,
     time,
   })
   collector.on('collect', async (buttonInteraction) => {
@@ -68,15 +71,15 @@ export const usePagination = ({
 }
 
 export const createPaginationButtons = (activePage: number, pagesLength: number) =>
-  new MessageActionRow().addComponents(
-    new MessageButton()
+  new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+    new ButtonBuilder()
       .setCustomId(PaginationButtonNames.LEFT)
       .setLabel('◀')
-      .setStyle('PRIMARY')
+      .setStyle(ButtonStyle.Primary)
       .setDisabled(activePage === 0),
-    new MessageButton()
+    new ButtonBuilder()
       .setCustomId(PaginationButtonNames.RIGHT)
       .setLabel('▶')
-      .setStyle('PRIMARY')
+      .setStyle(ButtonStyle.Primary)
       .setDisabled(activePage === pagesLength - 1)
   )

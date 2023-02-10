@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js'
+import { EmbedBuilder } from 'discord.js'
 import { EMBED_COLOR } from '../constants'
 
 interface ICreateEmbed {
@@ -7,7 +7,7 @@ interface ICreateEmbed {
 }
 
 export const createEmbed = ({ title, description = '' }: ICreateEmbed) =>
-  new MessageEmbed().setColor(EMBED_COLOR).setTitle(title).setDescription(description)
+  new EmbedBuilder().setColor(EMBED_COLOR).setTitle(title).setDescription(description)
 
 // TODO upload image to CDN
 // .setAuthor({

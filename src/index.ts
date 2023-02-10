@@ -1,11 +1,13 @@
-import { Client, Intents } from 'discord.js'
+import { Client, GatewayIntentBits } from 'discord.js'
 import { CommandHandlers } from './commands'
 import { changeLanguage, errorHandler, initTranslations, onGuildJoin, onGuildLeave } from './utils'
 import logger from './utils/logger'
 import initTickDetector from './utils/tickDetector'
 import './utils/environment'
 
-const BotClient = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
+const BotClient = new Client({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+})
 
 BotClient.once('ready', async () => {
   await initTranslations()

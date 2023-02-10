@@ -1,5 +1,11 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
-import { Message, MessageActionRow, MessageButton } from 'discord.js'
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ComponentType,
+  MessageActionRowComponentBuilder,
+  SlashCommandBuilder,
+} from 'discord.js'
 import i18next from 'i18next'
 import { Command } from '../classes'
 import { CommandNames } from '../constants'
@@ -15,21 +21,23 @@ export default new Command(
       option.setName('number').setDescription('The number to ping').setRequired(true)
     ),
   async ({ interaction }) => {
-    const row = new MessageActionRow().addComponents(
-      new MessageButton().setCustomId('left').setLabel('Left').setStyle('PRIMARY'),
-      new MessageButton().setCustomId('right').setLabel('Right').setStyle('PRIMARY')
+    const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+      new ButtonBuilder().setCustomId('left').setLabel('Left').setStyle(ButtonStyle.Primary),
+      new ButtonBuilder().setCustomId('right').setLabel('Right').setStyle(ButtonStyle.Primary)
     )
 
-    const number = interaction.options.getNumber('number') || 0
+    // FIXME
+    // @ts-ignore
+    const number = (interaction.options.getNumber('number') as number) || 0
 
-    const reply = (await interaction.reply({
+    const reply = await interaction.reply({
       content: `Pong dude! ${number} ${i18next.t('ping.response')}`,
       components: [row],
       fetchReply: true,
-    })) as Message
+    })
 
     const collector = reply.createMessageComponentCollector({
-      componentType: 'BUTTON',
+      componentType: ComponentType.Button,
       time: 10000, // 10 seconds
     })
     collector.on('collect', async (buttonInteraction) => {
