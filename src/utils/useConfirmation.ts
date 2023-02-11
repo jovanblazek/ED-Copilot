@@ -4,12 +4,13 @@ import {
   ButtonInteraction,
   ButtonStyle,
   CacheType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   ComponentType,
   MessageActionRowComponentBuilder,
   WebhookEditMessageOptions,
 } from 'discord.js'
-import i18next from 'i18next'
+import L from '../i18n/i18n-node'
+import { Locales } from '../i18n/i18n-types'
 
 const BUTTON_INTERACTION_TIME = 20000
 const ButtonNames = {
@@ -23,8 +24,9 @@ const createConfirmationButtons = () =>
     new ButtonBuilder().setCustomId(ButtonNames.NO).setLabel('✘').setStyle(ButtonStyle.Danger)
   )
 
-interface IUseConfirmation {
-  interaction: CommandInteraction<CacheType>
+interface UseConfirmationProps {
+  interaction: ChatInputCommandInteraction<CacheType>
+  locale: Locales
   confirmation: WebhookEditMessageOptions
   onConfirm: (buttonInteraction: ButtonInteraction<CacheType>) => Promise<void>
   onCancel: (buttonInteraction: ButtonInteraction<CacheType>) => Promise<void>
@@ -32,10 +34,11 @@ interface IUseConfirmation {
 
 export const useConfirmation = async ({
   interaction,
+  locale,
   confirmation,
   onConfirm,
   onCancel,
-}: IUseConfirmation) => {
+}: UseConfirmationProps) => {
   const reply = await interaction.editReply({
     ...confirmation,
     components: [createConfirmationButtons()],
@@ -55,7 +58,7 @@ export const useConfirmation = async ({
       }
     } else {
       await buttonInteraction.reply({
-        content: i18next.t('error.buttonsDisabled'),
+        content: L[locale].error.buttonsDisabled(),
         ephemeral: true,
       })
     }

@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from 'discord.js'
-import i18next from 'i18next'
 import { chunk } from 'lodash'
+import { SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
+import L from '../i18n/i18n-node'
 import {
   createPaginationButtons,
   generateInaraEmbed,
@@ -22,7 +23,7 @@ const MaterialTrader: Command = {
     .addStringOption((option) =>
       option.setName('system').setDescription('Your location').setRequired(true)
     ),
-  handler: async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
     const systemName = interaction.options.getString('system') || 'Sol'
     const systemNameWeb = encodeURIComponent(systemName)
@@ -30,10 +31,7 @@ const MaterialTrader: Command = {
     const parsedData = await scrapeInara(url, CELLS_PER_ROW)
 
     if (parsedData.length === 0) {
-      await interaction.editReply({
-        content: i18next.t('error.systemNotFound', { systemName }),
-      })
-      return
+      throw new SystemNotFoundError({ locale, systemName })
     }
 
     const chunks: ScrapedInaraData[][] = chunk(parsedData, ROWS_PER_PAGE)
@@ -41,7 +39,7 @@ const MaterialTrader: Command = {
     const pagesLength = pages.length
 
     await interaction.editReply({
-      embeds: [generateInaraEmbed(url, pages[0], 'materialTrader.title')],
+      embeds: [generateInaraEmbed(url, pages[0], L[locale].materialTrader.title())],
       components: [createPaginationButtons(0, pagesLength)],
     })
 
@@ -51,7 +49,9 @@ const MaterialTrader: Command = {
       paginationlenght: pagesLength,
       onPageChange: async (buttonInteraction, activePageIndex) => {
         await buttonInteraction.update({
-          embeds: [generateInaraEmbed(url, pages[activePageIndex], 'materialTrader.title')],
+          embeds: [
+            generateInaraEmbed(url, pages[activePageIndex], L[locale].materialTrader.title()),
+          ],
           components: [createPaginationButtons(activePageIndex, pagesLength)],
         })
       },

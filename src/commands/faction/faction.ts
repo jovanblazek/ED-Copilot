@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js'
-import i18next from 'i18next'
 import { CommandNames, FactionSubcommands } from '../../constants'
+import L from '../../i18n/i18n-node'
 import { Command } from '../types'
 // import { factionSystemsHandler } from './systems'
 
@@ -23,7 +23,7 @@ const Faction: Command = {
         .setName(FactionSubcommands.stations)
         .setDescription('Get information about stations of your faction')
     ),
-  handler: async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
     const { guildId } = interaction
     if (!guildId) {
@@ -33,7 +33,7 @@ const Faction: Command = {
     const faction = null
     if (!faction) {
       await interaction.editReply({
-        content: i18next.t('faction.notSetup'),
+        content: L[locale].faction.notSetup(),
       })
     }
 

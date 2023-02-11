@@ -1,5 +1,4 @@
 import got from 'got'
-import i18next from 'i18next'
 import { JSDOM } from 'jsdom'
 import { chunk } from 'lodash'
 import { DIVIDER, RankNames, Ranks } from '../constants'
@@ -102,7 +101,7 @@ export const scrapeInara = async (url: string, cellsPerRow: number) => {
 
 export const generateInaraEmbed = (url: string, data: ScrapedInaraData[], title: string) => {
   const embed = createEmbed({
-    title: i18next.t(title),
+    title,
     description: `[INARA](${url})\n${DIVIDER}`,
   })
 

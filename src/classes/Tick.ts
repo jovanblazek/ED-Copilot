@@ -4,7 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import got from 'got'
-import i18next from 'i18next'
+import L from '../i18n/i18n-node'
 import logger from '../utils/logger'
 
 dayjs.extend(utc)
@@ -89,7 +89,8 @@ export class Tick {
   differenceFrom(date?: Dayjs): string {
     const tickTime = this.getTicktime()
     if (!tickTime) {
-      return i18next.t('error.timeDifferenceError')
+      // TODO add locale
+      return L.en.error.timeDifferenceError()
     }
 
     if (date) {

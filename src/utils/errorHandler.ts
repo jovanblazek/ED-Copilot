@@ -1,6 +1,6 @@
 import { CacheType, CommandInteraction } from 'discord.js'
-import i18next from 'i18next'
 import { DataParseError, SystemNotFoundError, TickFetchError } from '../classes'
+import L from '../i18n/i18n-node'
 import logger from './logger'
 
 const replyToError = async (interaction: CommandInteraction<CacheType>, msgContent: string) => {
@@ -25,6 +25,6 @@ export const errorHandler = async (
     await replyToError(interaction, error.message)
   } else {
     logger.error(`Error while handling command ${commandName}`, error)
-    await replyToError(interaction, i18next.t('error.unknown'))
+    await replyToError(interaction, L.en.error.unknown())
   }
 }

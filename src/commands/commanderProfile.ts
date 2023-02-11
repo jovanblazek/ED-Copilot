@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js'
-import i18next from 'i18next'
 import { CommandNames } from '../constants'
+import L from '../i18n/i18n-node'
 import {
   addCommasToNumber,
   createEmbed,
@@ -19,7 +19,7 @@ const CommanderProfile: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.commanderProfile)
     .setDescription('Get your commander profile'),
-  handler: async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
 
     const user = await Prisma.user.findFirst({
@@ -29,7 +29,7 @@ const CommanderProfile: Command = {
     })
     if (!user) {
       await interaction.editReply({
-        content: i18next.t('commanderProfile.notFound'),
+        content: L[locale].commanderProfile.notFound(),
       })
       return
     }
@@ -45,13 +45,13 @@ const CommanderProfile: Command = {
 
     if (!inaraResponse || inaraResponse.header.eventStatus !== 200) {
       await interaction.editReply({
-        content: i18next.t('error.general'),
+        content: L[locale].error.general(),
       })
       return
     }
     if (inaraResponse.events[0].eventStatus === 204) {
       await interaction.editReply({
-        content: i18next.t('commanderProfile.notFound'),
+        content: L[locale].commanderProfile.notFound(),
       })
       return
     }
@@ -80,7 +80,7 @@ const CommanderProfile: Command = {
       ])
     } else {
       embed.setFooter({
-        text: i18next.t('commanderProfile.missingEdsmKey'),
+        text: L[locale].commanderProfile.missingEdsmKey(),
       })
     }
     // TODO rework this after adding timezone to DB

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js'
-import i18next from 'i18next'
 import { CommandNames, Languages, SetupSubcommands } from '../../constants'
+import L from '../../i18n/i18n-node'
 import { Command } from '../types'
 import { setupFactionHandler } from './faction'
 import { setupLanguagenHandler } from './language'
@@ -57,7 +57,7 @@ const Setup: Command = {
           option.setName('edsm_api_key').setDescription('EDSM API key').setRequired(false)
         )
     ),
-  handler: async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
     const subcommand = interaction.options.getSubcommand()
     if (subcommand === SetupSubcommands.profile) {
@@ -67,7 +67,7 @@ const Setup: Command = {
 
     if (!interaction.memberPermissions?.has('Administrator')) {
       await interaction.reply({
-        content: i18next.t('error.adminOnly'),
+        content: L[locale].error.adminOnly(),
         ephemeral: true,
       })
       return

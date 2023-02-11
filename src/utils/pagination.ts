@@ -4,16 +4,18 @@ import {
   ButtonInteraction,
   ButtonStyle,
   CacheType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   ComponentType,
   Message,
   MessageActionRowComponentBuilder,
 } from 'discord.js'
-import i18next from 'i18next'
 import { PAGINATION_COLLECTION_TIME, PaginationButtonNames } from '../constants'
+import L from '../i18n/i18n-node'
+import { Locales } from '../i18n/i18n-types'
 
-interface IUsePagination {
-  interaction: CommandInteraction<CacheType>
+interface UsePaginationProps {
+  interaction: ChatInputCommandInteraction<CacheType>
+  locale: Locales
   reply: Message
   paginationlenght: number
   time?: number
@@ -26,12 +28,13 @@ interface IUsePagination {
 
 export const usePagination = ({
   interaction,
+  locale,
   reply,
   paginationlenght,
   time = PAGINATION_COLLECTION_TIME,
   onPageChange,
   onEnd,
-}: IUsePagination) => {
+}: UsePaginationProps) => {
   let activePageIndex = 0
   const collector = reply.createMessageComponentCollector({
     componentType: ComponentType.Button,
@@ -50,7 +53,7 @@ export const usePagination = ({
       await onPageChange(buttonInteraction, activePageIndex)
     } else {
       await buttonInteraction.reply({
-        content: i18next.t('error.buttonsDisabled'),
+        content: L[locale].error.buttonsDisabled(),
         ephemeral: true,
       })
     }

@@ -1,4 +1,4 @@
-import { CacheType, CommandInteraction } from 'discord.js'
+import { CacheType, ChatInputCommandInteraction } from 'discord.js'
 import got from 'got'
 import { Tick, TickFetchError } from '../../classes'
 
@@ -55,7 +55,7 @@ export const factionSystemsHandler = async ({
   interaction,
   faction,
 }: {
-  interaction: CommandInteraction<CacheType>
+  interaction: ChatInputCommandInteraction<CacheType>
   tick: Tick
   faction: unknown
 }) => {
