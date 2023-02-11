@@ -1,2 +1,2 @@
-export * from './Error'
+export * from './Errors'
 export * from './Tick'

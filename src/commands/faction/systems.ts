@@ -67,7 +67,8 @@ export const factionSystemsHandler = async ({
 
   const tickTime = null
   if (!tickTime) {
-    throw new TickFetchError()
+    // TODO add locale
+    throw new TickFetchError({ locale: 'en' })
   }
 
   // parsedData.forEach((data) => {

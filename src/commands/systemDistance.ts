@@ -37,7 +37,7 @@ const SystemDistance: Command = {
     .addStringOption((option) =>
       option.setName('to').setDescription('System #2').setRequired(true)
     ),
-  handler: async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
 
     const system1 = interaction.options.getString('from')!
@@ -47,7 +47,7 @@ const SystemDistance: Command = {
     const coords2 = await getSystemCoords(system2)
 
     if (!coords1 || !coords2) {
-      throw new SystemNotFoundError(!coords1 ? system1 : system2)
+      throw new SystemNotFoundError({ locale, systemName: !coords1 ? system1 : system2 })
     }
 
     const distance = Math.sqrt(

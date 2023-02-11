@@ -71,23 +71,23 @@ const SystemInfo: Command = {
     .addStringOption((option) =>
       option.setName('system').setDescription('System to lookup').setRequired(true)
     ),
-  handler: async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
 
     const systemName = interaction.options.getString('system') || 'Sol'
-    throw new SystemNotFoundError(systemName) // TODO remove after tick command is implemented
+    throw new SystemNotFoundError({ locale, systemName }) // TODO remove after tick command is implemented
     const systemNameWeb = encodeURIComponent(systemName)
 
     const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`
 
     const fetchedData: EdsmResponse = await got(url).json()
     if (isEmpty(fetchedData)) {
-      throw new SystemNotFoundError(systemName)
+      throw new SystemNotFoundError({ locale, systemName })
     }
 
     const parsedData = parseSystemData(fetchedData)
     if (!parsedData) {
-      throw new DataParseError()
+      throw new DataParseError({ locale })
     }
 
     // const localTimeZone = tick.getLocalTimeZone()

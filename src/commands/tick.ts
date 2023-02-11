@@ -20,12 +20,12 @@ const TickCommand: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.tick)
     .setDescription('Gets latest tick time'),
-  handler: async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
 
     const tickTime = null
     if (!tickTime) {
-      throw new TickFetchError()
+      throw new TickFetchError({ locale })
     }
 
     // await interaction.editReply({
