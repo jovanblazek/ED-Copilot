@@ -31,7 +31,9 @@ export default new Command(
       },
     })
     if (!user) {
-      await interaction.editReply(i18next.t('commanderProfile.notFound'))
+      await interaction.editReply({
+        content: i18next.t('commanderProfile.notFound'),
+      })
       return
     }
 
@@ -45,11 +47,15 @@ export default new Command(
     ])
 
     if (!inaraResponse || inaraResponse.header.eventStatus !== 200) {
-      await interaction.editReply(i18next.t('error.general'))
+      await interaction.editReply({
+        content: i18next.t('error.general'),
+      })
       return
     }
     if (inaraResponse.events[0].eventStatus === 204) {
-      await interaction.editReply(i18next.t('commanderProfile.notFound'))
+      await interaction.editReply({
+        content: i18next.t('commanderProfile.notFound'),
+      })
       return
     }
     const inaraProfile = inaraResponse.events[0].eventData
@@ -76,7 +82,9 @@ export default new Command(
         },
       ])
     } else {
-      embed.setFooter(i18next.t('commanderProfile.missingEdsmKey'))
+      embed.setFooter({
+        text: i18next.t('commanderProfile.missingEdsmKey'),
+      })
     }
     // TODO rework this after adding timezone to DB
     // embed.setFooter(`Inara & EDSM - ${format(new Date(), 'yyyy-MM-dd HH:mm:ss')}`)

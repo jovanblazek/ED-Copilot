@@ -9,6 +9,8 @@ export enum ErrorNames {
 
 export class SystemNotFoundError extends Error {
   constructor(systemName: string) {
+    // FIXME: update internationalization framework
+    // @ts-ignore
     super(i18next.t('error.systemNotFound', { systemName }))
     this.name = ErrorNames.SystemNotFoundError
     Error.captureStackTrace(this, SystemNotFoundError)
@@ -17,6 +19,7 @@ export class SystemNotFoundError extends Error {
 
 export class TickFetchError extends Error {
   constructor(message?: string) {
+    // @ts-ignore
     super(message || i18next.t('error.tickFetchError'))
     this.name = ErrorNames.TickFetchError
     Error.captureStackTrace(this, TickFetchError)
@@ -25,6 +28,7 @@ export class TickFetchError extends Error {
 
 export class DataParseError extends Error {
   constructor(message?: string) {
+    // @ts-ignore
     super(message || i18next.t('error.dataParseError'))
     this.name = ErrorNames.DataParseError
     Error.captureStackTrace(this, DataParseError)

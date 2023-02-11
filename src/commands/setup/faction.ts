@@ -1,4 +1,4 @@
-import { CacheType, CommandInteraction } from 'discord.js'
+import { CacheType, ChatInputCommandInteraction } from 'discord.js'
 import got from 'got'
 import i18next from 'i18next'
 import { createEmbed, Prisma, useConfirmation } from '../../utils'
@@ -14,7 +14,7 @@ type EliteBgsResponse = {
   }[]
 }
 
-export const setupFactionHandler = async (interaction: CommandInteraction<CacheType>) => {
+export const setupFactionHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
   const { guildId } = interaction
   if (!guildId) {
     logger.warn('Discord guild id not found while setting up faction.')
