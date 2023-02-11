@@ -1,5 +1,4 @@
 import { map, reduce } from 'lodash'
-import { CommandCallbackArgs } from '../classes'
 import commanderProfile from './commanderProfile'
 import faction from './faction'
 import interstellarFactors from './interstellarFactors'
@@ -10,9 +9,10 @@ import systemDistance from './systemDistance'
 import systemInfo from './systemInfo'
 import techBroker from './techBroker'
 import tick from './tick'
+import { CommandHandlerArgs } from './types'
 
 type CommandHandlersType = {
-  [key: string]: (args: CommandCallbackArgs) => Promise<void>
+  [key: string]: (args: CommandHandlerArgs) => Promise<void>
 }
 
 export const Commands = {
@@ -34,7 +34,7 @@ export const CommandHandlers: CommandHandlersType = reduce(
   Commands,
   (commandHandlers, command) => ({
     ...commandHandlers,
-    [command.params.name]: command.callback,
+    [command.builder.name]: command.handler,
   }),
   {}
 )

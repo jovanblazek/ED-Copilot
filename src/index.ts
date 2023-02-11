@@ -1,6 +1,8 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 import { CommandHandlers } from './commands'
-import { changeLanguage, errorHandler, initTranslations, onGuildJoin, onGuildLeave } from './utils'
+import { Locales } from './i18n/i18n-types'
+import { baseLocale } from './i18n/i18n-util'
+import { errorHandler, initTranslations, onGuildJoin, onGuildLeave, Prisma } from './utils'
 import logger from './utils/logger'
 import initTickDetector from './utils/tickDetector'
 import './utils/environment'
@@ -25,10 +27,15 @@ BotClient.on('interactionCreate', async (interaction) => {
   const handler = CommandHandlers[commandName]
 
   try {
-    if (handler) {
-      await changeLanguage(interaction.guildId)
+    const guildPreferences = await Prisma.preferences.findFirst({
+      where: { guildId: interaction.guildId! },
+    })
+    if (handler && guildPreferences) {
       await handler({
         interaction,
+        context: {
+          locale: (guildPreferences?.language as Locales) || baseLocale,
+        },
       })
     }
   } catch (error) {

@@ -2,8 +2,9 @@ import dayjs from 'dayjs'
 import { SlashCommandBuilder } from 'discord.js'
 import got from 'got'
 import { isEmpty } from 'lodash'
-import { Command, DataParseError, SystemNotFoundError } from '../classes'
+import { DataParseError, SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
+import { Command } from './types'
 
 type Faction = {
   name: string
@@ -63,17 +64,14 @@ const getStates = (faction: Omit<Faction, 'lastUpdate'>) => {
   return output
 }
 
-export default new Command(
-  {
-    name: CommandNames.systemInfo,
-  },
-  new SlashCommandBuilder()
+const SystemInfo: Command = {
+  builder: new SlashCommandBuilder()
     .setName(CommandNames.systemInfo)
     .setDescription('Get system BGS info')
     .addStringOption((option) =>
       option.setName('system').setDescription('System to lookup').setRequired(true)
     ),
-  async ({ interaction }) => {
+  handler: async ({ interaction }) => {
     await interaction.deferReply()
 
     const systemName = interaction.options.getString('system') || 'Sol'
@@ -110,5 +108,7 @@ export default new Command(
     // await interaction.editReply({
     //   embeds: [embed],
     // })
-  }
-)
+  },
+}
+
+export default SystemInfo

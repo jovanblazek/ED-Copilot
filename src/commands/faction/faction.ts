@@ -1,14 +1,11 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
+import { SlashCommandBuilder } from 'discord.js'
 import i18next from 'i18next'
-import { Command } from '../../classes'
 import { CommandNames, FactionSubcommands } from '../../constants'
+import { Command } from '../types'
 // import { factionSystemsHandler } from './systems'
 
-export default new Command(
-  {
-    name: CommandNames.faction,
-  },
-  new SlashCommandBuilder()
+const Faction: Command = {
+  builder: new SlashCommandBuilder()
     .setName(CommandNames.faction)
     .setDescription('Get information about your faction')
     .addSubcommand((subcommand) =>
@@ -26,7 +23,7 @@ export default new Command(
         .setName(FactionSubcommands.stations)
         .setDescription('Get information about stations of your faction')
     ),
-  async ({ interaction }) => {
+  handler: async ({ interaction }) => {
     await interaction.deferReply()
     const { guildId } = interaction
     if (!guildId) {
@@ -44,5 +41,7 @@ export default new Command(
     // if (subcommand === FactionSubcommands.systems) {
     //   await factionSystemsHandler({ interaction })
     // }
-  }
-)
+  },
+}
+
+export default Faction

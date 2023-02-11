@@ -1,17 +1,14 @@
 import { SlashCommandBuilder } from 'discord.js'
 import i18next from 'i18next'
-import { Command } from '../../classes'
 import { CommandNames, Languages, SetupSubcommands } from '../../constants'
+import { Command } from '../types'
 import { setupFactionHandler } from './faction'
 import { setupLanguagenHandler } from './language'
 import { setupProfileHandler } from './profile'
 import { setupTimezoneHandler } from './timezone'
 
-export default new Command(
-  {
-    name: CommandNames.setup,
-  },
-  new SlashCommandBuilder()
+const Setup: Command = {
+  builder: new SlashCommandBuilder()
     .setName(CommandNames.setup)
     .setDescription('Tweak the bot to your liking')
     .addSubcommand((subcommand) =>
@@ -60,7 +57,7 @@ export default new Command(
           option.setName('edsm_api_key').setDescription('EDSM API key').setRequired(false)
         )
     ),
-  async ({ interaction }) => {
+  handler: async ({ interaction }) => {
     await interaction.deferReply()
     const subcommand = interaction.options.getSubcommand()
     if (subcommand === SetupSubcommands.profile) {
@@ -86,5 +83,7 @@ export default new Command(
     if (subcommand === SetupSubcommands.timezone) {
       await setupTimezoneHandler(interaction)
     }
-  }
-)
+  },
+}
+
+export default Setup

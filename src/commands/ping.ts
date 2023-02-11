@@ -6,21 +6,18 @@ import {
   MessageActionRowComponentBuilder,
   SlashCommandBuilder,
 } from 'discord.js'
-import i18next from 'i18next'
-import { Command } from '../classes'
 import { CommandNames } from '../constants'
+import L from '../i18n/i18n-node'
+import { Command } from './types'
 
-export default new Command(
-  {
-    name: CommandNames.ping,
-  },
-  new SlashCommandBuilder()
+const Ping: Command = {
+  builder: new SlashCommandBuilder()
     .setName(CommandNames.ping)
     .setDescription('Replies with pong!')
     .addNumberOption((option) =>
       option.setName('number').setDescription('The number to ping').setRequired(true)
     ),
-  async ({ interaction }) => {
+  handler: async ({ interaction, context: { locale } }) => {
     const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
       new ButtonBuilder().setCustomId('left').setLabel('Left').setStyle(ButtonStyle.Primary),
       new ButtonBuilder().setCustomId('right').setLabel('Right').setStyle(ButtonStyle.Primary)
@@ -29,7 +26,7 @@ export default new Command(
     const number = interaction.options.getNumber('number') || 0
 
     const reply = await interaction.reply({
-      content: `Pong dude! ${number} ${i18next.t('ping.response')}`,
+      content: `Pong dude! ${number} ${L[locale].ping.response()}`,
       components: [row],
       fetchReply: true,
     })
@@ -60,5 +57,7 @@ export default new Command(
         components: [],
       })
     })
-  }
-)
+  },
+}
+
+export default Ping

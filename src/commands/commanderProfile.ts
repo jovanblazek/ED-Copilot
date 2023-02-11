@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js'
 import i18next from 'i18next'
-import { Command } from '../classes'
 import { CommandNames } from '../constants'
 import {
   addCommasToNumber,
@@ -11,18 +10,16 @@ import {
   parseInaraRanks,
   Prisma,
 } from '../utils'
+import { Command } from './types'
 
 // TODO use image from CDN, or local image
 const FALLBACK_CMDR_AVATAR_URL = 'https://inara.cz/data/users/131/131443x1830.jpg'
 
-export default new Command(
-  {
-    name: CommandNames.commanderProfile,
-  },
-  new SlashCommandBuilder()
+const CommanderProfile: Command = {
+  builder: new SlashCommandBuilder()
     .setName(CommandNames.commanderProfile)
     .setDescription('Get your commander profile'),
-  async ({ interaction }) => {
+  handler: async ({ interaction }) => {
     await interaction.deferReply()
 
     const user = await Prisma.user.findFirst({
@@ -91,5 +88,7 @@ export default new Command(
     await interaction.editReply({
       embeds: [embed],
     })
-  }
-)
+  },
+}
+
+export default CommanderProfile

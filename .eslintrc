@@ -9,6 +9,7 @@
     "arrow-body-style": ["error", "as-needed"],
     "import/extensions": "off",
     "no-restricted-syntax": "off",
+    "import/no-named-as-default": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {

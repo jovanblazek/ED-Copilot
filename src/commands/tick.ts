@@ -1,10 +1,10 @@
 import { Dayjs } from 'dayjs'
-import { Client, SlashCommandBuilder } from 'discord.js'
+import { SlashCommandBuilder } from 'discord.js'
 import i18next from 'i18next'
-import { Tick, TickCommand, TickFetchError } from '../classes'
+import { Tick, TickFetchError } from '../classes'
 import { CommandNames } from '../constants'
 import { createEmbed } from '../utils'
-import logger from '../utils/logger'
+import { Command } from './types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createTickEmbed = (tickTime: Dayjs, tick: Tick) =>
@@ -16,12 +16,11 @@ const createTickEmbed = (tickTime: Dayjs, tick: Tick) =>
       [${i18next.t('tick.history')}](https://elitebgs.app/tick)`,
   })
 
-export default new TickCommand(
-  {
-    name: CommandNames.tick,
-  },
-  new SlashCommandBuilder().setName(CommandNames.tick).setDescription('Gets latest tick time'),
-  async ({ interaction }) => {
+const TickCommand: Command = {
+  builder: new SlashCommandBuilder()
+    .setName(CommandNames.tick)
+    .setDescription('Gets latest tick time'),
+  handler: async ({ interaction }) => {
     await interaction.deferReply()
 
     const tickTime = null
@@ -33,20 +32,21 @@ export default new TickCommand(
     //   embeds: [createTickEmbed(tickTime)],
     // })
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/require-await, require-await
-  async (client: Client) => {
-    const tickTime = null
-    if (!tickTime) {
-      logger.error('Error while trying to report tick')
-      // return
-    }
+  // async (client: Client) => {
+  //   const tickTime = null
+  //   if (!tickTime) {
+  //     logger.error('Error while trying to report tick')
+  //     // return
+  //   }
 
-    // const channel = client.channels.cache.get(tickReportChannel) as TextChannel
-    // if (!channel) {
-    //   return
-    // }
-    // await channel.send({
-    //   embeds: [createTickEmbed(tickTime, tick)],
-    // })
-  }
-)
+  //   // const channel = client.channels.cache.get(tickReportChannel) as TextChannel
+  //   // if (!channel) {
+  //   //   return
+  //   // }
+  //   // await channel.send({
+  //   //   embeds: [createTickEmbed(tickTime, tick)],
+  //   // })
+  // }
+}
+
+export default TickCommand
