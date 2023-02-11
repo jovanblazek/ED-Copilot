@@ -1,16 +1,15 @@
 import dayjs from 'dayjs'
 import advancedFormatPlugin from 'dayjs/plugin/advancedFormat'
 import timezonePlugin from 'dayjs/plugin/timezone'
-import { CacheType, CommandInteraction } from 'discord.js'
+import { CacheType, ChatInputCommandInteraction } from 'discord.js'
 import i18next from 'i18next'
 import { createEmbed, Prisma, useConfirmation } from '../../utils'
 
 dayjs.extend(timezonePlugin)
 dayjs.extend(advancedFormatPlugin)
 
-export const setupTimezoneHandler = async (interaction: CommandInteraction<CacheType>) => {
-  // @ts-ignore
-  const timezone = interaction.options.getString('timezone')! as string
+export const setupTimezoneHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+  const timezone = interaction.options.getString('timezone') || 'UTC'
 
   try {
     void useConfirmation({
@@ -19,17 +18,17 @@ export const setupTimezoneHandler = async (interaction: CommandInteraction<Cache
         embeds: [
           createEmbed({
             title: i18next.t('setup.timezone.confirm.title'),
-            description:
-              i18next.t('setup.timezone.confirm.description', {
-                currentTime: dayjs().tz(timezone).format('YYYY-MM-DD HH:mm:ss'),
-              }) || '', // FIXME remove this when i18next is fixed,
+            description: i18next.t('setup.timezone.confirm.description', {
+              currentTime: dayjs().tz(timezone).format('YYYY-MM-DD HH:mm:ss'),
+            }),
           }),
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        await Prisma.preferences.update({
+        await Prisma.preferences.upsert({
           where: { guildId: interaction.guildId! },
-          data: { timezone },
+          create: { guildId: interaction.guildId!, timezone },
+          update: { timezone },
         })
 
         await buttonInteraction.update({

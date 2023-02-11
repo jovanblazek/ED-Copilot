@@ -17,7 +17,7 @@ BotClient.once('ready', async () => {
 })
 
 BotClient.on('interactionCreate', async (interaction) => {
-  if (!interaction.isCommand()) {
+  if (!interaction.isChatInputCommand()) {
     return
   }
 

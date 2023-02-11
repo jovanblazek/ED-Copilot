@@ -75,9 +75,8 @@ export default new Command(
     ),
   async ({ interaction }) => {
     await interaction.deferReply()
-    // FIXME
-    // @ts-ignore
-    const systemName = (interaction.options.getString('system') as string) || 'Sol'
+
+    const systemName = interaction.options.getString('system') || 'Sol'
     throw new SystemNotFoundError(systemName) // TODO remove after tick command is implemented
     const systemNameWeb = encodeURIComponent(systemName)
 

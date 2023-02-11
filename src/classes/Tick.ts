@@ -11,20 +11,11 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(relativeTime)
 dayjs.extend(localeData)
+dayjs.locale('en')
 
 type EliteBgsTickResponse = {
   time: string
 }
-
-// FIXME
-// void import(`dayjs/locale/${dayjsLanguage}`)
-// .then(() => {
-//   dayjs.locale(dayjsLanguage)
-// })
-// .catch(() => {
-//   logger.warn('Incorrect dayjs language specified in config.json. Falling back to default.')
-// })
-dayjs.locale('en')
 
 // TODO refactor -  move to cache and add user set timezone
 export class Tick {

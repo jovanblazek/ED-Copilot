@@ -107,10 +107,12 @@ export const generateInaraEmbed = (url: string, data: ScrapedInaraData[], title:
   })
 
   data.forEach(({ type, station, system, distanceLs, distanceLy }) => {
-    embed.addField(
-      `${type ? `${type} - ` : ''}${system}`,
-      `${station} - ${distanceLs}\n\`${distanceLy}\`\n`
-    )
+    embed.addFields([
+      {
+        name: `${type ? `${type} - ` : ''}${system}`,
+        value: `${station} - ${distanceLs}\n\`${distanceLy}\`\n`,
+      },
+    ])
   })
   return embed
 }

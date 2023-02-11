@@ -26,9 +26,7 @@ export default new Command(
       new ButtonBuilder().setCustomId('right').setLabel('Right').setStyle(ButtonStyle.Primary)
     )
 
-    // FIXME
-    // @ts-ignore
-    const number = (interaction.options.getNumber('number') as number) || 0
+    const number = interaction.options.getNumber('number') || 0
 
     const reply = await interaction.reply({
       content: `Pong dude! ${number} ${i18next.t('ping.response')}`,

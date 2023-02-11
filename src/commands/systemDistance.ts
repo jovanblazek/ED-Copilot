@@ -42,12 +42,8 @@ export default new Command(
   async ({ interaction }) => {
     await interaction.deferReply()
 
-    // FIXME
-    // @ts-ignore
-    const system1 = interaction.options.getString('from')! as string
-    // FIXME
-    // @ts-ignore
-    const system2 = interaction.options.getString('to')! as string
+    const system1 = interaction.options.getString('from')!
+    const system2 = interaction.options.getString('to')!
 
     const coords1 = await getSystemCoords(system1)
     const coords2 = await getSystemCoords(system2)

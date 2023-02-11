@@ -1,6 +1,6 @@
 import {
   CacheType,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   SlashCommandBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from 'discord.js'
@@ -10,7 +10,7 @@ export type CommandParameters = {
 }
 
 export type CommandCallbackArgs = {
-  interaction: CommandInteraction<CacheType>
+  interaction: ChatInputCommandInteraction<CacheType>
 }
 
 export class Command {

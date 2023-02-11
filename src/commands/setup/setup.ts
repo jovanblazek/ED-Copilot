@@ -48,6 +48,7 @@ export default new Command(
           option.setName('timezone').setDescription('Timezone name').setRequired(true)
         )
     )
+    // TODO move to /profile setup command and limit this command to admins only with setDefaultMemberPermissions
     .addSubcommand((subcommand) =>
       subcommand
         .setName(SetupSubcommands.profile)
@@ -61,7 +62,6 @@ export default new Command(
     ),
   async ({ interaction }) => {
     await interaction.deferReply()
-    // @ts-ignore
     const subcommand = interaction.options.getSubcommand()
     if (subcommand === SetupSubcommands.profile) {
       await setupProfileHandler(interaction)
