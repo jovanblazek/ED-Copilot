@@ -1,7 +1,7 @@
 import { Guild } from 'discord.js'
 import { Languages } from '../constants'
-import logger from './logger'
-import { Prisma } from './prismaClient'
+import logger from '../utils/logger'
+import { Prisma } from '../utils/prismaClient'
 
 export const onGuildJoin = async ({ id, name }: Guild) => {
   logger.info(`Joined guild ${name}, id: ${id}`)
