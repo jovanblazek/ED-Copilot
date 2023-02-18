@@ -13,10 +13,12 @@ export type CommandHandlerArgs = {
   }
 }
 
+export type CommandHandler = (args: CommandHandlerArgs) => Promise<void>
+
 export type Command = {
   builder:
     | SlashCommandBuilder
     | SlashCommandSubcommandsOnlyBuilder
     | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>
-  handler: (args: CommandHandlerArgs) => Promise<void>
+  handler: CommandHandler
 }

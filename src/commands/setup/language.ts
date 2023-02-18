@@ -1,21 +1,26 @@
-import { CacheType, ChatInputCommandInteraction } from 'discord.js'
-import i18next from 'i18next'
+import L from '../../i18n/i18n-node'
+import { baseLocale, isLocale } from '../../i18n/i18n-util'
 import { Prisma } from '../../utils'
+import { CommandHandler } from '../types'
 
-export const setupLanguagenHandler = async (
-  interaction: ChatInputCommandInteraction<CacheType>
-) => {
+export const setupLanguagenHandler: CommandHandler = async ({
+  interaction,
+  context: { locale },
+}) => {
   const { guildId } = interaction
   if (!guildId) {
     throw new Error('Guild ID not found in interaction')
   }
 
-  const language = interaction.options.getString('language') || 'en'
+  const newLocale = interaction.options.getString('language') || baseLocale
+  if (!isLocale(newLocale)) {
+    await interaction.editReply(L[locale].error.general())
+    return
+  }
   await Prisma.preferences.upsert({
     where: { guildId },
-    create: { guildId, language, timezone: 'UTC' },
-    update: { language },
+    create: { guildId, language: newLocale, timezone: 'UTC' },
+    update: { language: newLocale },
   })
-  await i18next.changeLanguage(language)
-  await interaction.editReply(i18next.t('setup.language.saved'))
+  await interaction.editReply(L[newLocale].setup.language.saved())
 }

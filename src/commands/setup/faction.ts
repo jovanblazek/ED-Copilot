@@ -1,8 +1,8 @@
-import { CacheType, ChatInputCommandInteraction } from 'discord.js'
 import got from 'got'
-import i18next from 'i18next'
+import L from '../../i18n/i18n-node'
 import { createEmbed, Prisma, useConfirmation } from '../../utils'
 import logger from '../../utils/logger'
+import { CommandHandler } from '../types'
 
 type EliteBgsResponse = {
   docs: {
@@ -14,7 +14,7 @@ type EliteBgsResponse = {
   }[]
 }
 
-export const setupFactionHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+export const setupFactionHandler: CommandHandler = async ({ interaction, context: { locale } }) => {
   const { guildId } = interaction
   if (!guildId) {
     logger.warn('Discord guild id not found while setting up faction.')
@@ -31,7 +31,7 @@ export const setupFactionHandler = async (interaction: ChatInputCommandInteracti
   const { docs } = await got(url).json<EliteBgsResponse>()
 
   if (!docs.length) {
-    await interaction.editReply(i18next.t('setup.faction.notFound'))
+    await interaction.editReply(L[locale].setup.faction.notFound())
     return
   }
 
@@ -46,11 +46,12 @@ export const setupFactionHandler = async (interaction: ChatInputCommandInteracti
   try {
     void useConfirmation({
       interaction,
+      locale,
       confirmation: {
         embeds: [
           createEmbed({
-            title: i18next.t('setup.faction.confirm.title'),
-            description: i18next.t('setup.faction.confirm.description', {
+            title: L[locale].setup.faction.confirm.title(),
+            description: L[locale].setup.faction.confirm.description({
               factionName,
               factionShorthand,
               allegiance,
@@ -67,20 +68,20 @@ export const setupFactionHandler = async (interaction: ChatInputCommandInteracti
         })
 
         await buttonInteraction.update({
-          content: i18next.t('setup.faction.saved'),
+          content: L[locale].setup.faction.saved(),
           embeds: [],
           components: [],
         })
       },
       onCancel: async (buttonInteraction) => {
         await buttonInteraction.update({
-          content: i18next.t('setup.faction.canceled'),
+          content: L[locale].setup.faction.canceled(),
           embeds: [],
           components: [],
         })
       },
     })
   } catch {
-    await interaction.editReply(i18next.t('setup.faction.notFound'))
+    await interaction.editReply(L[locale].setup.faction.notFound())
   }
 }

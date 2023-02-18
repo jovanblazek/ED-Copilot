@@ -1,24 +1,28 @@
 import dayjs from 'dayjs'
 import advancedFormatPlugin from 'dayjs/plugin/advancedFormat'
 import timezonePlugin from 'dayjs/plugin/timezone'
-import { CacheType, ChatInputCommandInteraction } from 'discord.js'
-import i18next from 'i18next'
+import L from '../../i18n/i18n-node'
 import { createEmbed, Prisma, useConfirmation } from '../../utils'
+import { CommandHandler } from '../types'
 
 dayjs.extend(timezonePlugin)
 dayjs.extend(advancedFormatPlugin)
 
-export const setupTimezoneHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+export const setupTimezoneHandler: CommandHandler = async ({
+  interaction,
+  context: { locale },
+}) => {
   const timezone = interaction.options.getString('timezone') || 'UTC'
 
   try {
     void useConfirmation({
       interaction,
+      locale,
       confirmation: {
         embeds: [
           createEmbed({
-            title: i18next.t('setup.timezone.confirm.title'),
-            description: i18next.t('setup.timezone.confirm.description', {
+            title: L[locale].setup.timezone.confirm.title(),
+            description: L[locale].setup.timezone.confirm.description({
               currentTime: dayjs().tz(timezone).format('YYYY-MM-DD HH:mm:ss'),
             }),
           }),
@@ -32,20 +36,20 @@ export const setupTimezoneHandler = async (interaction: ChatInputCommandInteract
         })
 
         await buttonInteraction.update({
-          content: i18next.t('setup.timezone.saved'),
+          content: L[locale].setup.timezone.saved(),
           embeds: [],
           components: [],
         })
       },
       onCancel: async (buttonInteraction) => {
         await buttonInteraction.update({
-          content: i18next.t('setup.timezone.canceled'),
+          content: L[locale].setup.timezone.canceled(),
           embeds: [],
           components: [],
         })
       },
     })
   } catch {
-    await interaction.editReply(i18next.t('setup.timezone.notFound'))
+    await interaction.editReply(L[locale].setup.timezone.notFound())
   }
 }

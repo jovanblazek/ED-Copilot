@@ -1,11 +1,17 @@
 import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames, Languages, SetupSubcommands } from '../../constants'
-import L from '../../i18n/i18n-node'
 import { Command } from '../types'
 import { setupFactionHandler } from './faction'
 import { setupLanguagenHandler } from './language'
 import { setupProfileHandler } from './profile'
 import { setupTimezoneHandler } from './timezone'
+
+const SubcommandHandlers = {
+  [SetupSubcommands.faction]: setupFactionHandler,
+  [SetupSubcommands.language]: setupLanguagenHandler,
+  [SetupSubcommands.profile]: setupProfileHandler,
+  [SetupSubcommands.timezone]: setupTimezoneHandler,
+}
 
 const Setup: Command = {
   builder: new SlashCommandBuilder()
@@ -57,32 +63,20 @@ const Setup: Command = {
           option.setName('edsm_api_key').setDescription('EDSM API key').setRequired(false)
         )
     ),
-  handler: async ({ interaction, context: { locale } }) => {
+  handler: async ({ interaction, context }) => {
     await interaction.deferReply()
     const subcommand = interaction.options.getSubcommand()
-    if (subcommand === SetupSubcommands.profile) {
-      await setupProfileHandler(interaction)
-      return
+    if (SubcommandHandlers[subcommand]) {
+      await SubcommandHandlers[subcommand]({ interaction, context })
     }
 
-    if (!interaction.memberPermissions?.has('Administrator')) {
-      await interaction.reply({
-        content: L[locale].error.adminOnly(),
-        ephemeral: true,
-      })
-      return
-    }
-
-    if (subcommand === SetupSubcommands.faction) {
-      await setupFactionHandler(interaction)
-      return
-    }
-    if (subcommand === SetupSubcommands.language) {
-      await setupLanguagenHandler(interaction)
-    }
-    if (subcommand === SetupSubcommands.timezone) {
-      await setupTimezoneHandler(interaction)
-    }
+    // if (!interaction.memberPermissions?.has('Administrator')) {
+    //   await interaction.reply({
+    //     content: L[locale].error.adminOnly(),
+    //     ephemeral: true,
+    //   })
+    //   return
+    // }
   },
 }
 

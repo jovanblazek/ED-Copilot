@@ -1,8 +1,8 @@
-import { CacheType, ChatInputCommandInteraction } from 'discord.js'
-import i18next from 'i18next'
+import L from '../../i18n/i18n-node'
 import { encrypt, Prisma } from '../../utils'
+import { CommandHandler } from '../types'
 
-export const setupProfileHandler = async (interaction: ChatInputCommandInteraction<CacheType>) => {
+export const setupProfileHandler: CommandHandler = async ({ interaction, context: { locale } }) => {
   const cmdrName = interaction.options.getString('name')!
   const edsmApiKeyRaw = interaction.options.getString('edsm_api_key') || null
   const edsmApiKey = edsmApiKeyRaw ? encrypt(edsmApiKeyRaw) : null
@@ -22,5 +22,5 @@ export const setupProfileHandler = async (interaction: ChatInputCommandInteracti
     },
   })
 
-  await interaction.editReply(i18next.t('setup.profile.saved'))
+  await interaction.editReply(L[locale].setup.profile.saved())
 }
