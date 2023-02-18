@@ -1,6 +1,7 @@
 import got from 'got'
+import { createEmbed, useConfirmation } from '../../embeds'
 import L from '../../i18n/i18n-node'
-import { createEmbed, Prisma, useConfirmation } from '../../utils'
+import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import { CommandHandler } from '../types'
 

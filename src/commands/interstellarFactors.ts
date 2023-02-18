@@ -2,14 +2,9 @@ import { SlashCommandBuilder } from 'discord.js'
 import { chunk } from 'lodash'
 import { SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
+import { createPaginationButtons, usePagination } from '../embeds'
 import L from '../i18n/i18n-node'
-import {
-  createPaginationButtons,
-  generateInaraEmbed,
-  ScrapedInaraData,
-  scrapeInara,
-  usePagination,
-} from '../utils'
+import { generateInaraEmbed, ScrapedInaraData, scrapeInara } from '../utils'
 import { Command } from './types'
 
 const CELLS_PER_ROW = 7
@@ -45,6 +40,7 @@ const InterstellarFactors: Command = {
 
     usePagination({
       interaction,
+      locale,
       reply: await interaction.fetchReply(),
       paginationlenght: pagesLength,
       onPageChange: async (buttonInteraction, activePageIndex) => {

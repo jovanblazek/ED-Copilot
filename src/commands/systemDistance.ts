@@ -2,7 +2,8 @@ import { SlashCommandBuilder } from 'discord.js'
 import got from 'got'
 import { SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
-import { createEmbed, toUpperCaseFirstLetter } from '../utils'
+import { createEmbed } from '../embeds'
+import { toUpperCaseFirstLetter } from '../utils'
 import { Command } from './types'
 
 type SystemData = {

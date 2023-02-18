@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames } from '../constants'
+import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
 import {
   addCommasToNumber,
-  createEmbed,
   fetchCommanderCredits,
   InaraProfile,
   inaraRequest,

@@ -2,7 +2,7 @@ import got from 'got'
 import { JSDOM } from 'jsdom'
 import { chunk } from 'lodash'
 import { DIVIDER, RankNames, Ranks } from '../constants'
-import { createEmbed } from './embed'
+import { createEmbed } from '../embeds'
 
 type InaraEvent = {
   eventCustomID?: number
