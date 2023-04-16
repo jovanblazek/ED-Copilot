@@ -1,48 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createLogger, format, transports } from 'winston'
+import pino from 'pino'
+import pretty from 'pino-pretty'
+import { createWriteStream } from 'pino-sentry'
 import './environment'
 
-type LogItem = {
-  level: string
-  message: string
-  data?: Record<any, any>
-  error?: string
-  timestamp?: string
-}
-
-const formatData = (item: LogItem) => (item.data ? ` - ${JSON.stringify(item.data)}` : '')
-const formatError = (item: LogItem) => (item.error ? ` - ${item.error}` : '')
-
-const initLogger = () => {
-  if (process.env.NODE_ENV !== 'development') {
-    return createLogger({
-      level: process.env.LOG_LEVEL || 'debug',
-    })
-  }
-  return createLogger({
-    level: 'debug',
-    format: format.combine(
-      format.colorize(),
-      format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      format.printf(
-        (item: LogItem) =>
-          `${item.timestamp || ''} [${item.level}]: ${item.message}${formatData(item)}${formatError(
-            item
-          )}`
-      )
-    ),
-    transports: [new transports.Console()],
-  })
-}
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+const SentryStream = createWriteStream({ dsn: process.env.SENTRY_DSN, level: 'warning' })
+const PrettyConsoleStream = pretty({
+  colorize: true,
+})
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const logger = initLogger()
+const logger = pino(
+  {
+    level: IS_PRODUCTION ? 'info' : 'debug',
+    enabled: process.env.NODE_ENV !== 'test',
+  },
+  pino.multistream([PrettyConsoleStream, ...(IS_PRODUCTION ? [SentryStream] : [])])
+)
 
-export default {
-  /* eslint-disable */
-  debug: (message: string, ...args: any) => logger.debug(message, ...args),
-  info: (message: string, info?: Object | unknown, ...args: any) => logger.info(message, info, ...args),
-  warn: (message: string, ...args: any) => logger.warn(message, ...args),
-  error: (message: string, error?: Object | unknown, ...args: any) => logger.error(message, error, ...args),
-  /* eslint-enable */
-}
+export default logger

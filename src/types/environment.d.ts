@@ -1,9 +1,10 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      NODE_ENV: 'development' | 'production'
+      NODE_ENV: 'development' | 'production' | 'test'
       BOT_TOKEN: string
       INARA_API_KEY: string
+      SENTRY_DSN: string
 
       // Postgres
       POSTGRES_PORT: string
