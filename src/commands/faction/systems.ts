@@ -1,6 +1,5 @@
 import { CacheType, ChatInputCommandInteraction } from 'discord.js'
 import got from 'got'
-import { Tick, TickFetchError } from '../../classes'
 
 // const calculateInfluenceTrend = (data, history) => {
 //   const dataLength = data.length
@@ -56,7 +55,7 @@ export const factionSystemsHandler = async ({
   faction,
 }: {
   interaction: ChatInputCommandInteraction<CacheType>
-  tick: Tick
+  tick: unknown
   faction: unknown
 }) => {
   const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true&count=2`
@@ -65,11 +64,11 @@ export const factionSystemsHandler = async ({
   // const parsedData = parseSystemsData(fetchedData.docs[0].faction_presence)
   // calculateInfluenceTrend(parsedData, fetchedData.docs[0].history)
 
-  const tickTime = null
-  if (!tickTime) {
-    // TODO add locale
-    throw new TickFetchError({ locale: 'en' })
-  }
+  // const tickTime = null
+  // if (!tickTime) {
+  //   // TODO add locale
+  //   throw new TickFetchError({ locale: 'en' })
+  // }
 
   // parsedData.forEach((data) => {
   //   data.isUpdated = wasAfterTick(data.lastUpdate, tickTime)

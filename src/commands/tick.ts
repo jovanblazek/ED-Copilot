@@ -1,21 +1,9 @@
-// import { Dayjs } from 'dayjs'
 import { SlashCommandBuilder } from 'discord.js'
-import { TickFetchError } from '../classes'
 import { CommandNames } from '../constants'
-// import L from '../i18n/i18n-node'
-// import { Locales } from '../i18n/i18n-types'
-// import { createEmbed } from '../utils'
+import { createEmbed } from '../embeds'
+import L from '../i18n/i18n-node'
+import { getTickDifferenceFromNow, getTickTime, wasTickToday } from '../utils'
 import { Command } from './types'
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// const createTickEmbed = (tickTime: Dayjs, tick: Tick, locale: Locales) =>
-//   createEmbed({
-//     title: L[locale].tick.title(),
-//     description: `**${tickTime.format('DD.MM.YYYY HH:mm')}**
-//       ${tick.differenceFrom()}\n
-//       ${L[locale].tick.wasToday()}: ${tick.wasTickToday() ? '✅' : '❌'}\n
-//       [${L[locale].tick.history()}](https://elitebgs.app/tick)`,
-//   })
 
 const TickCommand: Command = {
   builder: new SlashCommandBuilder()
@@ -24,14 +12,25 @@ const TickCommand: Command = {
   handler: async ({ interaction, context: { locale } }) => {
     await interaction.deferReply()
 
-    const tickTime = null
-    if (!tickTime) {
-      throw new TickFetchError({ locale })
-    }
+    const tickTime = await getTickTime({ locale, localTimezone: 'Europe/Berlin' })
+    const wasToday = wasTickToday({
+      tickTime,
+      localTimezone: 'Europe/Berlin', // TODO change, add to context next to locale
+    })
 
-    // await interaction.editReply({
-    //   embeds: [createTickEmbed(tickTime)],
-    // })
+    const differenceFromNow = getTickDifferenceFromNow({ tickTime })
+
+    await interaction.editReply({
+      embeds: [
+        createEmbed({
+          title: L[locale].tick.title(),
+          description: `**${tickTime.format('DD.MM.YYYY HH:mm')}**
+            ${differenceFromNow}\n
+            ${L[locale].tick.wasToday()}: ${wasToday ? '✅' : '❌'}\n
+            [${L[locale].tick.history()}](https://elitebgs.app/tick)`,
+        }),
+      ],
+    })
   },
   // async (client: Client) => {
   //   const tickTime = null

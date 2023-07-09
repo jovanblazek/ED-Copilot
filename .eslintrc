@@ -58,7 +58,7 @@
         "selector": "variable",
         "types": ["boolean"],
         "format": ["PascalCase"],
-        "prefix": ["is", "has", "does", "do", "are", "were", "can"]
+        "prefix": ["is", "has", "does", "do", "are", "were", "can", "was"]
       }
     ]
   }
