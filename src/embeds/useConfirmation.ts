@@ -7,7 +7,7 @@ import {
   ChatInputCommandInteraction,
   ComponentType,
   MessageActionRowComponentBuilder,
-  WebhookEditMessageOptions,
+  WebhookMessageEditOptions,
 } from 'discord.js'
 import L from '../i18n/i18n-node'
 import { Locales } from '../i18n/i18n-types'
@@ -27,7 +27,7 @@ const createConfirmationButtons = () =>
 interface UseConfirmationProps {
   interaction: ChatInputCommandInteraction<CacheType>
   locale: Locales
-  confirmation: WebhookEditMessageOptions
+  confirmation: WebhookMessageEditOptions
   onConfirm: (buttonInteraction: ButtonInteraction<CacheType>) => Promise<void>
   onCancel: (buttonInteraction: ButtonInteraction<CacheType>) => Promise<void>
 }

@@ -40,6 +40,14 @@ const en = {
         description: 'Current time: {currentTime}',
       },
     },
+    tickReportChannel: {
+      title: 'Current tick reporting channel',
+      description: 'Channel: {channel}\n Are you sure you want to remove it?',
+      descriptionNoChannel: 'Channel: -',
+      saved: 'Channel {channel} will now be used for reporting game ticks.',
+      removed: 'Tick reporting channel removed.',
+      notRemoved: 'Channel {channel} will remain used for reporting game ticks.',
+    },
   },
   faction: {
     notSetup: 'Faction is not setup.',

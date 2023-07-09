@@ -3,10 +3,10 @@ import { EMBED_COLOR } from '../constants'
 
 interface CreateEmbedProps {
   title: string
-  description?: string
+  description?: string | null
 }
 
-export const createEmbed = ({ title, description = '' }: CreateEmbedProps) =>
+export const createEmbed = ({ title, description = null }: CreateEmbedProps) =>
   new EmbedBuilder().setColor(EMBED_COLOR).setTitle(title).setDescription(description)
 
 // TODO upload image to CDN

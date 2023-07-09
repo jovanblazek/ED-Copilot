@@ -93,7 +93,7 @@ export const scrapeInara = async (url: string, cellsPerRow: number) => {
     station: row[cellsPerRow === 8 ? 1 : 0].textContent ?? '',
     system: (row[cellsPerRow === 8 ? 2 : 1].textContent ?? '').slice(0, -2), // remove copy icon
     distanceLs: row[cellsPerRow - 2].textContent ?? '',
-    distanceLy: row[cellsPerRow - 1].textContent ?? '',
+    distanceLy: row[cellsPerRow - 1].firstChild?.nodeValue ?? '',
   }))
 
   return data

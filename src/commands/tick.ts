@@ -1,21 +1,21 @@
-import { Dayjs } from 'dayjs'
+// import { Dayjs } from 'dayjs'
 import { SlashCommandBuilder } from 'discord.js'
-import { Tick, TickFetchError } from '../classes'
+import { TickFetchError } from '../classes'
 import { CommandNames } from '../constants'
-import L from '../i18n/i18n-node'
-import { Locales } from '../i18n/i18n-types'
-import { createEmbed } from '../utils'
+// import L from '../i18n/i18n-node'
+// import { Locales } from '../i18n/i18n-types'
+// import { createEmbed } from '../utils'
 import { Command } from './types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const createTickEmbed = (tickTime: Dayjs, tick: Tick, locale: Locales) =>
-  createEmbed({
-    title: L[locale].tick.title(),
-    description: `**${tickTime.format('DD.MM.YYYY HH:mm')}**
-      ${tick.differenceFrom()}\n
-      ${L[locale].tick.wasToday()}: ${tick.wasTickToday() ? '✅' : '❌'}\n
-      [${L[locale].tick.history()}](https://elitebgs.app/tick)`,
-  })
+// const createTickEmbed = (tickTime: Dayjs, tick: Tick, locale: Locales) =>
+//   createEmbed({
+//     title: L[locale].tick.title(),
+//     description: `**${tickTime.format('DD.MM.YYYY HH:mm')}**
+//       ${tick.differenceFrom()}\n
+//       ${L[locale].tick.wasToday()}: ${tick.wasTickToday() ? '✅' : '❌'}\n
+//       [${L[locale].tick.history()}](https://elitebgs.app/tick)`,
+//   })
 
 const TickCommand: Command = {
   builder: new SlashCommandBuilder()

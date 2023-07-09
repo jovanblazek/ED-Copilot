@@ -42,6 +42,7 @@ const parseSystemData = (response: EdsmResponse) => {
   return { systemName, systemData, lastUpdate }
 }
 
+// @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getStates = (faction: Omit<Faction, 'lastUpdate'>) => {
   const pendingStates = faction.pendingStates.map(({ state }) => state).join(', ')
@@ -76,6 +77,7 @@ const SystemInfo: Command = {
 
     const systemName = interaction.options.getString('system') || 'Sol'
     throw new SystemNotFoundError({ locale, systemName }) // TODO remove after tick command is implemented
+    // @ts-ignore
     const systemNameWeb = encodeURIComponent(systemName)
 
     const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`

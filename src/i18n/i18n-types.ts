@@ -119,6 +119,36 @@ type RootTranslation = {
 				description: RequiredParams<'currentTime'>
 			}
 		}
+		tickReportChannel: {
+			/**
+			 * C​u​r​r​e​n​t​ ​t​i​c​k​ ​r​e​p​o​r​t​i​n​g​ ​c​h​a​n​n​e​l
+			 */
+			title: string
+			/**
+			 * C​h​a​n​n​e​l​:​ ​{​c​h​a​n​n​e​l​}​
+		​ ​A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​r​e​m​o​v​e​ ​i​t​?
+			 * @param {unknown} channel
+			 */
+			description: RequiredParams<'channel'>
+			/**
+			 * C​h​a​n​n​e​l​:​ ​-
+			 */
+			descriptionNoChannel: string
+			/**
+			 * C​h​a​n​n​e​l​ ​{​c​h​a​n​n​e​l​}​ ​w​i​l​l​ ​n​o​w​ ​b​e​ ​u​s​e​d​ ​f​o​r​ ​r​e​p​o​r​t​i​n​g​ ​g​a​m​e​ ​t​i​c​k​s​.
+			 * @param {unknown} channel
+			 */
+			saved: RequiredParams<'channel'>
+			/**
+			 * T​i​c​k​ ​r​e​p​o​r​t​i​n​g​ ​c​h​a​n​n​e​l​ ​r​e​m​o​v​e​d​.
+			 */
+			removed: string
+			/**
+			 * C​h​a​n​n​e​l​ ​{​c​h​a​n​n​e​l​}​ ​w​i​l​l​ ​r​e​m​a​i​n​ ​u​s​e​d​ ​f​o​r​ ​r​e​p​o​r​t​i​n​g​ ​g​a​m​e​ ​t​i​c​k​s​.
+			 * @param {unknown} channel
+			 */
+			notRemoved: RequiredParams<'channel'>
+		}
 	}
 	faction: {
 		/**
@@ -288,6 +318,33 @@ export type TranslationFunctions = {
 				 */
 				description: (arg: { currentTime: unknown }) => LocalizedString
 			}
+		}
+		tickReportChannel: {
+			/**
+			 * Current tick reporting channel
+			 */
+			title: () => LocalizedString
+			/**
+			 * Channel: {channel}
+		 Are you sure you want to remove it?
+			 */
+			description: (arg: { channel: unknown }) => LocalizedString
+			/**
+			 * Channel: -
+			 */
+			descriptionNoChannel: () => LocalizedString
+			/**
+			 * Channel {channel} will now be used for reporting game ticks.
+			 */
+			saved: (arg: { channel: unknown }) => LocalizedString
+			/**
+			 * Tick reporting channel removed.
+			 */
+			removed: () => LocalizedString
+			/**
+			 * Channel {channel} will remain used for reporting game ticks.
+			 */
+			notRemoved: (arg: { channel: unknown }) => LocalizedString
 		}
 	}
 	faction: {

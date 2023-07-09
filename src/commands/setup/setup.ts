@@ -1,9 +1,10 @@
-import { SlashCommandBuilder } from 'discord.js'
+import { ChannelType, SlashCommandBuilder } from 'discord.js'
 import { CommandNames, Languages, SetupSubcommands } from '../../constants'
 import { Command } from '../types'
 import { setupFactionHandler } from './faction'
 import { setupLanguagenHandler } from './language'
 import { setupProfileHandler } from './profile'
+import { setupTickReportChannelHandler } from './tickReportChannel'
 import { setupTimezoneHandler } from './timezone'
 
 const SubcommandHandlers = {
@@ -11,6 +12,7 @@ const SubcommandHandlers = {
   [SetupSubcommands.language]: setupLanguagenHandler,
   [SetupSubcommands.profile]: setupProfileHandler,
   [SetupSubcommands.timezone]: setupTimezoneHandler,
+  [SetupSubcommands.tick]: setupTickReportChannelHandler,
 }
 
 const Setup: Command = {
@@ -29,7 +31,15 @@ const Setup: Command = {
         )
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName(SetupSubcommands.tick).setDescription('Set tick report channel')
+      subcommand
+        .setName(SetupSubcommands.tick)
+        .setDescription('Set tick report channel')
+        .addChannelOption((option) =>
+          option
+            .setName('channel')
+            .setDescription('Channel')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
