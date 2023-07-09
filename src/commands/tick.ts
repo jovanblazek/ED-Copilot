@@ -9,13 +9,13 @@ const TickCommand: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.tick)
     .setDescription('Gets latest tick time'),
-  handler: async ({ interaction, context: { locale } }) => {
+  handler: async ({ interaction, context: { locale, timezone } }) => {
     await interaction.deferReply()
 
-    const tickTime = await getTickTime({ locale, localTimezone: 'Europe/Berlin' })
+    const tickTime = await getTickTime({ locale, timezone })
     const wasToday = wasTickToday({
       tickTime,
-      localTimezone: 'Europe/Berlin', // TODO change, add to context next to locale
+      timezone,
     })
 
     const differenceFromNow = getTickDifferenceFromNow({ tickTime })

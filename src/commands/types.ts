@@ -10,6 +10,7 @@ export type CommandHandlerArgs = {
   interaction: ChatInputCommandInteraction<CacheType>
   context: {
     locale: Locales
+    timezone: string
   }
 }
 

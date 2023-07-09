@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits } from 'discord.js'
 import { initEventHandlers } from './events'
 import logger from './utils/logger'
 import initTickDetector from './utils/tickDetector'
+import './i18n/dayjsLocales'
 import './utils/environment'
 
 const BotClient = new Client({
@@ -10,7 +11,9 @@ const BotClient = new Client({
 
 BotClient.once('ready', () => {
   initEventHandlers(BotClient)
-  initTickDetector(BotClient)
+  if (process.env.NODE_ENV === 'production') {
+    initTickDetector()
+  }
 
   logger.info('Bot is ready!')
 })
