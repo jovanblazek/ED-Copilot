@@ -3,7 +3,10 @@ import { SlashCommandBuilder } from 'discord.js'
 import got from 'got'
 import { isEmpty } from 'lodash'
 import { DataParseError, SystemNotFoundError } from '../classes'
-import { CommandNames } from '../constants'
+import { CommandNames, DIVIDER } from '../constants'
+import { createEmbed } from '../embeds'
+import L from '../i18n/i18n-node'
+import { getTickTime, wasTickToday } from '../utils'
 import { Command } from './types'
 
 type Faction = {
@@ -42,8 +45,6 @@ const parseSystemData = (response: EdsmResponse) => {
   return { systemName, systemData, lastUpdate }
 }
 
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getStates = (faction: Omit<Faction, 'lastUpdate'>) => {
   const pendingStates = faction.pendingStates.map(({ state }) => state).join(', ')
   const activeStates = faction.activeStates.map(({ state }) => state).join(', ')
@@ -72,44 +73,46 @@ const SystemInfo: Command = {
     .addStringOption((option) =>
       option.setName('system').setDescription('System to lookup').setRequired(true)
     ),
-  handler: async ({ interaction, context: { locale } }) => {
+  handler: async ({ interaction, context: { locale, timezone } }) => {
     await interaction.deferReply()
 
-    const systemName = interaction.options.getString('system') || 'Sol'
-    throw new SystemNotFoundError({ locale, systemName }) // TODO remove after tick command is implemented
-    // @ts-ignore
-    const systemNameWeb = encodeURIComponent(systemName)
+    const systemNameInput = interaction.options.getString('system') || 'Sol'
+    const systemNameWeb = encodeURIComponent(systemNameInput)
 
     const url = `https://www.edsm.net/api-system-v1/factions?systemName=${systemNameWeb}`
 
     const fetchedData: EdsmResponse = await got(url).json()
     if (isEmpty(fetchedData)) {
-      throw new SystemNotFoundError({ locale, systemName })
+      throw new SystemNotFoundError({ locale, systemName: systemNameInput })
     }
 
     const parsedData = parseSystemData(fetchedData)
     if (!parsedData) {
       throw new DataParseError({ locale })
     }
+    const { systemName, systemData, lastUpdate } = parsedData
+    const tickTime = await getTickTime({ locale, timezone })
 
-    // const localTimeZone = tick.getLocalTimeZone()
+    const embed = createEmbed({
+      title: L[locale].systemInfo.title({ systemName }),
+      description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${DIVIDER}`,
+    }).setFooter({
+      text: `${L[locale].systemInfo.lastUpdate({
+        time: lastUpdate.tz(timezone).format('DD.MM.YYYY HH:mm'),
+      })} ${wasTickToday({ tickTime, timezone }) ? `✅` : `❌`}`,
+    })
 
-    // const embed = createEmbed({
-    //   title: i18next.t('systemInfo.title', { systemName: parsedData.systemName }),
-    //   description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${DIVIDER}`,
-    // }).setFooter({
-    //   text: `${i18next.t('systemInfo.lastUpdate', {
-    //     time: parsedData.lastUpdate.tz(localTimeZone).format('DD.MM.YYYY HH:mm'),
-    //   })} ${tick.wasAfterTick(parsedData.lastUpdate) ? `✅` : `❌`}`,
-    // })
+    embed.addFields(
+      systemData.map((faction) => ({
+        name: `${faction.influence}% - ${faction.name}`,
+        value: `${getStates(faction)}`,
+        inline: false,
+      }))
+    )
 
-    // parsedData.systemData.forEach((faction) => {
-    //   embed.addField(`${faction.influence}% - ${faction.name}`, `${getStates(faction)}`, false)
-    // })
-
-    // await interaction.editReply({
-    //   embeds: [embed],
-    // })
+    await interaction.editReply({
+      embeds: [embed],
+    })
   },
 }
 

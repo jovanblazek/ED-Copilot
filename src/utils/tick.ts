@@ -63,5 +63,5 @@ export const wasTickToday = ({ tickTime, timezone }: { tickTime: Dayjs; timezone
 
 export const getTickDifferenceFromNow = ({ tickTime }: { tickTime: Dayjs }) => {
   const utcTimeNow = dayjs.utc()
-  return tickTime.from(utcTimeNow)
+  return tickTime.utc().from(utcTimeNow)
 }

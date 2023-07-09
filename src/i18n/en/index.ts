@@ -71,7 +71,7 @@ const en = {
   },
   systemInfo: {
     title: 'Factions in {systemName}',
-    lastUpdate: 'Last update from {time}',
+    lastUpdate: 'Last update: {time}',
   },
   commanderProfile: {
     notFound:
