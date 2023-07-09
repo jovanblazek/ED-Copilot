@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Inara scraper should return broker data: Tech broker data snapshot 1`] = `
-Object {
+{
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
   "station": "Dobrovolskiy Enterprise",
@@ -11,7 +11,7 @@ Object {
 `;
 
 exports[`Inara scraper should return factors data: Interstellar factors data snapshot 1`] = `
-Object {
+{
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
   "station": Any<String>,
@@ -21,7 +21,7 @@ Object {
 `;
 
 exports[`Inara scraper should return trader data: Material trader data snapshot 1`] = `
-Object {
+{
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
   "station": "Patterson Enterprise",
