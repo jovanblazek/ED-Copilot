@@ -1,5 +1,6 @@
 import { map, reduce } from 'lodash'
 import commanderProfile from './commanderProfile'
+import copilot from './copilot'
 import faction from './faction'
 import interstellarFactors from './interstellarFactors'
 import materialTrader from './materialTrader'
@@ -25,6 +26,7 @@ export const Commands = {
   systemInfo,
   faction,
   commanderProfile,
+  copilot,
   setup,
 }
 

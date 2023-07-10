@@ -67,24 +67,29 @@ const CommanderProfile: Command = {
     const embed = createEmbed({
       title: `CMDR ${inaraProfile.userName}`,
     })
-    embed.setURL(inaraProfile.inaraURL)
-    embed.setThumbnail(inaraProfile?.avatarImageURL || FALLBACK_CMDR_AVATAR_URL)
-    embed.addFields(rankEmbedFields)
-    if (cmdrCredits) {
-      embed.addFields([
-        {
-          name: 'Balance',
-          value: `${addCommasToNumber(cmdrCredits.credits[0].balance)} Cr`,
-          inline: true,
-        },
-      ])
+      .setURL(inaraProfile.inaraURL)
+      .setThumbnail(inaraProfile?.avatarImageURL || FALLBACK_CMDR_AVATAR_URL)
+      .addFields(rankEmbedFields)
+      .setTimestamp()
+
+    if (cmdrCredits?.credits) {
+      embed
+        .addFields([
+          {
+            name: 'Balance',
+            value: `${addCommasToNumber(cmdrCredits.credits[0].balance)} Cr`,
+            inline: true,
+          },
+        ])
+        .setFooter({
+          text: `Inara & EDSM`,
+        })
     } else {
       embed.setFooter({
-        text: L[locale].commanderProfile.missingEdsmKey(),
+        text: `${L[locale].commanderProfile.missingEdsmKey()}\nInara`,
       })
     }
-    // TODO rework this after adding timezone to DB
-    // embed.setFooter(`Inara & EDSM - ${format(new Date(), 'yyyy-MM-dd HH:mm:ss')}`)
+
     await interaction.editReply({
       embeds: [embed],
     })

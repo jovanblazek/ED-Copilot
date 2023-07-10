@@ -9,6 +9,7 @@ export const CommandNames = {
   faction: 'faction',
   commanderProfile: 'profile',
   setup: 'setup',
+  copilot: 'copilot',
 }
 
 export const FactionSubcommands = {
@@ -17,12 +18,15 @@ export const FactionSubcommands = {
   stations: 'stations',
 }
 
-export const SetupSubcommands = {
+export const CopilotSubcommands = {
   faction: 'faction',
   tick: 'tick',
-  profile: 'profile',
   language: 'language',
   timezone: 'timezone',
+}
+
+export const SetupSubcommands = {
+  profile: 'profile',
 }
 
 export const PaginationButtonNames = {
