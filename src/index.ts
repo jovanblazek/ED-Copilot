@@ -12,7 +12,7 @@ const BotClient = new Client({
 BotClient.once('ready', () => {
   initEventHandlers(BotClient)
   if (process.env.NODE_ENV === 'production') {
-    initTickDetector()
+    initTickDetector(BotClient)
   }
 
   logger.info('Bot is ready!')
