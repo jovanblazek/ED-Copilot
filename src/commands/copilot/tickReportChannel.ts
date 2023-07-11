@@ -24,7 +24,7 @@ export const setupTickReportChannelHandler: CommandHandler = async ({
       data: { tickReportChannelId: selectedChannel.id },
     })
     await interaction.editReply(
-      L[locale].setup.tickReportChannel.saved({
+      L[locale].copilot.tickReportChannel.saved({
         channel: `<#${selectedChannel.id}>`,
       })
     )
@@ -41,8 +41,8 @@ export const setupTickReportChannelHandler: CommandHandler = async ({
     await interaction.editReply({
       embeds: [
         createEmbed({
-          title: L[locale].setup.tickReportChannel.title(),
-          description: L[locale].setup.tickReportChannel.descriptionNoChannel(),
+          title: L[locale].copilot.tickReportChannel.title(),
+          description: L[locale].copilot.tickReportChannel.descriptionNoChannel(),
         }),
       ],
     })
@@ -56,8 +56,8 @@ export const setupTickReportChannelHandler: CommandHandler = async ({
     confirmation: {
       embeds: [
         createEmbed({
-          title: L[locale].setup.tickReportChannel.title(),
-          description: L[locale].setup.tickReportChannel.description({
+          title: L[locale].copilot.tickReportChannel.title(),
+          description: L[locale].copilot.tickReportChannel.description({
             channel: `<#${currentTickReportChannelId}>`,
           }),
         }),
@@ -70,14 +70,14 @@ export const setupTickReportChannelHandler: CommandHandler = async ({
       })
 
       await buttonInteraction.update({
-        content: L[locale].setup.tickReportChannel.removed(),
+        content: L[locale].copilot.tickReportChannel.removed(),
         embeds: [],
         components: [],
       })
     },
     onCancel: async (buttonInteraction) => {
       await buttonInteraction.update({
-        content: L[locale].setup.tickReportChannel.notRemoved({
+        content: L[locale].copilot.tickReportChannel.notRemoved({
           channel: `<#${currentTickReportChannelId}>`,
         }),
         embeds: [],

@@ -12,19 +12,16 @@ const en = {
     adminOnly: 'This command is only available to admins.',
     buttonsDisabled: "These buttons aren't for you!",
   },
-  setup: {
+  copilot: {
     faction: {
       notFound: 'Could not find any factions with that name.',
       confirm: {
         title: 'Is this information correct?',
         description:
-          'Name: {factionName}\nShorthand: {factionShorthand}\nAllegiance: {allegiance}\nSystems present: {systemsCount}.',
+          'Name: {factionName}\nShorthand: {factionShorthand}\nAllegiance: {allegiance}\nSystems present: {systemsCount}',
       },
       saved: 'Faction saved.',
       canceled: 'Faction setup canceled.',
-    },
-    profile: {
-      saved: 'Profile settings saved.',
     },
     language: {
       saved: 'Language settings saved.',
@@ -78,6 +75,11 @@ const en = {
       'Could not find commander profile.\nAdd your CMDR name and EDSM API key using `/setup profile` command.',
     missingEdsmKey:
       'To see account balance, you need to add your EDSM API key using `/setup profile` command.',
+  },
+  setup: {
+    profile: {
+      saved: 'Profile settings saved.',
+    },
   },
 } satisfies BaseTranslation
 

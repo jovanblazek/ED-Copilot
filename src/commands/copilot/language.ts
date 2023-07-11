@@ -22,5 +22,5 @@ export const setupLanguagenHandler: CommandHandler = async ({
     create: { guildId, language: newLocale, timezone: 'UTC' },
     update: { language: newLocale },
   })
-  await interaction.editReply(L[newLocale].setup.language.saved())
+  await interaction.editReply(L[newLocale].copilot.language.saved())
 }

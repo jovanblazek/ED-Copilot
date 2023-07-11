@@ -50,7 +50,7 @@ type RootTranslation = {
 		 */
 		buttonsDisabled: string
 	}
-	setup: {
+	copilot: {
 		faction: {
 			/**
 			 * C​o​u​l​d​ ​n​o​t​ ​f​i​n​d​ ​a​n​y​ ​f​a​c​t​i​o​n​s​ ​w​i​t​h​ ​t​h​a​t​ ​n​a​m​e​.
@@ -65,7 +65,7 @@ type RootTranslation = {
 				 * N​a​m​e​:​ ​{​f​a​c​t​i​o​n​N​a​m​e​}​
 			​S​h​o​r​t​h​a​n​d​:​ ​{​f​a​c​t​i​o​n​S​h​o​r​t​h​a​n​d​}​
 			​A​l​l​e​g​i​a​n​c​e​:​ ​{​a​l​l​e​g​i​a​n​c​e​}​
-			​S​y​s​t​e​m​s​ ​p​r​e​s​e​n​t​:​ ​{​s​y​s​t​e​m​s​C​o​u​n​t​}​.
+			​S​y​s​t​e​m​s​ ​p​r​e​s​e​n​t​:​ ​{​s​y​s​t​e​m​s​C​o​u​n​t​}
 				 * @param {unknown} allegiance
 				 * @param {unknown} factionName
 				 * @param {unknown} factionShorthand
@@ -81,12 +81,6 @@ type RootTranslation = {
 			 * F​a​c​t​i​o​n​ ​s​e​t​u​p​ ​c​a​n​c​e​l​e​d​.
 			 */
 			canceled: string
-		}
-		profile: {
-			/**
-			 * P​r​o​f​i​l​e​ ​s​e​t​t​i​n​g​s​ ​s​a​v​e​d​.
-			 */
-			saved: string
 		}
 		language: {
 			/**
@@ -201,7 +195,7 @@ type RootTranslation = {
 		 */
 		title: RequiredParams<'systemName'>
 		/**
-		 * L​a​s​t​ ​u​p​d​a​t​e​ ​f​r​o​m​ ​{​t​i​m​e​}
+		 * L​a​s​t​ ​u​p​d​a​t​e​:​ ​{​t​i​m​e​}
 		 * @param {unknown} time
 		 */
 		lastUpdate: RequiredParams<'time'>
@@ -216,6 +210,14 @@ type RootTranslation = {
 		 * T​o​ ​s​e​e​ ​a​c​c​o​u​n​t​ ​b​a​l​a​n​c​e​,​ ​y​o​u​ ​n​e​e​d​ ​t​o​ ​a​d​d​ ​y​o​u​r​ ​E​D​S​M​ ​A​P​I​ ​k​e​y​ ​u​s​i​n​g​ ​`​/​s​e​t​u​p​ ​p​r​o​f​i​l​e​`​ ​c​o​m​m​a​n​d​.
 		 */
 		missingEdsmKey: string
+	}
+	setup: {
+		profile: {
+			/**
+			 * P​r​o​f​i​l​e​ ​s​e​t​t​i​n​g​s​ ​s​a​v​e​d​.
+			 */
+			saved: string
+		}
 	}
 }
 
@@ -255,7 +257,7 @@ export type TranslationFunctions = {
 		 */
 		buttonsDisabled: () => LocalizedString
 	}
-	setup: {
+	copilot: {
 		faction: {
 			/**
 			 * Could not find any factions with that name.
@@ -270,7 +272,7 @@ export type TranslationFunctions = {
 				 * Name: {factionName}
 			Shorthand: {factionShorthand}
 			Allegiance: {allegiance}
-			Systems present: {systemsCount}.
+			Systems present: {systemsCount}
 				 */
 				description: (arg: { allegiance: unknown, factionName: unknown, factionShorthand: unknown, systemsCount: unknown }) => LocalizedString
 			}
@@ -282,12 +284,6 @@ export type TranslationFunctions = {
 			 * Faction setup canceled.
 			 */
 			canceled: () => LocalizedString
-		}
-		profile: {
-			/**
-			 * Profile settings saved.
-			 */
-			saved: () => LocalizedString
 		}
 		language: {
 			/**
@@ -397,7 +393,7 @@ export type TranslationFunctions = {
 		 */
 		title: (arg: { systemName: unknown }) => LocalizedString
 		/**
-		 * Last update from {time}
+		 * Last update: {time}
 		 */
 		lastUpdate: (arg: { time: unknown }) => LocalizedString
 	}
@@ -411,6 +407,14 @@ export type TranslationFunctions = {
 		 * To see account balance, you need to add your EDSM API key using `/setup profile` command.
 		 */
 		missingEdsmKey: () => LocalizedString
+	}
+	setup: {
+		profile: {
+			/**
+			 * Profile settings saved.
+			 */
+			saved: () => LocalizedString
+		}
 	}
 }
 

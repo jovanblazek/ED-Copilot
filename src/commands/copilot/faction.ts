@@ -51,8 +51,8 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
       confirmation: {
         embeds: [
           createEmbed({
-            title: L[locale].setup.faction.confirm.title(),
-            description: L[locale].setup.faction.confirm.description({
+            title: L[locale].copilot.faction.confirm.title(),
+            description: L[locale].copilot.faction.confirm.description({
               factionName,
               factionShorthand,
               allegiance,
@@ -69,20 +69,20 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
         })
 
         await buttonInteraction.update({
-          content: L[locale].setup.faction.saved(),
+          content: L[locale].copilot.faction.saved(),
           embeds: [],
           components: [],
         })
       },
       onCancel: async (buttonInteraction) => {
         await buttonInteraction.update({
-          content: L[locale].setup.faction.canceled(),
+          content: L[locale].copilot.faction.canceled(),
           embeds: [],
           components: [],
         })
       },
     })
   } catch {
-    await interaction.editReply(L[locale].setup.faction.notFound())
+    await interaction.editReply(L[locale].copilot.faction.notFound())
   }
 }

@@ -22,8 +22,8 @@ export const setupTimezoneHandler: CommandHandler = async ({
       confirmation: {
         embeds: [
           createEmbed({
-            title: L[locale].setup.timezone.confirm.title(),
-            description: L[locale].setup.timezone.confirm.description({
+            title: L[locale].copilot.timezone.confirm.title(),
+            description: L[locale].copilot.timezone.confirm.description({
               currentTime: dayjs().tz(timezone).format('YYYY-MM-DD HH:mm:ss'),
             }),
           }),
@@ -37,20 +37,20 @@ export const setupTimezoneHandler: CommandHandler = async ({
         })
 
         await buttonInteraction.update({
-          content: L[locale].setup.timezone.saved(),
+          content: L[locale].copilot.timezone.saved(),
           embeds: [],
           components: [],
         })
       },
       onCancel: async (buttonInteraction) => {
         await buttonInteraction.update({
-          content: L[locale].setup.timezone.canceled(),
+          content: L[locale].copilot.timezone.canceled(),
           embeds: [],
           components: [],
         })
       },
     })
   } catch {
-    await interaction.editReply(L[locale].setup.timezone.notFound())
+    await interaction.editReply(L[locale].copilot.timezone.notFound())
   }
 }
