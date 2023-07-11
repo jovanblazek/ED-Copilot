@@ -65,3 +65,6 @@ export const getTickDifferenceFromNow = ({ tickTime }: { tickTime: Dayjs }) => {
   const utcTimeNow = dayjs.utc()
   return tickTime.utc().from(utcTimeNow)
 }
+
+export const wasAfterTick = ({ lastUpdate, tickTime }: { lastUpdate: Dayjs; tickTime: Dayjs }) =>
+  lastUpdate.utc().isAfter(tickTime.utc())

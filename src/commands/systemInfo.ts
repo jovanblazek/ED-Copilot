@@ -6,7 +6,7 @@ import { DataParseError, SystemNotFoundError } from '../classes'
 import { CommandNames, DIVIDER } from '../constants'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
-import { getTickTime, wasTickToday } from '../utils'
+import { getTickTime, wasAfterTick } from '../utils'
 import { Command } from './types'
 
 type Faction = {
@@ -99,7 +99,7 @@ const SystemInfo: Command = {
     }).setFooter({
       text: `${L[locale].systemInfo.lastUpdate({
         time: lastUpdate.tz(timezone).format('DD.MM.YYYY HH:mm'),
-      })} ${wasTickToday({ tickTime, timezone }) ? `✅` : `❌`}`,
+      })} ${wasAfterTick({ tickTime, lastUpdate }) ? `✅` : `❌`}`,
     })
 
     embed.addFields(

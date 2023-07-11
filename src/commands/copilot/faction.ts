@@ -32,7 +32,7 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
   const { docs } = await got(url).json<EliteBgsResponse>()
 
   if (!docs.length) {
-    await interaction.editReply(L[locale].setup.faction.notFound())
+    await interaction.editReply(L[locale].copilot.faction.notFound())
     return
   }
 

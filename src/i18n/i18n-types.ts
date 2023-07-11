@@ -34,6 +34,10 @@ type RootTranslation = {
 		 */
 		tickFetchError: string
 		/**
+		 * C​o​u​l​d​ ​n​o​t​ ​f​e​t​c​h​ ​f​a​c​t​i​o​n​ ​d​a​t​a​.
+		 */
+		factionFetchError: string
+		/**
 		 * T​i​m​e​ ​d​i​f​f​e​r​e​n​c​e​ ​e​r​r​o​r​.
 		 */
 		timeDifferenceError: string
@@ -149,6 +153,21 @@ type RootTranslation = {
 		 * F​a​c​t​i​o​n​ ​i​s​ ​n​o​t​ ​s​e​t​u​p​.
 		 */
 		notSetup: string
+		conflicts: {
+			/**
+			 * {​f​a​c​t​i​o​n​N​a​m​e​}​ ​C​o​n​f​l​i​c​t​s
+			 * @param {unknown} factionName
+			 */
+			title: RequiredParams<'factionName'>
+			/**
+			 * N​o​ ​c​o​n​f​l​i​c​t​s​ ​�​�
+			 */
+			noConflicts: string
+			/**
+			 * p​e​n​d​i​n​g
+			 */
+			pendingConflict: string
+		}
 	}
 	ping: {
 		/**
@@ -240,6 +259,10 @@ export type TranslationFunctions = {
 	Check [this site](https://elitebgs.app/tick).
 		 */
 		tickFetchError: () => LocalizedString
+		/**
+		 * Could not fetch faction data.
+		 */
+		factionFetchError: () => LocalizedString
 		/**
 		 * Time difference error.
 		 */
@@ -348,6 +371,20 @@ export type TranslationFunctions = {
 		 * Faction is not setup.
 		 */
 		notSetup: () => LocalizedString
+		conflicts: {
+			/**
+			 * {factionName} Conflicts
+			 */
+			title: (arg: { factionName: unknown }) => LocalizedString
+			/**
+			 * No conflicts 🎉
+			 */
+			noConflicts: () => LocalizedString
+			/**
+			 * pending
+			 */
+			pendingConflict: () => LocalizedString
+		}
 	}
 	ping: {
 		/**

@@ -1,8 +1,16 @@
 import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames, FactionSubcommands } from '../../constants'
 import L from '../../i18n/i18n-node'
+import { Prisma } from '../../utils'
 import { Command } from '../types'
+import { factionConflictsHandler } from './conflicts'
 // import { factionSystemsHandler } from './systems'
+
+const SubcommandHandlers = {
+  [FactionSubcommands.conflicts]: factionConflictsHandler,
+  // [FactionSubcommands.stations]: factionStationsHandler,
+  // [FactionSubcommands.systems]: factionSystemsHandler,
+}
 
 const Faction: Command = {
   builder: new SlashCommandBuilder()
@@ -23,24 +31,32 @@ const Faction: Command = {
         .setName(FactionSubcommands.stations)
         .setDescription('Get information about stations of your faction')
     ),
-  handler: async ({ interaction, context: { locale } }) => {
+  handler: async ({ interaction, context }) => {
     await interaction.deferReply()
-    const { guildId } = interaction
-    if (!guildId) {
-      throw new Error('Discord guild id not found while processing faction command.')
+    if (!interaction.guildId) {
+      throw new Error('Guild ID not found in interaction')
     }
-    // const faction = await getCachedFaction(cache, guildId)
-    const faction = null
-    if (!faction) {
-      await interaction.editReply({
-        content: L[locale].faction.notSetup(),
+    const subcommand = interaction.options.getSubcommand()
+    if (SubcommandHandlers[subcommand]) {
+      const faction = await Prisma.faction.findFirst({
+        where: {
+          guildId: interaction.guildId,
+        },
+      })
+      if (!faction) {
+        await interaction.editReply({
+          content: L[context.locale].faction.notSetup(),
+        })
+        return
+      }
+      await SubcommandHandlers[subcommand]({
+        interaction,
+        context: {
+          ...context,
+          faction,
+        },
       })
     }
-
-    // const subcommand = interaction.options.getSubcommand()
-    // if (subcommand === FactionSubcommands.systems) {
-    //   await factionSystemsHandler({ interaction })
-    // }
   },
 }
 

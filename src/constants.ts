@@ -46,6 +46,11 @@ export const Emojis = {
   other: '<:other:822765350536871946>',
 }
 
+export const InaraUrl = {
+  minorFaction: (factionName: string) =>
+    `https://inara.cz/minorfaction/?search=${encodeURIComponent(factionName)}`,
+}
+
 export const Languages = {
   english: 'en',
   slovak: 'sk',
