@@ -4,12 +4,12 @@ import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
 import { Command } from '../types'
 import { factionConflictsHandler } from './conflicts'
-// import { factionSystemsHandler } from './systems'
+import { factionSystemsHandler } from './systems'
 
 const SubcommandHandlers = {
   [FactionSubcommands.conflicts]: factionConflictsHandler,
   // [FactionSubcommands.stations]: factionStationsHandler,
-  // [FactionSubcommands.systems]: factionSystemsHandler,
+  [FactionSubcommands.systems]: factionSystemsHandler,
 }
 
 const Faction: Command = {

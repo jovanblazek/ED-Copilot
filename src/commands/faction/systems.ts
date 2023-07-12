@@ -1,76 +1,76 @@
-import { CacheType, ChatInputCommandInteraction } from 'discord.js'
+import dayjs from 'dayjs'
 import got from 'got'
+import { groupBy, map, round, sortBy } from 'lodash'
+import { DataParseError } from '../../classes'
+import { DIVIDER, InaraUrl } from '../../constants'
+import { createEmbed } from '../../embeds'
+import L from '../../i18n/i18n-node'
+import type { FactionSystemsResponse } from '../../types/eliteBGS'
+import { getTickDifferenceFromNow, getTickTime, wasAfterTick } from '../../utils'
+import type { FactionCommandHandler } from './types'
 
-// const calculateInfluenceTrend = (data, history) => {
-//   const dataLength = data.length
-//   const historyLength = history.length
-//   for (let i = 0; i < dataLength; i++) {
-//     for (let j = 0; j < historyLength; j++) {
-//       if (data[i].system === history[j].system && data[i].realInfluence !== history[j].influence) {
-//         // console.log('Before '+ history[j].influence+ '-- After ' +data[i].realInfluence);
-//         data[i].trend = data[i].realInfluence - history[j].influence
-//         data[i].trend = (Math.round(data[i].trend * 1000) / 10).toFixed(1)
-//       }
-//     }
-//   }
-// }
-
-// const parseSystemsData = (systemsPresent) => {
-//   const data = []
-//   systemsPresent.forEach(
-//     ({
-//       system_name: systemName,
-//       influence,
-//       updated_at: updatedAt,
-//       system_details: systemDetails,
-//     }) => {
-//       data.push({
-//         system: systemName,
-//         realInfluence: influence,
-//         influence: Math.round(influence * 1000) / 10,
-//         trend: 0,
-//         population: addSuffixToInt(systemDetails.population),
-//         lastUpdate: moment.utc(updatedAt),
-//         isUpdated: false,
-//       })
-//     }
-//   )
-
-//   // sort by influence
-//   data.sort((a, b) => {
-//     if (a.influence < b.influence) {
-//       return 1
-//     }
-//     if (a.influence > b.influence) {
-//       return -1
-//     }
-//     return 0
-//   })
-//   return data
-// }
-
-export const factionSystemsHandler = async ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interaction,
-  faction,
+const parseSystemsData = ({
+  resposne,
+  commandContext: { locale, timezone },
 }: {
-  interaction: ChatInputCommandInteraction<CacheType>
-  tick: unknown
-  faction: unknown
+  resposne: FactionSystemsResponse
+  commandContext: Parameters<FactionCommandHandler>[0]['context']
 }) => {
-  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true&count=2`
-  const fetchedData = await got(url).json()
-  console.log('fetchedData', fetchedData)
-  // const parsedData = parseSystemsData(fetchedData.docs[0].faction_presence)
-  // calculateInfluenceTrend(parsedData, fetchedData.docs[0].history)
+  if (!resposne.docs.length) {
+    throw new DataParseError({ locale })
+  }
+  const { history } = resposne.docs[0]
+  const historyGroupedBySystem = groupBy(history, 'system_id')
+  const parsedSystemData = map(historyGroupedBySystem, (systemHistory) => {
+    // sort in ascending order, older first
+    const sortedHistory = sortBy(systemHistory, 'updated_at')
+    const currentValues = sortedHistory[1]
+    const previousValues = sortedHistory[0]
+    return {
+      systemName: currentValues.system,
+      lastUpdate: dayjs(currentValues.updated_at).tz(timezone),
+      currentInfluence: round(currentValues.influence * 100, 1),
+      influenceTrend: round((currentValues.influence - previousValues.influence) * 100, 1),
+    }
+  })
+  return sortBy(parsedSystemData, 'currentInfluence').reverse()
+}
 
-  // const tickTime = null
-  // if (!tickTime) {
-  //   // TODO add locale
-  //   throw new TickFetchError({ locale: 'en' })
-  // }
+export const factionSystemsHandler: FactionCommandHandler = async ({
+  interaction,
+  context: { faction, locale, timezone },
+}) => {
+  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&count=2`
+  const fetchedData = await got(url).json<FactionSystemsResponse>()
 
-  // parsedData.forEach((data) => {
-  //   data.isUpdated = wasAfterTick(data.lastUpdate, tickTime)
-  // })
+  const factionSystems = parseSystemsData({
+    resposne: fetchedData,
+    commandContext: {
+      locale,
+      faction,
+      timezone,
+    },
+  })
+  if (!factionSystems.length) {
+    throw new DataParseError({ locale })
+  }
+  const tickTime = await getTickTime({ locale, timezone })
+  const embed = createEmbed({
+    title: L[locale].faction.systems.title({
+      factionName: faction.shortName,
+    }),
+    description: `[INARA](${InaraUrl.minorFaction(faction.name)})\n${DIVIDER}`,
+  })
+
+  // TODO update emojis and formatting to improve UX
+  embed.addFields(
+    factionSystems.map(({ systemName, currentInfluence, influenceTrend, lastUpdate }) => ({
+      name: `${currentInfluence}% - ${systemName}`,
+      value: `${influenceTrend > 0 ? '📈 +' : '📉 '}${influenceTrend}%\n${getTickDifferenceFromNow({
+        tickTime: lastUpdate,
+      })} ${wasAfterTick({ lastUpdate, tickTime }) ? '✅' : '❌'}`,
+    }))
+  )
+
+  await interaction.editReply({ embeds: [embed] })
 }

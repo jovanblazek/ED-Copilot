@@ -54,6 +54,9 @@ const en = {
       noConflicts: 'No conflicts 🎉',
       pendingConflict: 'pending',
     },
+    systems: {
+      title: '{factionName} Systems',
+    },
   },
   ping: {
     response: 'Pong',

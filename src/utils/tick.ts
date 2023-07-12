@@ -61,10 +61,11 @@ export const wasTickToday = ({ tickTime, timezone }: { tickTime: Dayjs; timezone
   return localTickTime.isSame(localTime, 'day')
 }
 
+// TODO rename to more generic function as this is used not only for ticktime
 export const getTickDifferenceFromNow = ({ tickTime }: { tickTime: Dayjs }) => {
   const utcTimeNow = dayjs.utc()
   return tickTime.utc().from(utcTimeNow)
 }
-
+// TODO same as above
 export const wasAfterTick = ({ lastUpdate, tickTime }: { lastUpdate: Dayjs; tickTime: Dayjs }) =>
   lastUpdate.utc().isAfter(tickTime.utc())

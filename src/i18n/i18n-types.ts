@@ -168,6 +168,13 @@ type RootTranslation = {
 			 */
 			pendingConflict: string
 		}
+		systems: {
+			/**
+			 * {​f​a​c​t​i​o​n​N​a​m​e​}​ ​S​y​s​t​e​m​s
+			 * @param {unknown} factionName
+			 */
+			title: RequiredParams<'factionName'>
+		}
 	}
 	ping: {
 		/**
@@ -384,6 +391,12 @@ export type TranslationFunctions = {
 			 * pending
 			 */
 			pendingConflict: () => LocalizedString
+		}
+		systems: {
+			/**
+			 * {factionName} Systems
+			 */
+			title: (arg: { factionName: unknown }) => LocalizedString
 		}
 	}
 	ping: {
