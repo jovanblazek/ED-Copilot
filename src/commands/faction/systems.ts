@@ -6,7 +6,8 @@ import { DIVIDER, InaraUrl } from '../../constants'
 import { createEmbed } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionSystemsResponse } from '../../types/eliteBGS'
-import { getTickDifferenceFromNow, getTickTime, wasAfterTick } from '../../utils'
+import { getTickTime } from '../../utils'
+import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
 const parseSystemsData = ({
@@ -66,9 +67,11 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
   embed.addFields(
     factionSystems.map(({ systemName, currentInfluence, influenceTrend, lastUpdate }) => ({
       name: `${currentInfluence}% - ${systemName}`,
-      value: `${influenceTrend > 0 ? '📈 +' : '📉 '}${influenceTrend}%\n${getTickDifferenceFromNow({
-        tickTime: lastUpdate,
-      })} ${wasAfterTick({ lastUpdate, tickTime }) ? '✅' : '❌'}`,
+      value: `${
+        influenceTrend > 0 ? '📈 +' : '📉 '
+      }${influenceTrend}%\n${getPastTimeDifferenceFromNow({
+        pastTime: lastUpdate,
+      })} ${isAfterTime({ target: lastUpdate, isAfter: tickTime }) ? '✅' : '❌'}`,
     }))
   )
 

@@ -2,7 +2,8 @@ import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames } from '../constants'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
-import { getTickDifferenceFromNow, getTickTime, wasTickToday } from '../utils'
+import { getTickTime, wasTickToday } from '../utils'
+import { getPastTimeDifferenceFromNow } from '../utils/time'
 import { Command } from './types'
 
 const TickCommand: Command = {
@@ -18,7 +19,7 @@ const TickCommand: Command = {
       timezone,
     })
 
-    const differenceFromNow = getTickDifferenceFromNow({ tickTime })
+    const differenceFromNow = getPastTimeDifferenceFromNow({ pastTime: tickTime })
 
     await interaction.editReply({
       embeds: [
@@ -32,21 +33,6 @@ const TickCommand: Command = {
       ],
     })
   },
-  // async (client: Client) => {
-  //   const tickTime = null
-  //   if (!tickTime) {
-  //     logger.error('Error while trying to report tick')
-  //     // return
-  //   }
-
-  //   // const channel = client.channels.cache.get(tickReportChannel) as TextChannel
-  //   // if (!channel) {
-  //   //   return
-  //   // }
-  //   // await channel.send({
-  //   //   embeds: [createTickEmbed(tickTime, tick)],
-  //   // })
-  // }
 }
 
 export default TickCommand

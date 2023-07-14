@@ -8,7 +8,8 @@ import { createEmbed } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import { Locales } from '../../i18n/i18n-types'
 import type { FactionConflicsResponse } from '../../types/eliteBGS'
-import { getTickTime, wasAfterTick } from '../../utils'
+import { getTickTime } from '../../utils'
+import { isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
 type FactionInConflict = {
@@ -137,9 +138,9 @@ const printConflict = ({
     {
       name: '\u200b',
       value: `${conflict.lastUpdate.tz(timezone).format('DD.MM.YYYY HH:mm')} ${
-        wasAfterTick({
-          lastUpdate: conflict.lastUpdate,
-          tickTime,
+        isAfterTime({
+          target: conflict.lastUpdate,
+          isAfter: tickTime,
         })
           ? `✅`
           : `❌`
