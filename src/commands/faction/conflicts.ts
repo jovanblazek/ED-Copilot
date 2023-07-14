@@ -1,4 +1,3 @@
-import { Faction } from '@prisma/client'
 import dayjs, { Dayjs } from 'dayjs'
 import { bold, EmbedBuilder, inlineCode } from 'discord.js'
 import got from 'got'
@@ -6,7 +5,6 @@ import { DataParseError } from '../../classes'
 import { DIVIDER, Emojis, InaraUrl } from '../../constants'
 import { createEmbed } from '../../embeds'
 import L from '../../i18n/i18n-node'
-import { Locales } from '../../i18n/i18n-types'
 import type { FactionConflicsResponse } from '../../types/eliteBGS'
 import { getTickTime } from '../../utils'
 import { isAfterTime } from '../../utils/time'
@@ -29,12 +27,10 @@ type Conflict = {
 
 const parseConflictsData = ({
   resposne,
-  locale,
-  faction,
+  commandContext: { faction, locale },
 }: {
   resposne: FactionConflicsResponse
-  locale: Locales
-  faction: Faction
+  commandContext: Parameters<FactionCommandHandler>[0]['context']
 }): Conflict[] => {
   if (!resposne.docs.length) {
     throw new DataParseError({ locale })
@@ -91,25 +87,20 @@ const parseConflictsData = ({
   )
 }
 
-// TODO tidy up this arguments mess
 const printConflict = ({
   embed,
-  conflict,
-  targetFaction,
-  enemyFaction,
   tickTime,
-  timezone,
-  locale,
-  faction,
+  conflictData: { conflict, targetFaction, enemyFaction },
+  commandContext: { timezone, locale, faction },
 }: {
   embed: EmbedBuilder
-  conflict: Conflict
-  targetFaction: FactionInConflict
-  enemyFaction: FactionInConflict
   tickTime: Dayjs
-  timezone: string
-  locale: Locales
-  faction: Faction
+  conflictData: {
+    conflict: Conflict
+    targetFaction: FactionInConflict
+    enemyFaction: FactionInConflict
+  }
+  commandContext: Parameters<FactionCommandHandler>[0]['context']
 }) => {
   embed.addFields([
     {
@@ -149,16 +140,13 @@ const printConflict = ({
   ])
 }
 
-export const factionConflictsHandler: FactionCommandHandler = async ({
-  interaction,
-  context: { locale, faction, timezone },
-}) => {
+export const factionConflictsHandler: FactionCommandHandler = async ({ interaction, context }) => {
+  const { locale, faction, timezone } = context
   const conflictsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true`
   const fetchedData = await got(conflictsUrl).json<FactionConflicsResponse>()
   const conflicts = parseConflictsData({
     resposne: fetchedData,
-    locale,
-    faction,
+    commandContext: context,
   })
   const tickTime = await getTickTime({ locale, timezone })
   const embed = createEmbed({
@@ -180,24 +168,24 @@ export const factionConflictsHandler: FactionCommandHandler = async ({
       if (conflict.faction1.isTargetFaction) {
         printConflict({
           embed,
-          conflict,
-          targetFaction: conflict.faction1,
-          enemyFaction: conflict.faction2,
           tickTime,
-          timezone,
-          locale,
-          faction,
+          conflictData: {
+            conflict,
+            targetFaction: conflict.faction1,
+            enemyFaction: conflict.faction2,
+          },
+          commandContext: context,
         })
       } else {
         printConflict({
           embed,
-          conflict,
-          targetFaction: conflict.faction2,
-          enemyFaction: conflict.faction1,
           tickTime,
-          timezone,
-          locale,
-          faction,
+          conflictData: {
+            conflict,
+            targetFaction: conflict.faction1,
+            enemyFaction: conflict.faction2,
+          },
+          commandContext: context,
         })
       }
     })
