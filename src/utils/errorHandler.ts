@@ -24,7 +24,7 @@ export const errorHandler = async (
     logger.info(`Tick fetch error`)
     await replyToError(interaction, error.message)
   } else {
-    logger.error(error, `Error while handling command ${commandName}`)
+    logger.error(error, `Error while handling command: ${commandName}`)
     await replyToError(interaction, L.en.error.unknown())
   }
 }

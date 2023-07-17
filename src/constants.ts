@@ -44,6 +44,8 @@ export const Emojis = {
   outpost: '<:outpost:822765313870397460>',
   surfacePort: '<:surface:822765337548029962>',
   other: '<:other:822765350536871946>',
+  green_upwards_arrow: '<:arrow_green:842824851072614487>',
+  red_downwards_arrow: '<:arrow_red:842824890918764544>',
 }
 
 export const InaraUrl = {

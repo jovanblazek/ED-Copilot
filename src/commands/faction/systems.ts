@@ -1,8 +1,9 @@
 import dayjs from 'dayjs'
+import { blockQuote } from 'discord.js'
 import got from 'got'
 import { groupBy, map, round, sortBy } from 'lodash'
 import { DataParseError } from '../../classes'
-import { DIVIDER, InaraUrl } from '../../constants'
+import { DIVIDER, Emojis, InaraUrl } from '../../constants'
 import { createEmbed } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionSystemsResponse } from '../../types/eliteBGS'
@@ -63,15 +64,18 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
     description: `[INARA](${InaraUrl.minorFaction(faction.name)})\n${DIVIDER}`,
   })
 
-  // TODO update emojis and formatting to improve UX
   embed.addFields(
     factionSystems.map(({ systemName, currentInfluence, influenceTrend, lastUpdate }) => ({
       name: `${currentInfluence}% - ${systemName}`,
-      value: `${
-        influenceTrend > 0 ? '📈 +' : '📉 '
-      }${influenceTrend}%\n${getPastTimeDifferenceFromNow({
-        pastTime: lastUpdate,
-      })} ${isAfterTime({ target: lastUpdate, isAfter: tickTime }) ? '✅' : '❌'}`,
+      value: `${blockQuote(
+        `${
+          influenceTrend > 0 ? `${Emojis.green_upwards_arrow} +` : `${Emojis.red_downwards_arrow} `
+        }${influenceTrend}%\n${
+          isAfterTime({ target: lastUpdate, isAfter: tickTime }) ? '✅' : '❌'
+        } ${getPastTimeDifferenceFromNow({
+          pastTime: lastUpdate,
+        })}`
+      )}`,
     }))
   )
 
