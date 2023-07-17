@@ -2,6 +2,7 @@ import type { Translation } from '../i18n-types'
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const sk = {
+  // @ts-ignore
   error: {
     unknown: 'Pri vykonávaní príkazu sa vyskytla neznáma chyba 😞',
     systemNotFound: 'Systém `{systemName}` sa nepodarilo nájsť.',

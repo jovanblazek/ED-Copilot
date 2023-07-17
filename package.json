@@ -22,6 +22,7 @@
   "dependencies": {
     "@prisma/client": "^4.10.1",
     "@sentry/node": "^7.48.0",
+    "@types/node": "^20.4.2",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.7",

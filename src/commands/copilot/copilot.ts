@@ -62,7 +62,7 @@ const Copilot: Command = {
     ),
   handler: async ({ interaction, context }) => {
     await interaction.deferReply()
-    const subcommand = interaction.options.getSubcommand()
+    const subcommand = interaction.options.getSubcommand() as keyof typeof SubcommandHandlers
     if (SubcommandHandlers[subcommand]) {
       await SubcommandHandlers[subcommand]({ interaction, context })
     }

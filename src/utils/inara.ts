@@ -1,6 +1,6 @@
 import got from 'got'
 import { JSDOM } from 'jsdom'
-import { chunk } from 'lodash'
+import { chunk, get } from 'lodash'
 import { DIVIDER, RankNames, Ranks } from '../constants'
 import { createEmbed } from '../embeds'
 
@@ -28,7 +28,7 @@ export type InaraProfile = {
   userName: string
   commanderName: string
   commanderRanksPilot: {
-    rankName: string
+    rankName: keyof typeof Ranks
     rankValue: number
     rankProgress: number
   }[]
@@ -39,9 +39,8 @@ export type InaraProfile = {
 
 const INARA_API_URL = 'https://inara.cz/inapi/v1/'
 
-// TODO use constants from package.json
 const APP_NAME = 'ED-Copilot'
-const APP_VERSION = '0.1'
+const APP_VERSION = '2' // should match major version of the app
 
 export const inaraRequest = async <T>(events: InaraEvent[]) => {
   const response = await got
@@ -118,9 +117,9 @@ export const generateInaraEmbed = (url: string, data: ScrapedInaraData[], title:
 
 export const parseInaraRanks = (ranks: InaraProfile['commanderRanksPilot']) =>
   ranks.map(({ rankName, rankValue, rankProgress }) => {
-    const rank: string[] | undefined = Ranks[rankName]
+    const rank = Ranks[rankName]
     return {
       name: (RankNames[rankName] || rankName) as string,
-      value: `${rank ? rank[rankValue] : 'Error'} (${Math.floor(rankProgress * 100)}%)`,
+      value: `${get(rank, rankValue, '---')} (${Math.floor(rankProgress * 100)}%)`,
     }
   })

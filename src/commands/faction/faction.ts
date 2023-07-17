@@ -10,7 +10,7 @@ const SubcommandHandlers = {
   [FactionSubcommands.conflicts]: factionConflictsHandler,
   // [FactionSubcommands.stations]: factionStationsHandler,
   [FactionSubcommands.systems]: factionSystemsHandler,
-}
+} as const
 
 const Faction: Command = {
   builder: new SlashCommandBuilder()
@@ -36,7 +36,7 @@ const Faction: Command = {
     if (!interaction.guildId) {
       throw new Error('Guild ID not found in interaction')
     }
-    const subcommand = interaction.options.getSubcommand()
+    const subcommand = interaction.options.getSubcommand() as keyof typeof SubcommandHandlers
     if (SubcommandHandlers[subcommand]) {
       const faction = await Prisma.faction.findFirst({
         where: {

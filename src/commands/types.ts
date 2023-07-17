@@ -6,7 +6,7 @@ import {
 } from 'discord.js'
 import { Locales } from '../i18n/i18n-types'
 
-export type CommandHandlerArgs<ContextExtension = Record<string, never>> = {
+export type CommandHandlerArgs<ContextExtension = Record<string, unknown>> = {
   interaction: ChatInputCommandInteraction<CacheType>
   context: {
     locale: Locales
@@ -14,7 +14,7 @@ export type CommandHandlerArgs<ContextExtension = Record<string, never>> = {
   } & ContextExtension
 }
 
-export type CommandHandler<ContextExtension = Record<string, never>> = (
+export type CommandHandler<ContextExtension = Record<string, unknown>> = (
   args: CommandHandlerArgs<ContextExtension>
 ) => Promise<void>
 

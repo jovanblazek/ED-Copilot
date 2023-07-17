@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+    "module": "CommonJS",
     "lib": [
-      "ESNext",
+      "ES2022",
     ],
     "outDir": "build",
     "removeComments": true,
-    "target": "ES6",
+    "target": "ES2022",
     "resolveJsonModule": true,
     // "baseUrl": "./src",
     "esModuleInterop": true,
@@ -13,7 +14,7 @@
     "paths": {}, // A series of entries which re-map imports to lookup locations relative to the baseUrl
     "alwaysStrict": true,
     "allowUnreachableCode": false,
-    "noImplicitAny": false, // TODO change in the future
+    "noImplicitAny": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
