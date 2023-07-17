@@ -7,7 +7,7 @@ import { createEmbed } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionConflicsResponse } from '../../types/eliteBGS'
 import { getTickTime } from '../../utils'
-import { isAfterTime } from '../../utils/time'
+import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
 type FactionInConflict = {
@@ -91,7 +91,7 @@ const printConflict = ({
   embed,
   tickTime,
   conflictData: { conflict, targetFaction, enemyFaction },
-  commandContext: { timezone, locale, faction },
+  commandContext: { locale, faction },
 }: {
   embed: EmbedBuilder
   tickTime: Dayjs
@@ -128,14 +128,16 @@ const printConflict = ({
     },
     {
       name: '\u200b',
-      value: `${conflict.lastUpdate.tz(timezone).format('DD.MM.YYYY HH:mm')} ${
+      value: `${
         isAfterTime({
           target: conflict.lastUpdate,
           isAfter: tickTime,
         })
           ? `✅`
           : `❌`
-      }`,
+      } ${getPastTimeDifferenceFromNow({
+        pastTime: conflict.lastUpdate,
+      })}`,
     },
   ])
 }
@@ -149,21 +151,17 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
     commandContext: context,
   })
   const tickTime = await getTickTime({ locale, timezone })
+  const conflictsLength = conflicts.length
   const embed = createEmbed({
     title: L[locale].faction.conflicts.title({
       factionName: faction.shortName,
     }),
-    description: `[INARA](${InaraUrl.minorFaction(faction.name)})\n${DIVIDER}`,
+    description: `[INARA](${InaraUrl.minorFaction(faction.name)})\n${DIVIDER}${
+      !conflictsLength ? `\n${L[locale].faction.conflicts.noConflicts()}` : ''
+    }`,
   })
 
-  if (!conflicts.length) {
-    embed.addFields([
-      {
-        name: L[locale].faction.conflicts.noConflicts(),
-        value: '\u200b',
-      },
-    ])
-  } else {
+  if (conflictsLength) {
     conflicts.forEach((conflict) => {
       if (conflict.faction1.isTargetFaction) {
         printConflict({
@@ -182,8 +180,8 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
           tickTime,
           conflictData: {
             conflict,
-            targetFaction: conflict.faction1,
-            enemyFaction: conflict.faction2,
+            targetFaction: conflict.faction2,
+            enemyFaction: conflict.faction1,
           },
           commandContext: context,
         })
