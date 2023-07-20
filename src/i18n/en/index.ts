@@ -57,6 +57,9 @@ const en = {
     systems: {
       title: '{factionName} Systems',
     },
+    stations: {
+      title: '{factionName} Stations',
+    },
   },
   ping: {
     response: 'Pong',

@@ -48,9 +48,25 @@ export const Emojis = {
   red_downwards_arrow: '<:arrow_red:842824890918764544>',
 } as const
 
+export enum StationType {
+  Coriolis,
+  Outpost,
+  SurfacePort,
+  Other,
+}
+
+export const StationTypeEmojis = {
+  [StationType.Coriolis]: Emojis.coriolis,
+  [StationType.Outpost]: Emojis.outpost,
+  [StationType.SurfacePort]: Emojis.surfacePort,
+  [StationType.Other]: Emojis.other,
+} as const
+
 export const InaraUrl = {
   minorFaction: (factionName: string) =>
     `https://inara.cz/minorfaction/?search=${encodeURIComponent(factionName)}`,
+  minorFactionAssets: (factionName: string) =>
+    `https://inara.cz/elite/minorfaction-assets/?search=${encodeURIComponent(factionName)}`,
 } as const
 
 export const Languages = {

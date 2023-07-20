@@ -175,6 +175,13 @@ type RootTranslation = {
 			 */
 			title: RequiredParams<'factionName'>
 		}
+		stations: {
+			/**
+			 * {​f​a​c​t​i​o​n​N​a​m​e​}​ ​S​t​a​t​i​o​n​s
+			 * @param {unknown} factionName
+			 */
+			title: RequiredParams<'factionName'>
+		}
 	}
 	ping: {
 		/**
@@ -395,6 +402,12 @@ export type TranslationFunctions = {
 		systems: {
 			/**
 			 * {factionName} Systems
+			 */
+			title: (arg: { factionName: unknown }) => LocalizedString
+		}
+		stations: {
+			/**
+			 * {factionName} Stations
 			 */
 			title: (arg: { factionName: unknown }) => LocalizedString
 		}

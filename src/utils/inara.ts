@@ -1,7 +1,7 @@
 import got from 'got'
 import { JSDOM } from 'jsdom'
 import { chunk, get } from 'lodash'
-import { DIVIDER, RankNames, Ranks } from '../constants'
+import { DIVIDER, RankNames, Ranks, StationType } from '../constants'
 import { createEmbed } from '../embeds'
 
 type InaraEvent = {
@@ -123,3 +123,32 @@ export const parseInaraRanks = (ranks: InaraProfile['commanderRanksPilot']) =>
       value: `${get(rank, rankValue, '---')} (${Math.floor(rankProgress * 100)}%)`,
     }
   })
+
+export const getInaraStationType = (node: ChildNode | null) => {
+  if (!node) {
+    return StationType.Other
+  }
+  const iconBgPosition = get(node, ['style', 'background-position'], '') as string
+  const iconBgPositionX = parseInt(iconBgPosition)
+
+  const iconsMap = new Map<number, StationType>([
+    [0, StationType.Other],
+    [-13, StationType.Coriolis],
+    [-26, StationType.Outpost],
+    [-39, StationType.Outpost],
+    [-52, StationType.Outpost],
+    [-65, StationType.Outpost],
+    [-78, StationType.Outpost],
+    [-91, StationType.Outpost],
+    [-104, StationType.Outpost],
+    [-117, StationType.Outpost],
+    [-130, StationType.Outpost],
+    [-143, StationType.Outpost],
+    [-156, StationType.Coriolis],
+    [-169, StationType.Coriolis],
+    [-182, StationType.SurfacePort],
+    [-195, StationType.SurfacePort],
+  ])
+
+  return iconsMap.get(iconBgPositionX) ?? StationType.Other
+}
