@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs'
-import { bold, EmbedBuilder, inlineCode } from 'discord.js'
+import { bold, EmbedBuilder, hyperlink, inlineCode } from 'discord.js'
 import got from 'got'
 import { DataParseError } from '../../classes'
 import { DIVIDER, Emojis, InaraUrl } from '../../constants'
@@ -156,7 +156,7 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
     title: L[locale].faction.conflicts.title({
       factionName: faction.shortName,
     }),
-    description: `[INARA](${InaraUrl.minorFaction(faction.name)})\n${DIVIDER}${
+    description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}${
       !conflictsLength ? `\n${L[locale].faction.conflicts.noConflicts()}` : ''
     }`,
   })

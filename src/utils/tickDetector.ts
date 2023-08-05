@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs'
-import { ChannelType, Client } from 'discord.js'
+import { bold, ChannelType, Client, hyperlink } from 'discord.js'
 import { io } from 'socket.io-client'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
@@ -36,8 +36,8 @@ const reportTick = async (client: Client, tickTime: Dayjs) => {
           embeds: [
             createEmbed({
               title: L[locale].tick.title(),
-              description: `**${tickTime.tz(timezone).format('DD.MM.YYYY HH:mm')}**\n
-            [${L[locale].tick.history()}](https://elitebgs.app/tick)`,
+              description: `${bold(tickTime.tz(timezone).format('DD.MM.YYYY HH:mm'))}\n
+              ${hyperlink(L[locale].tick.history(), 'https://elitebgs.app/tick')}`,
             }),
           ],
         })

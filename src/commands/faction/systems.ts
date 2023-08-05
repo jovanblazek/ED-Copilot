@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { blockQuote } from 'discord.js'
+import { blockQuote, hyperlink } from 'discord.js'
 import got from 'got'
 import { groupBy, map, round, sortBy } from 'lodash'
 import { DataParseError } from '../../classes'
@@ -61,7 +61,7 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
     title: L[locale].faction.systems.title({
       factionName: faction.shortName,
     }),
-    description: `[INARA](${InaraUrl.minorFaction(faction.name)})\n${DIVIDER}`,
+    description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}`,
   })
 
   embed.addFields(

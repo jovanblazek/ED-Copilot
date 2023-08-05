@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { SlashCommandBuilder } from 'discord.js'
+import { hyperlink, SlashCommandBuilder } from 'discord.js'
 import got from 'got'
 import { isEmpty } from 'lodash'
 import { DataParseError, SystemNotFoundError } from '../classes'
@@ -96,7 +96,10 @@ const SystemInfo: Command = {
 
     const embed = createEmbed({
       title: L[locale].systemInfo.title({ systemName }),
-      description: `[INARA](https://inara.cz/starsystem/?search=${systemNameWeb})\n${DIVIDER}`,
+      description: `${hyperlink(
+        'INARA',
+        `https://inara.cz/starsystem/?search=${systemNameWeb}`
+      )}\n${DIVIDER}`,
     }).setFooter({
       text: `${L[locale].systemInfo.lastUpdate({
         time: lastUpdate.tz(timezone).format('DD.MM.YYYY HH:mm'),

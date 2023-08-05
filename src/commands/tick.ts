@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js'
+import { bold, hyperlink, SlashCommandBuilder } from 'discord.js'
 import { CommandNames } from '../constants'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
@@ -25,10 +25,10 @@ const TickCommand: Command = {
       embeds: [
         createEmbed({
           title: L[locale].tick.title(),
-          description: `**${tickTime.format('DD.MM.YYYY HH:mm')}**
+          description: `${bold(tickTime.format('DD.MM.YYYY HH:mm'))}
             ${differenceFromNow}\n
             ${L[locale].tick.wasToday()}: ${wasToday ? '✅' : '❌'}\n
-            [${L[locale].tick.history()}](https://elitebgs.app/tick)`,
+            ${hyperlink(L[locale].tick.history(), 'https://elitebgs.app/tick')}`,
         }),
       ],
     })

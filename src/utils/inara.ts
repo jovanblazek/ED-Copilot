@@ -1,3 +1,4 @@
+import { hyperlink } from 'discord.js'
 import got from 'got'
 import { JSDOM } from 'jsdom'
 import { chunk, get } from 'lodash'
@@ -101,7 +102,7 @@ export const scrapeInara = async (url: string, cellsPerRow: number) => {
 export const generateInaraEmbed = (url: string, data: ScrapedInaraData[], title: string) => {
   const embed = createEmbed({
     title,
-    description: `[INARA](${url})\n${DIVIDER}`,
+    description: `${hyperlink('INARA', url)}\n${DIVIDER}`,
   })
 
   data.forEach(({ type, station, system, distanceLs, distanceLy }) => {
