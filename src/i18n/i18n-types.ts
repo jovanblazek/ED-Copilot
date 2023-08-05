@@ -34,21 +34,9 @@ type RootTranslation = {
 		 */
 		tickFetchError: string
 		/**
-		 * C​o​u​l​d​ ​n​o​t​ ​f​e​t​c​h​ ​f​a​c​t​i​o​n​ ​d​a​t​a​.
-		 */
-		factionFetchError: string
-		/**
-		 * T​i​m​e​ ​d​i​f​f​e​r​e​n​c​e​ ​e​r​r​o​r​.
-		 */
-		timeDifferenceError: string
-		/**
 		 * C​o​u​l​d​ ​n​o​t​ ​p​a​r​s​e​ ​d​a​t​a​.
 		 */
 		dataParseError: string
-		/**
-		 * T​h​i​s​ ​c​o​m​m​a​n​d​ ​i​s​ ​o​n​l​y​ ​a​v​a​i​l​a​b​l​e​ ​t​o​ ​a​d​m​i​n​s​.
-		 */
-		adminOnly: string
 		/**
 		 * T​h​e​s​e​ ​b​u​t​t​o​n​s​ ​a​r​e​n​'​t​ ​f​o​r​ ​y​o​u​!
 		 */
@@ -268,21 +256,9 @@ export type TranslationFunctions = {
 		 */
 		tickFetchError: () => LocalizedString
 		/**
-		 * Could not fetch faction data.
-		 */
-		factionFetchError: () => LocalizedString
-		/**
-		 * Time difference error.
-		 */
-		timeDifferenceError: () => LocalizedString
-		/**
 		 * Could not parse data.
 		 */
 		dataParseError: () => LocalizedString
-		/**
-		 * This command is only available to admins.
-		 */
-		adminOnly: () => LocalizedString
 		/**
 		 * These buttons aren't for you!
 		 */

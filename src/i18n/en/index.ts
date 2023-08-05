@@ -7,10 +7,7 @@ const en = {
     general: 'Something went wrong. Try again later.',
     systemNotFound: 'Could not find system named `{systemName}`.',
     tickFetchError: 'Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).',
-    factionFetchError: 'Could not fetch faction data.',
-    timeDifferenceError: 'Time difference error.',
     dataParseError: 'Could not parse data.',
-    adminOnly: 'This command is only available to admins.',
     buttonsDisabled: "These buttons aren't for you!",
   },
   copilot: {
