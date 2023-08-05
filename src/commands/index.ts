@@ -4,7 +4,6 @@ import copilot from './copilot'
 import faction from './faction'
 import interstellarFactors from './interstellarFactors'
 import materialTrader from './materialTrader'
-import ping from './ping'
 import setup from './setup'
 import systemDistance from './systemDistance'
 import systemInfo from './systemInfo'
@@ -17,7 +16,6 @@ type CommandHandlersType = {
 }
 
 export const Commands = {
-  ping,
   techBroker,
   materialTrader,
   interstellarFactors,

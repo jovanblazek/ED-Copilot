@@ -61,9 +61,6 @@ const en = {
       title: '{factionName} Stations',
     },
   },
-  ping: {
-    response: 'Pong',
-  },
   techBroker: {
     title: 'Technology Brokers',
   },

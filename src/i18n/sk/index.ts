@@ -14,9 +14,6 @@ const sk = {
     buttonsDisabled: 'Tieto tlačidlá nie sú pre teba!',
     general: 'Nastala chyba. Skús to znova neskôr.',
   },
-  ping: {
-    response: 'Pong po slovensky',
-  },
   techBroker: {
     title: 'Technology Brokeri',
   },

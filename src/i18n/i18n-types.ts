@@ -183,12 +183,6 @@ type RootTranslation = {
 			title: RequiredParams<'factionName'>
 		}
 	}
-	ping: {
-		/**
-		 * P​o​n​g
-		 */
-		response: string
-	}
 	techBroker: {
 		/**
 		 * T​e​c​h​n​o​l​o​g​y​ ​B​r​o​k​e​r​s
@@ -411,12 +405,6 @@ export type TranslationFunctions = {
 			 */
 			title: (arg: { factionName: unknown }) => LocalizedString
 		}
-	}
-	ping: {
-		/**
-		 * Pong
-		 */
-		response: () => LocalizedString
 	}
 	techBroker: {
 		/**
