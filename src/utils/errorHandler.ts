@@ -3,10 +3,17 @@ import { DataParseError, SystemNotFoundError, TickFetchError } from '../classes'
 import L from '../i18n/i18n-node'
 import logger from './logger'
 
-const replyToError = async (interaction: CommandInteraction<CacheType>, msgContent: string) => {
-  await interaction.editReply({
-    content: msgContent,
-  })
+const replyToError = async (interaction: CommandInteraction<CacheType>, message: string) => {
+  if (interaction.deferred) {
+    await interaction.editReply({
+      content: message,
+    })
+  } else {
+    await interaction.reply({
+      content: message,
+      ephemeral: true,
+    })
+  }
 }
 
 export const errorHandler = async (
