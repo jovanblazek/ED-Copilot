@@ -26,7 +26,9 @@ export const onInteractionCreate = async (interaction: Interaction) => {
           timezone: guildPreferences.timezone || 'UTC',
         },
       })
+      return
     }
+    throw new Error('Command or guild not found.')
   } catch (error) {
     await errorHandler(error, interaction, commandName)
   }

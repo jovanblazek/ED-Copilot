@@ -20,3 +20,9 @@ export class DataParseError extends BaseError {
     super(L[locale].error.dataParseError())
   }
 }
+
+export class InteractionError extends BaseError {
+  constructor({ locale }: { locale: Locales }) {
+    super(L[locale].error.unknown())
+  }
+}

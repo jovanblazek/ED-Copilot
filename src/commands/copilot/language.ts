@@ -9,7 +9,7 @@ export const setupLanguagenHandler: CommandHandler = async ({
 }) => {
   const { guildId } = interaction
   if (!guildId) {
-    throw new Error('Guild ID not found in interaction')
+    return // We should never get here as this check is done in the parent command
   }
 
   const newLocale = interaction.options.getString('language') || baseLocale

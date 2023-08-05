@@ -1,7 +1,9 @@
 import { SlashCommandBuilder } from 'discord.js'
+import { InteractionError } from '../../classes'
 import { CommandNames, FactionSubcommands } from '../../constants'
 import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
+import logger from '../../utils/logger'
 import { Command } from '../types'
 import { factionConflictsHandler } from './conflicts'
 import { factionStationsHandler } from './stations'
@@ -36,7 +38,8 @@ const Faction: Command = {
   handler: async ({ interaction, context }) => {
     await interaction.deferReply()
     if (!interaction.guildId) {
-      throw new Error('Guild ID not found in interaction')
+      logger.error('Discord guild id not found while calling faction command.')
+      throw new InteractionError({ locale: context.locale })
     }
     const subcommand = interaction.options.getSubcommand() as keyof typeof SubcommandHandlers
     if (SubcommandHandlers[subcommand]) {

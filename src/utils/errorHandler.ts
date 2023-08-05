@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from 'discord.js'
-import { DataParseError, SystemNotFoundError, TickFetchError } from '../classes'
+import { DataParseError, InteractionError, SystemNotFoundError, TickFetchError } from '../classes'
 import L from '../i18n/i18n-node'
 import logger from './logger'
 
@@ -29,6 +29,9 @@ export const errorHandler = async (
     await replyToError(interaction, error.message)
   } else if (error instanceof TickFetchError) {
     logger.info(`Tick fetch error`)
+    await replyToError(interaction, error.message)
+  } else if (error instanceof InteractionError) {
+    logger.info(`Interaction error`)
     await replyToError(interaction, error.message)
   } else {
     logger.error(error, `Error while handling command: ${commandName}`)

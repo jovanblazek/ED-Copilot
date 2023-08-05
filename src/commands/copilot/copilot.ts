@@ -1,5 +1,7 @@
 import { ChannelType, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js'
+import { InteractionError } from '../../classes'
 import { CommandNames, CopilotSubcommands, Languages } from '../../constants'
+import logger from '../../utils/logger'
 import { Command } from '../types'
 import { setupFactionHandler } from './faction'
 import { setupLanguagenHandler } from './language'
@@ -62,6 +64,10 @@ const Copilot: Command = {
     ),
   handler: async ({ interaction, context }) => {
     await interaction.deferReply()
+    if (!interaction.guildId) {
+      logger.error('Discord guild id not found while calling copilot command.')
+      throw new InteractionError({ locale: context.locale })
+    }
     const subcommand = interaction.options.getSubcommand() as keyof typeof SubcommandHandlers
     if (SubcommandHandlers[subcommand]) {
       await SubcommandHandlers[subcommand]({ interaction, context })

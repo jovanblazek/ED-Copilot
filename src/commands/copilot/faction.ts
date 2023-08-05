@@ -18,8 +18,7 @@ type EliteBgsResponse = {
 export const setupFactionHandler: CommandHandler = async ({ interaction, context: { locale } }) => {
   const { guildId } = interaction
   if (!guildId) {
-    logger.warn('Discord guild id not found while setting up faction.')
-    return
+    return // We should never get here as this check is done in the parent command
   }
 
   const factionNameInput = interaction.options.getString('name')!
