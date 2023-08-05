@@ -14,6 +14,10 @@ declare global {
       POSTGRES_CONNECTION_STRING: string
 
       ENCRYPTION_KEY: string
+
+      // Discord
+      CLIENT_ID: string
+      DEV_GUILD_ID: string
     }
   }
 }
