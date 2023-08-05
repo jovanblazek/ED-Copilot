@@ -4,39 +4,7 @@ import { JSDOM } from 'jsdom'
 import { chunk, get } from 'lodash'
 import { DIVIDER, RankNames, Ranks, StationType } from '../constants'
 import { createEmbed } from '../embeds'
-
-type InaraEvent = {
-  eventCustomID?: number
-  eventName: string
-  eventTimestamp?: string
-  eventData: unknown | unknown[]
-}
-
-export type InaraResponse<T> = {
-  header: {
-    eventStatus: number
-  }
-  events: {
-    eventCustomID?: number
-    eventStatus: number
-    eventStatusText?: string
-    eventData: T
-  }[]
-}
-
-export type InaraProfile = {
-  userID: number
-  userName: string
-  commanderName: string
-  commanderRanksPilot: {
-    rankName: keyof typeof Ranks
-    rankValue: number
-    rankProgress: number
-  }[]
-  avatarImageURL?: string
-  inaraURL: string
-  otherNamesFound: string[]
-}
+import type { InaraEvent, InaraProfile, InaraResponse } from '../types/inara'
 
 const INARA_API_URL = 'https://inara.cz/inapi/v1/'
 

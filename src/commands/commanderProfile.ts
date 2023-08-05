@@ -2,10 +2,10 @@ import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames } from '../constants'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
+import type { InaraProfile } from '../types/inara'
 import {
   addCommasToNumber,
   fetchCommanderCredits,
-  InaraProfile,
   inaraRequest,
   parseInaraRanks,
   Prisma,
