@@ -49,7 +49,7 @@ const en = {
     conflicts: {
       title: '{factionName} Conflicts',
       noConflicts: 'No conflicts 🎉',
-      pendingConflict: 'pending',
+      pendingConflict: 'Pending',
     },
     systems: {
       title: '{factionName} Systems',

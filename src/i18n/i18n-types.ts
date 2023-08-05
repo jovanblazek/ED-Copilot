@@ -152,7 +152,7 @@ type RootTranslation = {
 			 */
 			noConflicts: string
 			/**
-			 * p​e​n​d​i​n​g
+			 * P​e​n​d​i​n​g
 			 */
 			pendingConflict: string
 		}
@@ -365,7 +365,7 @@ export type TranslationFunctions = {
 			 */
 			noConflicts: () => LocalizedString
 			/**
-			 * pending
+			 * Pending
 			 */
 			pendingConflict: () => LocalizedString
 		}

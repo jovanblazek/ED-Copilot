@@ -50,7 +50,7 @@ const sk = {
     conflicts: {
       title: '{factionName} Konflikty',
       noConflicts: 'Žiadne konflikty 🎉',
-      pendingConflict: 'čaká sa',
+      pendingConflict: 'Začína',
     },
     systems: {
       title: '{factionName} Systémy',

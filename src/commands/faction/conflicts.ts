@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs'
-import { bold, EmbedBuilder, hyperlink, inlineCode } from 'discord.js'
+import { EmbedBuilder, hyperlink, inlineCode, quote } from 'discord.js'
 import got from 'got'
 import { DataParseError } from '../../classes'
 import { DIVIDER, Emojis, InaraUrl } from '../../constants'
@@ -90,11 +90,13 @@ const parseConflictsData = ({
 const printConflict = ({
   embed,
   tickTime,
+  isLastConflict,
   conflictData: { conflict, targetFaction, enemyFaction },
   commandContext: { locale, faction },
 }: {
   embed: EmbedBuilder
   tickTime: Dayjs
+  isLastConflict: boolean
   conflictData: {
     conflict: Conflict
     targetFaction: FactionInConflict
@@ -102,23 +104,26 @@ const printConflict = ({
   }
   commandContext: Parameters<FactionCommandHandler>[0]['context']
 }) => {
+  const isConflictPending = conflict.status === 'pending'
   embed.addFields([
     {
-      name: `${bold(`${faction.shortName} vs ${enemyFaction.name}`)}`,
-      value: `${Emojis.system} ${conflict.system}`,
+      name: `${Emojis.system} ${conflict.system}`,
+      value: `${quote(
+        `${
+          isAfterTime({
+            target: conflict.lastUpdate,
+            isAfter: tickTime,
+          })
+            ? `✅`
+            : `❌`
+        } ${getPastTimeDifferenceFromNow({
+          pastTime: conflict.lastUpdate,
+        })}`
+      )}`,
     },
-    ...(conflict.status === 'pending'
-      ? [
-          {
-            name: inlineCode(L[locale].faction.conflicts.pendingConflict()),
-            value: '\u200b',
-            inline: true,
-          },
-        ]
-      : []),
     {
-      name: inlineCode(`${targetFaction.daysWon} vs ${enemyFaction.daysWon}`),
-      value: '\u200b',
+      name: `${inlineCode(targetFaction.daysWon.toString())} - ${faction.shortName}`,
+      value: `${inlineCode(enemyFaction.daysWon.toString())} - ${enemyFaction.name}`,
       inline: true,
     },
     {
@@ -126,19 +131,16 @@ const printConflict = ({
       value: `💥 ${targetFaction.stake || ' ---'}`,
       inline: true,
     },
-    {
-      name: '\u200b',
-      value: `${
-        isAfterTime({
-          target: conflict.lastUpdate,
-          isAfter: tickTime,
-        })
-          ? `✅`
-          : `❌`
-      } ${getPastTimeDifferenceFromNow({
-        pastTime: conflict.lastUpdate,
-      })}`,
-    },
+    ...(!isLastConflict || isConflictPending
+      ? [
+          {
+            name: isConflictPending
+              ? inlineCode(L[locale].faction.conflicts.pendingConflict())
+              : '\u200b',
+            value: !isLastConflict ? DIVIDER : '\u200b',
+          },
+        ]
+      : []),
   ])
 }
 
@@ -162,11 +164,13 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
   })
 
   if (conflictsLength) {
-    conflicts.forEach((conflict) => {
+    conflicts.forEach((conflict, index) => {
+      const isLastConflict = index === conflictsLength - 1
       if (conflict.faction1.isTargetFaction) {
         printConflict({
           embed,
           tickTime,
+          isLastConflict,
           conflictData: {
             conflict,
             targetFaction: conflict.faction1,
@@ -178,6 +182,7 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
         printConflict({
           embed,
           tickTime,
+          isLastConflict,
           conflictData: {
             conflict,
             targetFaction: conflict.faction2,
