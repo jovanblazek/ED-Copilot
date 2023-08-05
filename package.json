@@ -1,24 +1,30 @@
 {
   "name": "elitehub-bot",
   "version": "2.0.0",
-  "description": "Made specifically for our player faction, although it is possible to change faction name in `config.json` to make it work with yours.",
+  "description": "Elite Dangerous Discord bot",
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --exit-child src/index.ts",
+    "translations:watch": "typesafe-i18n",
     "test": "jest",
     "register-commands": "ts-node -T src/utils/registerCommands.ts",
-    "typesafe-i18n": "typesafe-i18n"
+    "migrate": "prisma migrate deploy",
+    "migrate:dev": "prisma migrate dev",
+    "generate-types": "prisma generate",
+    "build": "rimraf build/ && tsc --project tsconfig.production.json && npm run postbuild",
+    "postbuild": "copyfiles .env ./build",
+    "start": "node build/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jovanblazek/elitehub-bot.git"
+    "url": "git+https://github.com/jovanblazek/ed-copilot.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "jovanblazek",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jovanblazek/elitehub-bot/issues"
+    "url": "https://github.com/jovanblazek/ED-Copilot/issues"
   },
-  "homepage": "https://github.com/jovanblazek/elitehub-bot#readme",
+  "homepage": "https://github.com/jovanblazek/ED-Copilot#readme",
   "dependencies": {
     "@prisma/client": "^4.10.1",
     "@sentry/node": "^7.48.0",
@@ -46,6 +52,7 @@
     "@types/lodash": "^4.14.191",
     "@types/node": "^20.4.8",
     "@types/pino": "^7.0.5",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.33.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.6.0",
@@ -56,6 +63,7 @@
     "jest": "^29.4.2",
     "prettier": "^2.8.4",
     "prisma": "^4.10.1",
+    "rimraf": "^5.0.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
