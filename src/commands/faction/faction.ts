@@ -26,12 +26,13 @@ const Faction: Command = {
       subcommand
         .setName(FactionSubcommands.conflicts)
         .setDescription('Get information about conflicts of your faction')
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName(FactionSubcommands.stations)
-        .setDescription('Get information about stations of your faction')
     ),
+  // Not fully developed, move to systemInfo command
+  // .addSubcommand((subcommand) =>
+  //   subcommand
+  //     .setName(FactionSubcommands.stations)
+  //     .setDescription('Get information about stations of your faction')
+  // ),
   handler: async ({ interaction, context }) => {
     await interaction.deferReply()
     if (!interaction.guildId) {
