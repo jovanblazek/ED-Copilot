@@ -45,6 +45,8 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@sudolabs-io/eslint-config-sudolabs": "^1.5.144",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.4.0",
@@ -52,6 +54,7 @@
     "@types/lodash": "^4.14.191",
     "@types/node": "^20.4.8",
     "@types/pino": "^7.0.5",
+    "conventional-changelog-conventionalcommits": "^6.1.0",
     "copyfiles": "^2.4.1",
     "eslint": "^8.33.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -64,6 +67,7 @@
     "prettier": "^2.8.4",
     "prisma": "^4.10.1",
     "rimraf": "^5.0.1",
+    "semantic-release": "^21.0.7",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
@@ -71,5 +75,69 @@
   },
   "engines": {
     "node": "18.14.0"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "./CHANGELOG.md"
+        }
+      ],
+      "@semantic-release/github",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "./CHANGELOG.md"
+          ]
+        }
+      ]
+    ],
+    "preset": "conventionalcommits",
+    "presetConfig": {
+      "types": [
+        {
+          "type": "feat",
+          "section": ":sparkles: Features",
+          "hidden": false
+        },
+        {
+          "type": "fix",
+          "section": ":bug: Bug Fixes",
+          "hidden": false
+        },
+        {
+          "type": "enh",
+          "section": ":up: Enhancements",
+          "hidden": false
+        },
+        {
+          "type": "revert",
+          "section": ":rewind: Reverts",
+          "hidden": false
+        },
+        {
+          "type": "docs",
+          "section": ":books: Documentation",
+          "hidden": false
+        },
+        {
+          "type": "chore",
+          "section": ":octopus: Miscellaneous Chores",
+          "hidden": false
+        },
+        {
+          "type": "test",
+          "section": ":white_check_mark: Tests",
+          "hidden": false
+        }
+      ]
+    }
   }
 }
