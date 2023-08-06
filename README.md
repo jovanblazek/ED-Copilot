@@ -23,7 +23,7 @@ Copilot is a discord bot that can help you look up the information you need. Any
 
 1. Add Copilot to your server
 2. Set it up using the `/copilot` command to choose your preferred language, faction and channel for reporting ticks.
-3. Enjoy!
+3. Enjoy! 🎉
 
 <div align="center">
   <img src="./images/conflicts-message.png" alt="message-embed" height="360px" /><br/>
