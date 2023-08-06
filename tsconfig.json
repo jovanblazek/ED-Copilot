@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "lib": [
+      "ES2022",
+    ],
+    "outDir": "build",
+    "removeComments": true,
+    "target": "ES2022",
+    "resolveJsonModule": true,
+    // "baseUrl": "./src",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "paths": {}, // A series of entries which re-map imports to lookup locations relative to the baseUrl
+    "alwaysStrict": true,
+    "allowUnreachableCode": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "build"
+  ],
+}

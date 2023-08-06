@@ -1,0 +1,29 @@
+name: Detect changes in files with enviroment variables
+
+on: [pull_request]
+
+jobs:
+  detect-env-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Checkout pull request branch
+        uses: actions/checkout@v3
+
+      - name: Detect changes in env files
+        uses: jovanblazek/env-changes-detector@v1.0.1
+        id: detect-changes-in-env-files
+        with:
+          files: '["**env-example", "**env-test-example"]'
+
+      - name: Add or update sticky comment
+        uses: marocchino/sticky-pull-request-comment@v2.2.0
+        with:
+          header: 'detect-env-changes'
+          message: |
+            ${{ steps.detect-changes-in-env-files.outputs.env-changes-md }}
