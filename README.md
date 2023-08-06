@@ -18,6 +18,7 @@
 </div>
 
 ## 🎯 What is Copilot?
+
 Copilot is a discord bot that can help you look up the information you need. Anything from nearest material traders, tick detection, to faction influence details or ongoing conflicts. List of all commands can be found below. Bot currently supports two languages: English and Slovak.
 
 1. Add Copilot to your server
@@ -31,29 +32,29 @@ Copilot is a discord bot that can help you look up the information you need. Any
   </caption>
 </div>
 
-
 > **Note** \
 > Copilot is currently in closed beta so is not possible to invite him to your server yet. (But will be soon!)
 
 ## 📡 Commands
-| Command | Description |
-| ------- | ----------- |
-| `copilot` |  Setup/update preferences (admins only). |
-| `faction systems` | List of systems where your faction is present with current influence & trend. |
-| `faction conflicts` | List of ongoing conflicts with details. |
-| `system` | Get info about a system and its factions. |
-| `profile` | Show off your Elite Dangerous profile. |
-| `broker` | Nearest tech brokers. |
-| `trader` | Nearest material traders. |
-| `factors` | Nearest interstellar factors. |
-| `distance` | Calculate distance between two systems. |
-| `tick` | Get the latest tick time. |
-| `setup profile` | Setup your Elite Dangerous profile. |
 
+| Command             | Description                                                                   |
+| ------------------- | ----------------------------------------------------------------------------- |
+| `copilot`           | Setup/update preferences (admins only).                                       |
+| `faction systems`   | List of systems where your faction is present with current influence & trend. |
+| `faction conflicts` | List of ongoing conflicts with details.                                       |
+| `system`            | Get info about a system and its factions.                                     |
+| `profile`           | Show off your Elite Dangerous profile.                                        |
+| `broker`            | Nearest tech brokers.                                                         |
+| `trader`            | Nearest material traders.                                                     |
+| `factors`           | Nearest interstellar factors.                                                 |
+| `distance`          | Calculate distance between two systems.                                       |
+| `tick`              | Get the latest tick time.                                                     |
+| `setup profile`     | Setup your Elite Dangerous profile.                                           |
 
 ---
 
 ## Development
+
 ### 💻 Environment Setup
 
 1. Create an app with a bot on Discord developer portal
@@ -68,7 +69,6 @@ Copilot is a discord bot that can help you look up the information you need. Any
 ### 💿 Migrations
 
 After changing the prisma schema, create a migration using following command:
-
 
 ```
 prisma migrate dev --name added_column
