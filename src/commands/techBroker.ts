@@ -14,7 +14,7 @@ const ROWS_PER_PAGE = 5
 const TechBroker: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.techBroker)
-    .setDescription('Gets nearest tech brokers')
+    .setDescription('Get nearest tech brokers')
     .addStringOption((option) =>
       option.setName('system').setDescription('Your location').setRequired(true)
     ),

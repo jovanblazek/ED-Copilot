@@ -14,7 +14,7 @@ const ROWS_PER_PAGE = 5
 const MaterialTrader: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.materialTrader)
-    .setDescription('Gets nearest material traders')
+    .setDescription('Get nearest material traders')
     .addStringOption((option) =>
       option.setName('system').setDescription('Your location').setRequired(true)
     ),

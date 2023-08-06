@@ -34,7 +34,7 @@ const Copilot: Command = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName(CopilotSubcommands.tick)
-        .setDescription('Set tick report channel')
+        .setDescription('Set tick reporting channel')
         .addChannelOption((option) =>
           option
             .setName('channel')

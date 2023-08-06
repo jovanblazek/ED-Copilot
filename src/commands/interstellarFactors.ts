@@ -14,7 +14,7 @@ const ROWS_PER_PAGE = 5
 const InterstellarFactors: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.interstellarFactors)
-    .setDescription('Gets nearest interstellar factors')
+    .setDescription('Get nearest interstellar factors')
     .addStringOption((option) =>
       option.setName('system').setDescription('Your location').setRequired(true)
     ),

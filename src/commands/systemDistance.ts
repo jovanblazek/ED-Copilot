@@ -31,7 +31,7 @@ const getSystemCoords = async (systemName: string) => {
 const SystemDistance: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.systemDistance)
-    .setDescription('Gets distance between two systems')
+    .setDescription('Get distance between two systems')
     .addStringOption((option) =>
       option.setName('from').setDescription('System #1').setRequired(true)
     )

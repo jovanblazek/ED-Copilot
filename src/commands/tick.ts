@@ -9,7 +9,7 @@ import { Command } from './types'
 const TickCommand: Command = {
   builder: new SlashCommandBuilder()
     .setName(CommandNames.tick)
-    .setDescription('Gets latest tick time'),
+    .setDescription('Get latest tick time'),
   handler: async ({ interaction, context: { locale, timezone } }) => {
     await interaction.deferReply()
 
