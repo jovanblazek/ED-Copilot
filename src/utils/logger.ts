@@ -4,7 +4,7 @@ import { createWriteStream } from 'pino-sentry'
 import './environment'
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
-const SentryStream = createWriteStream({ dsn: process.env.SENTRY_DSN, level: 'warning' })
+const SentryStream = createWriteStream({ dsn: process.env.SENTRY_DSN, level: 'error' })
 const PrettyConsoleStream = pretty({
   colorize: true,
 })
