@@ -47,7 +47,11 @@ const reportTick = async (client: Client, tickTime: Dayjs) => {
 }
 
 export default (client: Client) => {
-  const socket = io('https://tick.edcd.io/')
+  const socket = io('https://tick.edcd.io/', {
+    reconnectionDelay: 60000, // 1 minute
+    reconnectionDelayMax: 480000, // 8 minutes
+    transports: ['websocket'],
+  })
 
   socket.on('connect', () => {
     logger.info('Connected to Tick Detector')
@@ -61,6 +65,7 @@ export default (client: Client) => {
   })
 
   socket.on('connect_error', (error) => {
-    logger.error(error, 'Error while connecting to Tick Detector')
+    // We don't want to spam the logs with connection errors
+    logger.warn(error, 'Error while connecting to Tick Detector')
   })
 }
