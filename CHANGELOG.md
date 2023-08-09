@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/jovanblazek/ed-copilot/compare/v2.0.0...v2.0.1) (2023-08-09)
+
+
+### :bug: Bug Fixes
+
+* Update tick detector's reconnection delay ([#16](https://github.com/jovanblazek/ed-copilot/issues/16)) ([0c3468f](https://github.com/jovanblazek/ed-copilot/commit/0c3468f4b725f303da4c46007245c429707bbb9d))
+
 ## [2.0.0](https://github.com/jovanblazek/ed-copilot/compare/v1.0.0...v2.0.0) (2023-08-06)
 
 
