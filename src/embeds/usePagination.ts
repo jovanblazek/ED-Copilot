@@ -41,14 +41,22 @@ export const usePagination = async ({
 }: UsePaginationProps) => {
   let activePageIndex = 0
   const paginationLength = embeds.length
+  const isOnlyOnePage = paginationLength === 1
   const reply = await interaction.editReply({
     embeds: [embeds[activePageIndex]],
-    components: [createPaginationButtons(activePageIndex, paginationLength)],
+    components: isOnlyOnePage
+      ? undefined
+      : [createPaginationButtons(activePageIndex, paginationLength)],
   })
+  if (isOnlyOnePage) {
+    return
+  }
+
   const collector = reply.createMessageComponentCollector({
     componentType: ComponentType.Button,
     time,
   })
+
   collector.on('collect', async (buttonInteraction) => {
     if (buttonInteraction.user.id === interaction.user.id) {
       if (buttonInteraction.customId === PaginationButtonNames.LEFT && activePageIndex > 0) {
