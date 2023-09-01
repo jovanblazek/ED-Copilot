@@ -1,14 +1,17 @@
 import dayjs, { Dayjs } from 'dayjs'
-import { EmbedBuilder, hyperlink, inlineCode, quote } from 'discord.js'
+import { hyperlink, inlineCode, quote } from 'discord.js'
 import got from 'got'
+import { chunk } from 'lodash'
 import { DataParseError } from '../../classes'
 import { DIVIDER, Emojis, InaraUrl } from '../../constants'
-import { createEmbed } from '../../embeds'
+import { createEmbed, usePagination } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionConflicsResponse } from '../../types/eliteBGS'
 import { getTickTime } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
+
+const CONFLICTS_PER_EMBED = 6 // 4 fields per conflict = 25/4
 
 type FactionInConflict = {
   name: string
@@ -88,13 +91,11 @@ const parseConflictsData = ({
 }
 
 const printConflict = ({
-  embed,
   tickTime,
   isLastConflict,
   conflictData: { conflict, targetFaction, enemyFaction },
   commandContext: { locale, faction },
 }: {
-  embed: EmbedBuilder
   tickTime: Dayjs
   isLastConflict: boolean
   conflictData: {
@@ -105,7 +106,7 @@ const printConflict = ({
   commandContext: Parameters<FactionCommandHandler>[0]['context']
 }) => {
   const isConflictPending = conflict.status === 'pending'
-  embed.addFields([
+  return [
     {
       name: `${Emojis.system} ${conflict.system}`,
       value: `${quote(
@@ -141,46 +142,53 @@ const printConflict = ({
           },
         ]
       : []),
-  ])
+  ]
 }
 
-export const factionConflictsHandler: FactionCommandHandler = async ({ interaction, context }) => {
-  const { locale, faction, timezone } = context
-  const conflictsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true`
-  const fetchedData = await got(conflictsUrl).json<FactionConflicsResponse>()
-  const conflicts = parseConflictsData({
-    resposne: fetchedData,
-    commandContext: context,
-  })
-  const tickTime = await getTickTime({ locale, timezone })
-  const conflictsLength = conflicts.length
-  const embed = createEmbed({
+const createFactionConflictsEmbeds = (
+  {
+    factionConflicts,
+    tickTime,
+  }: {
+    factionConflicts: Conflict[]
+    tickTime: Dayjs
+  },
+  context: Parameters<FactionCommandHandler>[0]['context']
+) => {
+  const { faction, locale } = context
+  const conflictsLength = factionConflicts.length
+
+  const embedHeader = {
     title: L[locale].faction.conflicts.title({
       factionName: faction.shortName,
     }),
     description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}${
       !conflictsLength ? `\n${L[locale].faction.conflicts.noConflicts()}` : ''
     }`,
-  })
+  }
 
-  if (conflictsLength) {
-    conflicts.forEach((conflict, index) => {
-      const isLastConflict = index === conflictsLength - 1
-      if (conflict.faction1.isTargetFaction) {
-        printConflict({
-          embed,
-          tickTime,
-          isLastConflict,
-          conflictData: {
-            conflict,
-            targetFaction: conflict.faction1,
-            enemyFaction: conflict.faction2,
-          },
-          commandContext: context,
-        })
-      } else {
-        printConflict({
-          embed,
+  if (!conflictsLength) {
+    return [createEmbed(embedHeader)]
+  }
+
+  const factionConflictsChunks = chunk(factionConflicts, CONFLICTS_PER_EMBED)
+  return factionConflictsChunks.map((factionConflictsChunk) =>
+    createEmbed(embedHeader).addFields(
+      factionConflictsChunk.flatMap((conflict, index) => {
+        const isLastConflict = index === conflictsLength - 1
+        if (conflict.faction1.isTargetFaction) {
+          return printConflict({
+            tickTime,
+            isLastConflict,
+            conflictData: {
+              conflict,
+              targetFaction: conflict.faction1,
+              enemyFaction: conflict.faction2,
+            },
+            commandContext: context,
+          })
+        }
+        return printConflict({
           tickTime,
           isLastConflict,
           conflictData: {
@@ -190,11 +198,31 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
           },
           commandContext: context,
         })
-      }
-    })
-  }
+      })
+    )
+  )
+}
 
-  await interaction.editReply({
-    embeds: [embed],
+export const factionConflictsHandler: FactionCommandHandler = async ({ interaction, context }) => {
+  const { faction, timezone, locale } = context
+  const conflictsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true`
+  const fetchedData = await got(conflictsUrl).json<FactionConflicsResponse>()
+  const factionConflicts = parseConflictsData({
+    resposne: fetchedData,
+    commandContext: context,
+  })
+  const tickTime = await getTickTime({ locale, timezone })
+  const embeds = createFactionConflictsEmbeds(
+    {
+      factionConflicts,
+      tickTime,
+    },
+    context
+  )
+
+  await usePagination({
+    interaction,
+    embeds,
+    locale,
   })
 }
