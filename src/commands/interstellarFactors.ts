@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from 'discord.js'
 import { chunk } from 'lodash'
 import { SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
-import { createPaginationButtons, usePagination } from '../embeds'
+import { usePagination } from '../embeds'
 import L from '../i18n/i18n-node'
 import { generateInaraEmbed, ScrapedInaraData, scrapeInara } from '../utils'
 import { Command } from './types'
@@ -31,26 +31,13 @@ const InterstellarFactors: Command = {
 
     const chunks: ScrapedInaraData[][] = chunk(parsedData, ROWS_PER_PAGE)
     const pages = chunks.slice(0, PAGE_COUNT)
-    const pagesLength = pages.length
 
-    await interaction.editReply({
-      embeds: [generateInaraEmbed(url, pages[0], L[locale].interstellarFactors.title())],
-      components: [createPaginationButtons(0, pagesLength)],
-    })
-
-    usePagination({
+    await usePagination({
       interaction,
       locale,
-      reply: await interaction.fetchReply(),
-      paginationlenght: pagesLength,
-      onPageChange: async (buttonInteraction, activePageIndex) => {
-        await buttonInteraction.update({
-          embeds: [
-            generateInaraEmbed(url, pages[activePageIndex], L[locale].interstellarFactors.title()),
-          ],
-          components: [createPaginationButtons(activePageIndex, pagesLength)],
-        })
-      },
+      embeds: pages.map((page) =>
+        generateInaraEmbed(url, page, L[locale].interstellarFactors.title())
+      ),
     })
   },
 }

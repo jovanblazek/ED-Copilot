@@ -1,10 +1,10 @@
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { blockQuote, hyperlink } from 'discord.js'
 import got from 'got'
-import { groupBy, map, round, sortBy } from 'lodash'
+import { chunk, groupBy, map, round, sortBy } from 'lodash'
 import { DataParseError } from '../../classes'
 import { DIVIDER, Emojis, InaraUrl } from '../../constants'
-import { createEmbed } from '../../embeds'
+import { createEmbed, usePagination } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionSystemsResponse } from '../../types/eliteBGS'
 import { getTickTime } from '../../utils'
@@ -38,6 +38,43 @@ const parseSystemsData = ({
   return sortBy(parsedSystemData, 'currentInfluence').reverse()
 }
 
+const createFactionSystemsEmbeds = (
+  {
+    factionSystems,
+    tickTime,
+  }: {
+    factionSystems: ReturnType<typeof parseSystemsData>
+    tickTime: Dayjs
+  },
+  { faction, locale }: Parameters<FactionCommandHandler>[0]['context']
+) => {
+  const factionSystemsChunks = chunk(factionSystems, 25)
+
+  return factionSystemsChunks.map((factionSystemsChunk) =>
+    createEmbed({
+      title: L[locale].faction.systems.title({
+        factionName: faction.shortName,
+      }),
+      description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}`,
+    }).addFields(
+      factionSystemsChunk.map(({ systemName, currentInfluence, influenceTrend, lastUpdate }) => ({
+        name: `${currentInfluence}% - ${systemName}`,
+        value: `${blockQuote(
+          `${
+            influenceTrend > 0
+              ? `${Emojis.green_upwards_arrow} +`
+              : `${Emojis.red_downwards_arrow} `
+          }${influenceTrend}%\n${
+            isAfterTime({ target: lastUpdate, isAfter: tickTime }) ? '✅' : '❌'
+          } ${getPastTimeDifferenceFromNow({
+            pastTime: lastUpdate,
+          })}`
+        )}`,
+      }))
+    )
+  )
+}
+
 export const factionSystemsHandler: FactionCommandHandler = async ({
   interaction,
   context: { faction, locale, timezone },
@@ -57,27 +94,18 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
     throw new DataParseError({ locale })
   }
   const tickTime = await getTickTime({ locale, timezone })
-  const embed = createEmbed({
-    title: L[locale].faction.systems.title({
-      factionName: faction.shortName,
-    }),
-    description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}`,
-  })
 
-  embed.addFields(
-    factionSystems.map(({ systemName, currentInfluence, influenceTrend, lastUpdate }) => ({
-      name: `${currentInfluence}% - ${systemName}`,
-      value: `${blockQuote(
-        `${
-          influenceTrend > 0 ? `${Emojis.green_upwards_arrow} +` : `${Emojis.red_downwards_arrow} `
-        }${influenceTrend}%\n${
-          isAfterTime({ target: lastUpdate, isAfter: tickTime }) ? '✅' : '❌'
-        } ${getPastTimeDifferenceFromNow({
-          pastTime: lastUpdate,
-        })}`
-      )}`,
-    }))
+  const embeds = createFactionSystemsEmbeds(
+    {
+      factionSystems,
+      tickTime,
+    },
+    { locale, faction, timezone }
   )
 
-  await interaction.editReply({ embeds: [embed] })
+  await usePagination({
+    interaction,
+    embeds,
+    locale,
+  })
 }
