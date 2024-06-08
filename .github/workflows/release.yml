@@ -26,26 +26,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
-
-  deploy:
-    needs: [release]
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Deploy using ssh
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: 22
-        script: |
-          cd ~/builds/ED-Copilot
-          git pull origin main
-          git status
-          export NVM_DIR=~/.nvm
-          source ~/.nvm/nvm.sh 
-          npm ci
-          npm run build
-          npx prisma migrate deploy
-          pm2 restart copilot

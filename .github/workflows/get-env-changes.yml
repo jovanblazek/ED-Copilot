@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Detect changes in env files
-        uses: jovanblazek/env-changes-detector@v1.0.1
+        uses: jovanblazek/env-changes-detector@v2
         id: detect-changes-in-env-files
         with:
           files: '["**env-example", "**env-test-example"]'
