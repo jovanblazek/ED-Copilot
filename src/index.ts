@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits } from 'discord.js'
+import Koa from 'koa'
 import { initEventHandlers } from './events'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
@@ -21,3 +22,15 @@ BotClient.once('ready', () => {
 })
 
 void BotClient.login(process.env.BOT_TOKEN)
+
+// Server used as a health check for the bot
+const KoaApp = new Koa()
+KoaApp.use((ctx) => {
+  ctx.body = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+  }
+})
+KoaApp.listen(process.env.PORT, () => {
+  logger.info(`Koa server is running on port ${process.env.PORT!}`)
+})
