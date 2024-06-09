@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "Elite Dangerous Discord bot",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --exit-child src/index.ts",
     "translations:watch": "typesafe-i18n",
@@ -48,6 +49,7 @@
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^12.0.1",
     "@sudolabs-io/eslint-config-sudolabs": "^1.5.144",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.4.0",
@@ -91,12 +93,20 @@
           "changelogFile": "./CHANGELOG.md"
         }
       ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
       "@semantic-release/github",
       [
         "@semantic-release/git",
         {
           "assets": [
-            "./CHANGELOG.md"
+            "CHANGELOG.md",
+            "package.json",
+            "package-lock.json"
           ]
         }
       ]
