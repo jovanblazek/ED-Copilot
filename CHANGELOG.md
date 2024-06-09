@@ -1,3 +1,25 @@
+## [2.1.0](https://github.com/jovanblazek/ed-copilot/compare/v2.0.1...v2.1.0) (2024-06-09)
+
+
+### :sparkles: Features
+
+* Add health check endpoint ([#21](https://github.com/jovanblazek/ed-copilot/issues/21)) ([c9365ba](https://github.com/jovanblazek/ed-copilot/commit/c9365babdcd8d8deeff189f4f7616363b6747b63))
+
+
+### :bug: Bug Fixes
+
+* Release not working due to branch protection ([#22](https://github.com/jovanblazek/ed-copilot/issues/22)) ([a5bf51b](https://github.com/jovanblazek/ed-copilot/commit/a5bf51b580bbf9e8f23157d6fd7a549e0faf0fb7))
+
+
+### :up: Enhancements
+
+* Add pagination support for faction commands ([#17](https://github.com/jovanblazek/ed-copilot/issues/17)) ([5541850](https://github.com/jovanblazek/ed-copilot/commit/5541850393dec2f07983c7273be196587df5a6fb))
+
+
+### :octopus: Miscellaneous Chores
+
+* Update node to 18.20.3 & remove ssh deploy ([#20](https://github.com/jovanblazek/ed-copilot/issues/20)) ([629975b](https://github.com/jovanblazek/ed-copilot/commit/629975b79e0544799a5815dff6ec4be4e7166abc))
+
 ## [2.0.1](https://github.com/jovanblazek/ed-copilot/compare/v2.0.0...v2.0.1) (2023-08-09)
 
 
