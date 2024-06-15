@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import dayjs, { Dayjs } from 'dayjs'
 import relativeTimePlugin from 'dayjs/plugin/relativeTime'
 import timezonePlugin from 'dayjs/plugin/timezone'
@@ -6,7 +7,6 @@ import got from 'got'
 import { TickFetchError } from '../classes'
 import { Locales } from '../i18n/i18n-types'
 import logger from './logger'
-import * as Sentry from '@sentry/node'
 
 dayjs.extend(utcPlugin)
 dayjs.extend(timezonePlugin)

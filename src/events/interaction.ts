@@ -1,10 +1,10 @@
+import * as Sentry from '@sentry/node'
 import dayjs from 'dayjs'
 import { Interaction } from 'discord.js'
 import { CommandHandlers } from '../commands'
 import { Locales } from '../i18n/i18n-types'
 import { baseLocale } from '../i18n/i18n-util'
 import { errorHandler, Prisma } from '../utils'
-import * as Sentry from '@sentry/node'
 
 export const onInteractionCreate = async (interaction: Interaction) => {
   if (!interaction.isChatInputCommand()) {
@@ -24,7 +24,7 @@ export const onInteractionCreate = async (interaction: Interaction) => {
     message: 'Interaction options data',
     data: {
       options: interaction.options.data,
-    }
+    },
   })
 
   const { commandName } = interaction

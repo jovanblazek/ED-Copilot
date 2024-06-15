@@ -1,8 +1,8 @@
+import * as Sentry from '@sentry/node'
 import { CacheType, CommandInteraction } from 'discord.js'
 import { DataParseError, InteractionError, SystemNotFoundError, TickFetchError } from '../classes'
 import L from '../i18n/i18n-node'
 import logger from './logger'
-import * as Sentry from '@sentry/node'
 
 const replyToError = async (interaction: CommandInteraction<CacheType>, message: string) => {
   if (interaction.deferred) {
@@ -18,6 +18,7 @@ const replyToError = async (interaction: CommandInteraction<CacheType>, message:
 }
 
 export const errorHandler = async (
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   error: Error | unknown,
   interaction: CommandInteraction<CacheType>,
   commandName: string

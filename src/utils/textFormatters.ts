@@ -5,7 +5,7 @@ export const toUpperCaseFirstLetter = (str: string) => str.charAt(0).toUpperCase
 export const getStationTypeWithIcon = (stationType: string) => {
   let type
   let priority
-  switch (parseInt(stationType)) {
+  switch (parseInt(stationType, 10)) {
     case 1:
     case 12:
     case 13:
@@ -28,11 +28,6 @@ export const getStationTypeWithIcon = (stationType: string) => {
   }
   return { type, priority }
 }
-
-export const getTrendPercentage = (trend: string | number) =>
-  trend < 0
-    ? `<:arrow_red:842824890918764544> ${trend}%`
-    : `<:arrow_green:842824851072614487> +${trend}%`
 
 export const addCommasToNumber = (x: number): string =>
   x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')

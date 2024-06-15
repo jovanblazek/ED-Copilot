@@ -1,8 +1,8 @@
+import * as Sentry from '@sentry/node'
 import { Guild } from 'discord.js'
 import { Languages } from '../constants'
 import logger from '../utils/logger'
 import { Prisma } from '../utils/prismaClient'
-import * as Sentry from '@sentry/node'
 
 export const onGuildJoin = async ({ id, name }: Guild) => {
   logger.info(`Joined guild ${name}, id: ${id}`)

@@ -20,9 +20,6 @@ export type CommandHandler<ContextExtension = Record<string, unknown>> = (
 ) => Promise<void>
 
 export type Command = {
-  builder:
-    | SlashCommandBuilder
-    | SlashCommandSubcommandsOnlyBuilder
-    | SlashCommandOptionsOnlyBuilder
+  builder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandOptionsOnlyBuilder
   handler: CommandHandler
 }
