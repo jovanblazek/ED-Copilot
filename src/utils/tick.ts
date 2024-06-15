@@ -6,6 +6,7 @@ import got from 'got'
 import { TickFetchError } from '../classes'
 import { Locales } from '../i18n/i18n-types'
 import logger from './logger'
+import * as Sentry from '@sentry/node'
 
 dayjs.extend(utcPlugin)
 dayjs.extend(timezonePlugin)
@@ -26,6 +27,7 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
     return fetchedData.length === 0 ? null : dayjs.utc(fetchedData[0].time)
   } catch (error) {
     logger.error(error, 'Error while fetching tick time')
+    Sentry.captureException(error)
     return null
   }
 }

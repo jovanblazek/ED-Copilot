@@ -2,6 +2,7 @@ import {
   CacheType,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from 'discord.js'
 import { Locales } from '../i18n/i18n-types'
@@ -22,6 +23,6 @@ export type Command = {
   builder:
     | SlashCommandBuilder
     | SlashCommandSubcommandsOnlyBuilder
-    | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>
+    | SlashCommandOptionsOnlyBuilder
   handler: CommandHandler
 }

@@ -6,6 +6,7 @@ import logger from './utils/logger'
 import initTickDetector from './utils/tickDetector'
 import './i18n/dayjsLocales'
 import './utils/environment'
+import './utils/sentry'
 
 const BotClient = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
