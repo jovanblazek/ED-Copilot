@@ -7,6 +7,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:prettier/recommended",
+    "plugin:jest/recommended",
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -14,7 +15,10 @@
     "sourceType": "module",
     "project": "./tsconfig.json",
   },
-  "plugins": ["@typescript-eslint", "simple-import-sort", "import"],
+  "env": {
+    "jest/globals": true
+  },
+  "plugins": ["@typescript-eslint", "simple-import-sort", "import", "jest"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -51,6 +55,7 @@
     "import/extensions": "off",
     "no-restricted-syntax": "off",
     "import/no-named-as-default": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {

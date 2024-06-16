@@ -18,8 +18,7 @@ const replyToError = async (interaction: CommandInteraction<CacheType>, message:
 }
 
 export const errorHandler = async (
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  error: Error | unknown,
+  error: unknown,
   interaction: CommandInteraction<CacheType>,
   commandName: string
 ) => {

@@ -4,8 +4,7 @@ export type InaraEvent = {
   eventCustomID?: number
   eventName: string
   eventTimestamp?: string
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  eventData: unknown | unknown[]
+  eventData: unknown
 }
 
 export type InaraResponse<T> = {
