@@ -12,7 +12,7 @@
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
     "generate-types": "prisma generate",
-    "build": "rimraf build/ && tsc --project tsconfig.production.json && npm run postbuild",
+    "build": "pnpm run generate-types && rimraf build/ && tsc --project tsconfig.production.json && pnpm run postbuild",
     "postbuild": "copyfiles .env ./build",
     "start": "node build/index.js",
     "lint": "eslint .",
