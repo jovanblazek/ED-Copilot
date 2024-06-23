@@ -60,11 +60,11 @@ Copilot is a discord bot that can help you look up the information you need. Any
 1. Create an app with a bot on Discord developer portal
 2. Copy `.env.example` file to `.env` file and fill in the values.
 3. Set your development server ID and bot token in `.env` file.
-4. Install the dependencies with `npm install`.
+4. Install the dependencies with `pnpm install`.
 5. Run `docker-compose up` to start the DB.
-6. Run `npm run migrate:dev` to create the tables.
-7. Run `npm run register-commands` to register the commands on your testing server.
-8. Run `npm run dev` to start the bot.
+6. Run `pnpm run migrate:dev` to create the tables.
+7. Run `pnpm run register-commands` to register the commands on your testing server.
+8. Run `pnpm run dev` to start the bot.
 
 ### 💿 Migrations
 
@@ -81,7 +81,7 @@ Whenever you make changes to your Prisma schema in the future, you manually need
 To add new languages or update existing translations, run the following command:
 
 ```
-npm run translations:watch
+pnpm run translations:watch
 ```
 
 Then you can start editing the translations in `src/i18n` folder. For documentation on how to use the translation library, see [typesafe-i18n documentation](https://github.com/ivanhofer/typesafe-i18n).
