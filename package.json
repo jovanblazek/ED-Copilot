@@ -32,7 +32,6 @@
     "@prisma/client": "^5.15.1",
     "@sentry/node": "^8.11.0",
     "crypto-js": "^4.2.0",
-    "date-fns": "^2.29.3",
     "dayjs": "^1.11.11",
     "discord.js": "14.15.3",
     "dotenv": "^16.4.5",
