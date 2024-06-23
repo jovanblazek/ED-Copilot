@@ -1,3 +1,9 @@
+## [2.2.1](https://github.com/jovanblazek/ed-copilot/compare/v2.2.0...v2.2.1) (2024-06-23)
+
+### :bug: Bug Fixes
+
+* Add pnpm version to package json & update readme ([#24](https://github.com/jovanblazek/ed-copilot/issues/24)) ([72a3d04](https://github.com/jovanblazek/ed-copilot/commit/72a3d04e40fea5232a6e99a2dd57736a4512bd02))
+
 ## [2.2.0](https://github.com/jovanblazek/ed-copilot/compare/v2.1.0...v2.2.0) (2024-06-23)
 
 ### :sparkles: Features
