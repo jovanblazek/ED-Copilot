@@ -4,7 +4,7 @@ export type InaraEvent = {
   eventCustomID?: number
   eventName: string
   eventTimestamp?: string
-  eventData: unknown | unknown[]
+  eventData: unknown
 }
 
 export type InaraResponse<T> = {

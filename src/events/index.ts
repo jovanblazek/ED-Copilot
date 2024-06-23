@@ -12,6 +12,7 @@ const EventHandlers: Partial<{
 
 export const initEventHandlers = (client: Client) => {
   Object.entries(EventHandlers).forEach(([event, handler]) => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     client.on(event, handler)
   })
 }

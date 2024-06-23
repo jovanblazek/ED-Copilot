@@ -98,7 +98,7 @@ export const getInaraStationType = (node: ChildNode | null) => {
     return StationType.Other
   }
   const iconBgPosition = get(node, ['style', 'background-position'], '') as string
-  const iconBgPositionX = parseInt(iconBgPosition)
+  const iconBgPositionX = parseInt(iconBgPosition, 10)
 
   const iconsMap = new Map<number, StationType>([
     [0, StationType.Other],

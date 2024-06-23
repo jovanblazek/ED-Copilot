@@ -1,0 +1,8 @@
+build/
+node_modules/
+.env
+.vscode/
+coverage/
+.github/
+
+jest.config.js

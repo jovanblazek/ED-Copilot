@@ -1,65 +1,111 @@
 {
   "root": true,
   "extends": [
-    "@sudolabs-io/eslint-config-sudolabs/typescript",
-    "@sudolabs-io/eslint-config-sudolabs/with/prettier"
+    "eslint:recommended",
+    "airbnb-base",
+    "airbnb-typescript/base",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended",
   ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2024,
+    "sourceType": "module",
+    "project": "./tsconfig.json",
+  },
+  "env": {
+    "jest/globals": true
+  },
+  "plugins": ["@typescript-eslint", "simple-import-sort", "import", "jest"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".json", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
   "rules": {
+    "curly": ["error", "all"],
+    "no-void": ["error", { "allowAsStatement": true }],
+    "import/prefer-default-export": "off",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          [
+            // Packages. `react` related packages come first.
+            // Things that start with a letter (or digit or underscore), or `@` followed by a letter.
+            "^react",
+            "^@?\\w",
+            "^(theme)(/.*|$)",
+            "^(constants)(/.*|$)",
+            // Absolute imports and Relative imports.
+            "^(utils|components|screens|routes|providers|assets)(/.*|$)",
+            "^\\.",
+            // for scss imports.
+            "^[^.]",
+          ],
+        ],
+      },
+    ],
     "require-await": "error",
     "arrow-body-style": ["error", "as-needed"],
     "import/extensions": "off",
     "no-restricted-syntax": "off",
     "import/no-named-as-default": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
         "selector": "enum",
-        "format": ["PascalCase"]
+        "format": ["PascalCase"],
       },
       {
         "selector": "enumMember",
-        "format": ["PascalCase"]
+        "format": ["PascalCase"],
       },
       {
         "selector": "variable",
         "modifiers": ["const", "global"],
         "types": ["boolean", "string", "number"],
-        "format": ["UPPER_CASE"]
+        "format": ["UPPER_CASE"],
       },
       {
         "selector": "variable",
         "modifiers": ["const", "destructured", "global"],
         "types": ["boolean", "string", "number"],
-        "format": ["camelCase", "PascalCase", "UPPER_CASE"]
+        "format": ["camelCase", "PascalCase", "UPPER_CASE"],
       },
       {
         "selector": "variable",
         "modifiers": ["const", "destructured"],
         "types": ["boolean", "string", "number"],
-        "format": ["camelCase", "PascalCase", "UPPER_CASE"]
+        "format": ["camelCase", "PascalCase", "UPPER_CASE"],
       },
       {
         "selector": "variable",
         "modifiers": ["const"],
-        "format": ["camelCase"]
+        "format": ["camelCase"],
       },
       {
         "selector": "variable",
         "modifiers": ["const"],
         "types": ["function"],
-        "format": ["PascalCase", "camelCase"]
+        "format": ["PascalCase", "camelCase"],
       },
       {
         "selector": "variable",
         "modifiers": ["const", "global"],
-        "format": ["PascalCase"]
+        "format": ["PascalCase"],
       },
       {
         "selector": "variable",
         "types": ["boolean"],
         "format": ["PascalCase"],
-        "prefix": ["is", "has", "does", "do", "are", "were", "can", "was"]
-      }
-    ]
-  }
+        "prefix": ["is", "has", "does", "do", "are", "were", "can", "was"],
+      },
+    ],
+  },
 }

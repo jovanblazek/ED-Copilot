@@ -7,7 +7,7 @@ concurrency:
 on:
   pull_request:
     paths-ignore:
-      - "**.md"
+      - '**.md'
   workflow_dispatch:
 
 env:
@@ -16,19 +16,45 @@ env:
 jobs:
   test-jest:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        node-version: ["lts/*"]
+        node-version: ['20.15.0']
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm run test
+          cache: 'pnpm'
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Test
+        run: pnpm run test

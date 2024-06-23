@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { CacheType, CommandInteraction } from 'discord.js'
 import { DataParseError, InteractionError, SystemNotFoundError, TickFetchError } from '../classes'
 import L from '../i18n/i18n-node'
@@ -17,7 +18,7 @@ const replyToError = async (interaction: CommandInteraction<CacheType>, message:
 }
 
 export const errorHandler = async (
-  error: Error | unknown,
+  error: unknown,
   interaction: CommandInteraction<CacheType>,
   commandName: string
 ) => {
@@ -36,5 +37,6 @@ export const errorHandler = async (
   } else {
     logger.error(error, `Error while handling command: ${commandName}`)
     await replyToError(interaction, L.en.error.unknown())
+    Sentry.captureException(error)
   }
 }

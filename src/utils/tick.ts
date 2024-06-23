@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import dayjs, { Dayjs } from 'dayjs'
 import relativeTimePlugin from 'dayjs/plugin/relativeTime'
 import timezonePlugin from 'dayjs/plugin/timezone'
@@ -26,6 +27,7 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
     return fetchedData.length === 0 ? null : dayjs.utc(fetchedData[0].time)
   } catch (error) {
     logger.error(error, 'Error while fetching tick time')
+    Sentry.captureException(error)
     return null
   }
 }

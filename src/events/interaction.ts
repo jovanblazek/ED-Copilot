@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import dayjs from 'dayjs'
 import { Interaction } from 'discord.js'
 import { CommandHandlers } from '../commands'
@@ -9,6 +10,22 @@ export const onInteractionCreate = async (interaction: Interaction) => {
   if (!interaction.isChatInputCommand()) {
     return
   }
+  Sentry.setContext('Interaction', {
+    id: interaction.id,
+    type: interaction.type,
+    guildId: interaction.guildId,
+    channelId: interaction.channelId,
+    userId: interaction.user.id,
+    commandName: interaction.commandName,
+  })
+
+  Sentry.addBreadcrumb({
+    category: 'interaction.options.data',
+    message: 'Interaction options data',
+    data: {
+      options: interaction.options.data,
+    },
+  })
 
   const { commandName } = interaction
   const handler = CommandHandlers[commandName]

@@ -49,6 +49,7 @@ export const useConfirmation = async ({
     time: BUTTON_INTERACTION_TIME,
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('collect', async (buttonInteraction) => {
     if (buttonInteraction.user.id === interaction.user.id) {
       if (buttonInteraction.customId === ButtonNames.YES) {
@@ -64,6 +65,7 @@ export const useConfirmation = async ({
     }
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('end', async () => {
     const { embeds } = await interaction.fetchReply()
     await interaction.editReply({
