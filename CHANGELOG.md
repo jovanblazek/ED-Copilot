@@ -1,3 +1,9 @@
+## [2.2.0](https://github.com/jovanblazek/ed-copilot/compare/v2.1.0...v2.2.0) (2024-06-23)
+
+### :sparkles: Features
+
+* Migrate to Node 20, pnpm and upgrade packages ([#23](https://github.com/jovanblazek/ed-copilot/issues/23)) ([9a98a56](https://github.com/jovanblazek/ed-copilot/commit/9a98a56196457c6b27ecf533977cb46d6abf6fb2))
+
 ## [2.1.0](https://github.com/jovanblazek/ed-copilot/compare/v2.0.1...v2.1.0) (2024-06-09)
 
 
