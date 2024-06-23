@@ -1,7 +1,5 @@
 export const CommandNames = {
-  techBroker: 'broker',
-  materialTrader: 'trader',
-  interstellarFactors: 'factors',
+  nearest: 'nearest',
   systemDistance: 'distance',
   tick: 'tick',
   systemInfo: 'system',
@@ -9,6 +7,12 @@ export const CommandNames = {
   commanderProfile: 'profile',
   setup: 'setup',
   copilot: 'copilot',
+} as const
+
+export const NearestSubcommands = {
+  broker: 'broker',
+  trader: 'trader',
+  factors: 'factors',
 } as const
 
 export const FactionSubcommands = {
