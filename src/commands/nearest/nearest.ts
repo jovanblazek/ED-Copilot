@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames, NearestSubcommands } from '../../constants'
 import { Command } from '../types'
+import { PARAMS } from './constants'
 import { nearestInterstellarFactorsHandler } from './interstellarFactors'
 import { nearestMaterialTraderHandler } from './materialTrader'
 import { nearestTechBrokerHandler } from './techBroker'
@@ -20,7 +21,7 @@ const Nearest: Command = {
         .setName(NearestSubcommands.broker)
         .setDescription('Get nearest tech brokers')
         .addStringOption((option) =>
-          option.setName('system').setDescription('Your location').setRequired(true)
+          option.setName(PARAMS.system).setDescription('Your location').setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
@@ -28,7 +29,7 @@ const Nearest: Command = {
         .setName(NearestSubcommands.trader)
         .setDescription('Get nearest material traders')
         .addStringOption((option) =>
-          option.setName('system').setDescription('Your location').setRequired(true)
+          option.setName(PARAMS.system).setDescription('Your location').setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
@@ -36,7 +37,7 @@ const Nearest: Command = {
         .setName(NearestSubcommands.factors)
         .setDescription('Get nearest interstellar factors')
         .addStringOption((option) =>
-          option.setName('system').setDescription('Your location').setRequired(true)
+          option.setName(PARAMS.system).setDescription('Your location').setRequired(true)
         )
     ),
   handler: async ({ interaction, context }) => {
