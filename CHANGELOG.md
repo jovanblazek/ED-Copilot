@@ -1,3 +1,9 @@
+## [2.3.0](https://github.com/jovanblazek/ed-copilot/compare/v2.2.1...v2.3.0) (2024-07-27)
+
+### :sparkles: Features
+
+* Group trader, broker & factors command under nearest command ([#25](https://github.com/jovanblazek/ed-copilot/issues/25)) ([e042db1](https://github.com/jovanblazek/ed-copilot/commit/e042db1f67efd93ab42050ceb4a4c7330f16eb05))
+
 ## [2.2.1](https://github.com/jovanblazek/ed-copilot/compare/v2.2.0...v2.2.1) (2024-06-23)
 
 ### :bug: Bug Fixes
