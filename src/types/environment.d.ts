@@ -16,6 +16,7 @@ declare global {
       // Dragonfly
       DRAGONFLY_PORT: string
       DRAGONFLY_PASSWORD: string
+      DRAGONFLY_HOST: string
 
       ENCRYPTION_KEY: string
 
