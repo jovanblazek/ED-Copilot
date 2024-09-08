@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   db:
     image: postgres
@@ -11,5 +11,15 @@ services:
       POSTGRES_DB: '${POSTGRES_DB_NAME}'
     volumes:
       - copilot-db-volume:/var/lib/postgresql/data
+  dragonfly:
+    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    restart: always
+    ulimits:
+      memlock: -1
+    ports:
+      - "${DRAGONFLY_PORT}:6379"
+    volumes:
+      - copilot-dragonfly-volume:/data
 volumes:
   copilot-db-volume:
+  copilot-dragonfly-volume:

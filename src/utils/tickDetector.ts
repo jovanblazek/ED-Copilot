@@ -1,11 +1,12 @@
 import dayjs, { Dayjs } from 'dayjs'
 import { bold, ChannelType, Client, hyperlink } from 'discord.js'
 import { io } from 'socket.io-client'
+import { RedisKeys } from '../constants'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
 import logger from './logger'
 import { Prisma } from './prismaClient'
-import { setTickTime } from './tick'
+import { Redis } from './redis'
 
 const reportTick = async (client: Client, tickTime: Dayjs) => {
   const guilds = await Prisma.preferences.findMany({
@@ -57,10 +58,10 @@ export default (client: Client) => {
     logger.info('Connected to Tick Detector')
   })
 
-  socket.on('tick', (data: string | number | Date) => {
+  socket.on('tick', async (data: string | number | Date) => {
     const tickTime = dayjs.utc(data)
     logger.info('Tick detected', tickTime)
-    setTickTime(tickTime)
+    await Redis.set(RedisKeys.ticktime, tickTime.toISOString())
     void reportTick(client, tickTime)
   })
 

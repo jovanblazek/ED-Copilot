@@ -13,6 +13,11 @@ declare global {
       POSTGRES_DB_NAME: string
       POSTGRES_CONNECTION_STRING: string
 
+      // Dragonfly
+      DRAGONFLY_PORT: string
+      DRAGONFLY_PASSWORD: string
+      DRAGONFLY_HOST: string
+
       ENCRYPTION_KEY: string
 
       // Discord

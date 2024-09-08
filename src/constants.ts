@@ -77,9 +77,13 @@ export const Languages = {
   slovak: 'sk',
 } as const
 
-export const CacheNames = {
-  guildPreferences: 'preferences',
-  guildFactions: 'factions',
+export const RedisKeys = {
+  ticktime: 'ticktime',
+} as const
+
+// Expiration in seconds
+export const RedisExpiration = {
+  [RedisKeys.ticktime]: 4 * 60 * 60, // 4 hours
 } as const
 
 export const RankNames = {
