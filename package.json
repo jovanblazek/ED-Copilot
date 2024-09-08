@@ -1,6 +1,6 @@
 {
   "name": "ED-Copilot",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "description": "Elite Dangerous Discord bot",
   "main": "index.js",
   "private": true,

@@ -1,3 +1,9 @@
+## [2.4.0](https://github.com/jovanblazek/ed-copilot/compare/v2.3.2...v2.4.0) (2024-09-08)
+
+### :sparkles: Features
+
+* Add redis cache and cache ticktime ([#27](https://github.com/jovanblazek/ed-copilot/issues/27)) ([dce4451](https://github.com/jovanblazek/ed-copilot/commit/dce4451c7771a520949912c3e4e2c98b8cafb707))
+
 ## [2.3.2](https://github.com/jovanblazek/ed-copilot/compare/v2.3.1...v2.3.2) (2024-09-08)
 
 ### :bug: Bug Fixes
