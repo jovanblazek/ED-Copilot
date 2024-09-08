@@ -19,7 +19,7 @@ jobs:
         uses: jovanblazek/env-changes-detector@v2
         id: detect-changes-in-env-files
         with:
-          files: '["**env-example", "**env-test-example"]'
+          files: '["**env.example"]'
 
       - name: Add or update sticky comment
         uses: marocchino/sticky-pull-request-comment@v2.2.0
