@@ -1,3 +1,13 @@
+## [2.3.1](https://github.com/jovanblazek/ed-copilot/compare/v2.3.0...v2.3.1) (2024-09-08)
+
+### :bug: Bug Fixes
+
+* Nixpacks build failing due to permissions ([#28](https://github.com/jovanblazek/ed-copilot/issues/28)) ([bad00c4](https://github.com/jovanblazek/ed-copilot/commit/bad00c45fc601b75dee36f906cba660fb16f2016))
+
+### :up: Enhancements
+
+* Replace old libraries ([#26](https://github.com/jovanblazek/ed-copilot/issues/26)) ([1163139](https://github.com/jovanblazek/ed-copilot/commit/1163139979486d1585741d0cfee5211fc2dee0e7))
+
 ## [2.3.0](https://github.com/jovanblazek/ed-copilot/compare/v2.2.1...v2.3.0) (2024-07-27)
 
 ### :sparkles: Features
