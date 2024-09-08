@@ -1,3 +1,9 @@
+## [2.3.2](https://github.com/jovanblazek/ed-copilot/compare/v2.3.1...v2.3.2) (2024-09-08)
+
+### :bug: Bug Fixes
+
+* Revert changes to package json made in [#28](https://github.com/jovanblazek/ed-copilot/issues/28) ([#29](https://github.com/jovanblazek/ed-copilot/issues/29)) ([4cac908](https://github.com/jovanblazek/ed-copilot/commit/4cac9085a2971717ec7b35777bd3dcf05a3acbbd))
+
 ## [2.3.1](https://github.com/jovanblazek/ed-copilot/compare/v2.3.0...v2.3.1) (2024-09-08)
 
 ### :bug: Bug Fixes
