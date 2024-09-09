@@ -3,10 +3,17 @@ import Koa from 'koa'
 import { initEventHandlers } from './events'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
+import { Redis } from './utils/redis'
 import initTickDetector from './utils/tickDetector'
 import './i18n/dayjsLocales'
 import './utils/environment'
 import './utils/sentry'
+
+void Redis.connect()
+
+Redis.on('ready', () => {
+  logger.info('Redis is ready!')
+})
 
 const BotClient = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],

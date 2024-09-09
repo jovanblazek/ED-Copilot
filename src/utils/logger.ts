@@ -14,6 +14,7 @@ const logger = pino({
         level: 'debug',
         options: {
           colorize: true,
+          translateTime: 'UTC:yyyy-mm-dd HH:MM:ss.l',
         },
       },
     ],
