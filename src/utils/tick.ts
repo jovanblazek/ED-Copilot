@@ -26,6 +26,7 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
 
     const tickTime = fetchedData.length === 0 ? null : dayjs.utc(fetchedData[0].time)
     if (tickTime) {
+      logger.info('Caching tick time')
       await Redis.set(RedisKeys.ticktime, tickTime.toISOString(), 'EX', RedisExpiration.ticktime)
     }
     return tickTime
@@ -45,6 +46,7 @@ export const getTickTime = async ({
 }): Promise<Dayjs> => {
   const cachedTickTime = await Redis.get(RedisKeys.ticktime)
   if (cachedTickTime) {
+    logger.info('Using cached tick time')
     return dayjs(cachedTickTime).tz(timezone)
   }
 
