@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 import Koa from 'koa'
 import { initEventHandlers } from './events'
+import { initMQ } from './mq'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
 import { Redis } from './utils/redis'
@@ -9,10 +10,9 @@ import './i18n/dayjsLocales'
 import './utils/environment'
 import './utils/sentry'
 
-void Redis.connect()
-
 Redis.on('ready', () => {
   logger.info('Redis is ready!')
+  initMQ()
 })
 
 const BotClient = new Client({
