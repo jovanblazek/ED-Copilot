@@ -16,7 +16,8 @@
     "postbuild": "copyfiles .env ./build",
     "start": "node build/index.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "eddn:listen": "tsx src/workers/eddn/eddn.ts"
   },
   "repository": {
     "type": "git",
@@ -44,7 +45,8 @@
     "pino": "^9.2.0",
     "pino-pretty": "^11.2.1",
     "socket.io-client": "^4.7.5",
-    "typesafe-i18n": "^5.26.2"
+    "typesafe-i18n": "^5.26.2",
+    "zeromq": "^6.1.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
