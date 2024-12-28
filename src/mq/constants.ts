@@ -3,5 +3,5 @@
  * @url https://docs.bullmq.io/guide/redis-tm-compatibility/dragonfly
  */
 export const QueueNames = {
-  factionReport: '{factionReport}',
+  discordNotification: '{discordNotification}',
 }

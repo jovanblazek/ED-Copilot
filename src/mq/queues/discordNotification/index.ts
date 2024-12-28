@@ -3,7 +3,7 @@ import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 
-export const FactionReportQueue = new Queue(QueueNames.factionReport, {
+export const DiscordNotificationQueue = new Queue(QueueNames.discordNotification, {
   connection: Redis,
   defaultJobOptions: {
     attempts: 3,
@@ -16,8 +16,8 @@ export const FactionReportQueue = new Queue(QueueNames.factionReport, {
   },
 })
 
-export const FactionReportWorker = new Worker(
-  QueueNames.factionReport,
+export const DiscordNotificationWorker = new Worker(
+  QueueNames.discordNotification,
   // eslint-disable-next-line require-await, @typescript-eslint/require-await
   async (job) => {
     logger.info(job.data, 'Processing faction report job')

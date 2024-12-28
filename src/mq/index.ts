@@ -1,7 +1,7 @@
 import logger from '../utils/logger'
-import { FactionReportWorker } from './queues/factionReport'
+import { DiscordNotificationWorker } from './queues/discordNotification'
 
-const Workers = [FactionReportWorker]
+const Workers = [DiscordNotificationWorker]
 
 export const initMQ = () => {
   Workers.forEach((worker) => {
