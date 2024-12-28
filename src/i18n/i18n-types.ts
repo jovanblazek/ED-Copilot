@@ -57,13 +57,15 @@ type RootTranslation = {
 				 * N​a​m​e​:​ ​{​f​a​c​t​i​o​n​N​a​m​e​}​
 			​S​h​o​r​t​h​a​n​d​:​ ​{​f​a​c​t​i​o​n​S​h​o​r​t​h​a​n​d​}​
 			​A​l​l​e​g​i​a​n​c​e​:​ ​{​a​l​l​e​g​i​a​n​c​e​}​
-			​S​y​s​t​e​m​s​ ​p​r​e​s​e​n​t​:​ ​{​s​y​s​t​e​m​s​C​o​u​n​t​}
+			​S​y​s​t​e​m​s​ ​p​r​e​s​e​n​t​:​ ​{​s​y​s​t​e​m​s​C​o​u​n​t​}​
+			​N​o​t​i​f​i​c​a​t​i​o​n​ ​c​h​a​n​n​e​l​:​ ​{​n​o​t​i​f​i​c​a​t​i​o​n​C​h​a​n​n​e​l​}
 				 * @param {unknown} allegiance
 				 * @param {unknown} factionName
 				 * @param {unknown} factionShorthand
+				 * @param {unknown} notificationChannel
 				 * @param {unknown} systemsCount
 				 */
-				description: RequiredParams<'allegiance' | 'factionName' | 'factionShorthand' | 'systemsCount'>
+				description: RequiredParams<'allegiance' | 'factionName' | 'factionShorthand' | 'notificationChannel' | 'systemsCount'>
 			}
 			/**
 			 * F​a​c​t​i​o​n​ ​s​a​v​e​d​.
@@ -280,8 +282,9 @@ export type TranslationFunctions = {
 			Shorthand: {factionShorthand}
 			Allegiance: {allegiance}
 			Systems present: {systemsCount}
+			Notification channel: {notificationChannel}
 				 */
-				description: (arg: { allegiance: unknown, factionName: unknown, factionShorthand: unknown, systemsCount: unknown }) => LocalizedString
+				description: (arg: { allegiance: unknown, factionName: unknown, factionShorthand: unknown, notificationChannel: unknown, systemsCount: unknown }) => LocalizedString
 			}
 			/**
 			 * Faction saved.

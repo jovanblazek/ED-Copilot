@@ -17,7 +17,7 @@ const sk = {
       confirm: {
         title: 'Sú tieto informácie správne?',
         description:
-          'Názov: {factionName}\nSkratka: {factionShorthand}\nVernosť: {allegiance}\nPrítomná v systémoch: {systemsCount}',
+          'Názov: {factionName}\nSkratka: {factionShorthand}\nVernosť: {allegiance}\nPrítomná v systémoch: {systemsCount}\nKanál na notifikácie: {notificationChannel}',
       },
       saved: 'Frakcia uložená.',
       canceled: 'Nastavenie frakcie bolo zrušené.',

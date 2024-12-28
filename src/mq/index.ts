@@ -1,7 +1,8 @@
 import logger from '../utils/logger'
 import { DiscordNotificationWorker } from './queues/discordNotification'
+import { SystemProcessingWorker } from './queues/systemProcessing'
 
-const Workers = [DiscordNotificationWorker]
+const Workers = [DiscordNotificationWorker, SystemProcessingWorker]
 
 export const initMQ = () => {
   Workers.forEach((worker) => {

@@ -17,25 +17,55 @@ model User {
   edsmApiKey String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime? @default(now()) @updatedAt
+
+  @@index([userId])
 }
 
 model Preferences {
-  id                  Int       @id @default(autoincrement())
-  guildId             String    @unique
-  language            String    @default("en")
-  timezone            String
-  tickReportChannelId String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime? @default(now()) @updatedAt
+  id                           Int       @id @default(autoincrement())
+  guildId                      String    @unique
+  language                     String    @default("en")
+  timezone                     String
+  tickReportChannelId          String?
+  factionNotificationChannelId String?
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime? @default(now()) @updatedAt
+
+  @@index([guildId])
 }
 
 model Faction {
-  id        Int       @id @default(autoincrement())
-  guildId   String    @unique
-  name      String
-  shortName String
-  ebgsId    String
-  eddbId    Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @default(now()) @updatedAt
+  id           Int            @id @default(autoincrement())
+  guildId      String         @unique
+  name         String
+  shortName    String
+  ebgsId       String
+  eddbId       Int
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime?      @default(now()) @updatedAt
+  FactionState FactionState[]
+
+  @@index([guildId, eddbId, ebgsId, name])
+}
+
+enum StateType {
+  Pending
+  Active
+  Recovering
+}
+
+model FactionState {
+  id         BigInt    @id @default(autoincrement())
+  factionId  Int
+  systemName String
+  stateName  String
+  stateType  StateType
+  startedAt  DateTime
+  endedAt    DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @default(now()) @updatedAt
+
+  faction Faction @relation(fields: [factionId], references: [id])
+
+  @@index([factionId, systemName])
 }

@@ -16,7 +16,7 @@ const en = {
       confirm: {
         title: 'Is this information correct?',
         description:
-          'Name: {factionName}\nShorthand: {factionShorthand}\nAllegiance: {allegiance}\nSystems present: {systemsCount}',
+          'Name: {factionName}\nShorthand: {factionShorthand}\nAllegiance: {allegiance}\nSystems present: {systemsCount}\nNotification channel: {notificationChannel}',
       },
       saved: 'Faction saved.',
       canceled: 'Faction setup canceled.',

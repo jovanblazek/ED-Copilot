@@ -79,6 +79,7 @@ export const Languages = {
 
 export const RedisKeys = {
   ticktime: 'ticktime',
+  trackedFactions: 'trackedFactions',
 } as const
 
 // Expiration in seconds

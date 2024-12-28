@@ -4,6 +4,8 @@ import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import { CommandHandler } from '../types'
+import { ChannelType } from 'discord.js'
+import { addTrackedFaction, removeTrackedFaction } from '../../utils/redis'
 
 type EliteBgsResponse = {
   docs: {
@@ -23,6 +25,9 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
 
   const factionNameInput = interaction.options.getString('name')!
   const factionShorthand = interaction.options.getString('shorthand')!
+  const notificationChannel = interaction.options.getChannel<
+    ChannelType.GuildText | ChannelType.GuildAnnouncement
+  >('notification_channel')
   const factionNameEncoded = encodeURIComponent(factionNameInput)
 
   logger.info(`Setting up faction for guild ${guildId}, ${factionNameInput}, ${factionShorthand}`)
@@ -56,16 +61,38 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
               factionShorthand,
               allegiance,
               systemsCount: factionPresence.length,
+              notificationChannel: notificationChannel?.id ?? 'None',
             }),
           }),
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        await Prisma.faction.upsert({
+        const existingFaction = await Prisma.faction.findFirst({
+          where: { guildId },
+        })
+
+        if (existingFaction) {
+          await removeTrackedFaction({ id: existingFaction.id })
+        }
+
+        const upsertedFaction = await Prisma.faction.upsert({
           where: { guildId },
           create: { guildId, ebgsId, eddbId, name: factionName, shortName: factionShorthand },
           update: { ebgsId, eddbId, name: factionName, shortName: factionShorthand },
         })
+
+        if (notificationChannel?.id) {
+          await Prisma.preferences.update({
+            data: {
+              factionNotificationChannelId: notificationChannel.id,
+            },
+            where: {
+              guildId,
+            },
+          })
+
+          await addTrackedFaction({ id: upsertedFaction.id, name: factionName })
+        }
 
         await buttonInteraction.update({
           content: L[locale].copilot.faction.saved(),
