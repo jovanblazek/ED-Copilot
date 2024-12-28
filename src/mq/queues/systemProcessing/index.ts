@@ -23,8 +23,12 @@ export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
 export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
   QueueNames.systemProcessing,
   async (job) => {
-    logger.info(job.data, 'Processing system job')
-    const { StarSystem: systemName, Factions: factions, Conflicts: conflicts, timestamp } = job.data
+    const {
+      StarSystem: systemName,
+      Factions: factions,
+      // Conflicts: conflicts, // TODO: Implement
+      timestamp,
+    } = job.data
 
     // Get tracked factions in this system
     const trackedFactions = await getTrackedFactionsInSystem(factions)

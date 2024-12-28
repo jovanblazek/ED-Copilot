@@ -4,7 +4,6 @@ import { EDDNFaction, EDDNFactionState } from '../../../types/eddn'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
   const trackedFactions = await getTrackedFactions()
-  
   return trackedFactions.filter((factionFromRedis) =>
     eventFactions.find(({ Name }) => Name === factionFromRedis.name)
   )

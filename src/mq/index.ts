@@ -2,10 +2,10 @@ import logger from '../utils/logger'
 import { DiscordNotificationWorker } from './queues/discordNotification'
 import { SystemProcessingWorker } from './queues/systemProcessing'
 
-const Workers = [DiscordNotificationWorker, SystemProcessingWorker]
+export const BullMQWorkers = [DiscordNotificationWorker, SystemProcessingWorker]
 
 export const initMQ = () => {
-  Workers.forEach((worker) => {
+  BullMQWorkers.forEach((worker) => {
     worker.on('failed', (job) => {
       if (job) {
         logger.error(new Error(job.failedReason), `Job: ${job.name}:${job.id} - FAILED`)

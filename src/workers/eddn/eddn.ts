@@ -1,55 +1,69 @@
-import { Subscriber } from 'zeromq'
-import zlib from 'zlib'
+import { Worker } from 'worker_threads'
+import path from 'path'
 import logger from '../../utils/logger'
-import { HttpsEddnEdcdIoSchemasJournal1 } from './types'
 import { SystemProcessingQueue } from '../../mq/queues/systemProcessing'
-import { EDDNConflict, EDDNEventToProcess, EDDNFaction } from '../../types/eddn'
-
-const EDDN_URL = 'tcp://eddn.edcd.io:9500'
-const JOURNAL_EVENT_SCHEMA = 'https://eddn.edcd.io/schemas/journal/1'
-const MAJOR_GAME_VERSION = '4'
-const SOFTWARE = 'E:D Market Connector'
-const EVENTS = ['FSDJump', 'Location']
-const IGNORE_OLDER_THAN_MS = 10 * 60 * 1000 // 10 minutes
+import { EDDNEventToProcess } from '../../types/eddn'
 
 const SYSTEM_PROCESS_JOB_NAME = 'system-processing'
+const FILE_NAME = 'eddnWorker.js'
 
-async function run() {
-  const socket = new Subscriber()
+export default function startEDDNWorker() {
+  if (process.env.NODE_ENV !== 'production') {
+    throw new Error('EDDN worker is only available in production')
+  }
 
-  socket.connect(EDDN_URL)
-  socket.subscribe('')
-  logger.info(`EDDN listener connected to: ${EDDN_URL}`)
+  const worker = new Worker(path.join(__dirname, FILE_NAME))
+  
+  worker.on('online', () => {
+    logger.info('EDDN worker online')
+  })
 
-  for await (const [src] of socket) {
-    const message: HttpsEddnEdcdIoSchemasJournal1 = JSON.parse(zlib.inflateSync(src).toString())
-    if (
-      message.$schemaRef !== JOURNAL_EVENT_SCHEMA ||
-      !message.header.gameversion?.startsWith(MAJOR_GAME_VERSION) ||
-      !message.header.softwareName.startsWith(SOFTWARE) ||
-      !EVENTS.includes(message.message.event) ||
-      !message.message.StarSystem ||
-      !message.message.Factions ||
-      !message.message.Factions.length ||
-      new Date(message.message.timestamp).getTime() < Date.now() - IGNORE_OLDER_THAN_MS
-    ) {
-      // eslint-disable-next-line no-continue
-      continue
-    }
-    // logger.info(message)
-
-    const eddnEventToProcess: EDDNEventToProcess = {
-      StarSystem: message.message.StarSystem,
-      Factions: (message.message.Factions ?? []) as unknown as EDDNFaction[],
-      Conflicts: (message.message.Conflicts ?? []) as unknown as EDDNConflict[],
-      timestamp: message.message.timestamp,
-    }
-
+  worker.on('message', async (eddnEventToProcess: EDDNEventToProcess) => {
     await SystemProcessingQueue.add(
-      `${SYSTEM_PROCESS_JOB_NAME}:${message.message.StarSystem}`,
+      `${SYSTEM_PROCESS_JOB_NAME}:${eddnEventToProcess.StarSystem}`,
       eddnEventToProcess
     )
-  }
-}
+  })
 
-void run()
+  worker.on('error', (error) => {
+    logger.error(error, 'EDDN worker error')
+    // Don't restart on error when shutting down
+    if (!worker.threadId) {
+      return
+    }
+    startEDDNWorker()
+  })
+
+  worker.on('exit', (code) => {
+    logger.info(`EDDN worker stopped with exit code ${code}`)
+    if (code !== 0 && worker.threadId) {
+      logger.error(`EDDN worker stopped with exit code ${code}`)
+      startEDDNWorker()
+    }
+  })
+
+  const shutdown = async () => {
+    logger.info('Shutting down EDDN worker...')
+    return new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('EDDN worker shutdown timeout'))
+      }, 5000)
+
+      worker.once('message', (message) => {
+        if (message === 'shutdown_complete') {
+          clearTimeout(timeout)
+          resolve()
+        }
+      })
+
+      worker.once('error', (error) => {
+        clearTimeout(timeout)
+        reject(error)
+      })
+
+      worker.postMessage('shutdown')
+    })
+  }
+
+  return { worker, shutdown }
+}
