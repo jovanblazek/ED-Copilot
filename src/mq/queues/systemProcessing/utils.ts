@@ -1,5 +1,5 @@
 import { FactionState, StateType } from '@prisma/client'
-import { getTrackedFactions} from '../../../utils/redis'
+import { getTrackedFactions } from '../../../utils/redis'
 import { EDDNFaction, EDDNFactionState } from '../../../types/eddn'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
@@ -9,13 +9,11 @@ export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) =
   )
 }
 
-const getStatesToEnd = (currentDbStates: FactionState[], statesFromEvent: EDDNFactionState[]) => {
-  return currentDbStates.filter((state) => !statesFromEvent.some((s) => s.State === state.stateName))
-}
+const getStatesToEnd = (currentDbStates: FactionState[], statesFromEvent: EDDNFactionState[]) =>
+  currentDbStates.filter((state) => !statesFromEvent.some((s) => s.State === state.stateName))
 
-const getStatesToStart = (currentDbStates: FactionState[], statesFromEvent: EDDNFactionState[]) => {
-  return statesFromEvent.filter((state) => !currentDbStates.some((s) => s.stateName === state.State))
-}
+const getStatesToStart = (currentDbStates: FactionState[], statesFromEvent: EDDNFactionState[]) =>
+  statesFromEvent.filter((state) => !currentDbStates.some((s) => s.stateName === state.State))
 
 export const getAllStatesToEnd = ({
   currentDbStatesByType,

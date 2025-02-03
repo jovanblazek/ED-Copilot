@@ -5,6 +5,14 @@ import { CommandHandlers } from '../commands'
 import { Locales } from '../i18n/i18n-types'
 import { baseLocale } from '../i18n/i18n-util'
 import { errorHandler, Prisma } from '../utils'
+import { onGuildJoin } from './guild'
+import logger from '../utils/logger'
+
+const getGuildPreferences = async ({ guildId }: { guildId: string }) => {
+  return Prisma.preferences.findFirst({
+    where: { guildId },
+  })
+}
 
 export const onInteractionCreate = async (interaction: Interaction) => {
   if (!interaction.isChatInputCommand()) {
@@ -31,9 +39,12 @@ export const onInteractionCreate = async (interaction: Interaction) => {
   const handler = CommandHandlers[commandName]
 
   try {
-    const guildPreferences = await Prisma.preferences.findFirst({
-      where: { guildId: interaction.guildId! },
-    })
+    let guildPreferences = await getGuildPreferences({ guildId: interaction.guildId! })
+    if (!guildPreferences && interaction?.guild?.id) {
+      logger.warn(`Guild preferences not found for guild ${interaction.guildId}, joining...`)
+      await onGuildJoin(interaction.guild)
+      guildPreferences = await getGuildPreferences({ guildId: interaction.guild.id })
+    }
     if (handler && guildPreferences) {
       dayjs.locale(guildPreferences.language)
       await handler({

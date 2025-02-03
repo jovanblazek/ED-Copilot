@@ -34,6 +34,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
     const trackedFactions = await getTrackedFactionsInSystem(factions)
 
     for (const trackedFaction of trackedFactions) {
+      logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - START`)
       const factionFromEvent = factions.find(({ Name }) => Name === trackedFaction.name)
 
       // Should never happen
@@ -55,13 +56,22 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             acc[state.stateType].push(state)
             return acc
           },
-          {} as Record<StateType, FactionState[]>
+          {
+            [StateType.Active]: [] as FactionState[],
+            [StateType.Pending]: [] as FactionState[],
+            [StateType.Recovering]: [] as FactionState[],
+          }
         )
 
         const statesToEnd = getAllStatesToEnd({
           currentDbStatesByType,
           factionFromEvent,
         })
+
+        logger.info(
+          statesToEnd,
+          `systemProcessingWorker: ${systemName} - ${trackedFaction.name} - ENDING STATES`
+        )
 
         await trx.factionState.updateMany({
           where: {
@@ -70,17 +80,20 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
           data: { endedAt: new Date(timestamp) },
         })
 
-        logger.info(
-          `systemProcessingWorker: ${systemName} - ${trackedFaction.name} - ${JSON.stringify({
-            statesToEnd,
-          })}`
-        )
-
         const { activeStatesToStart, pendingStatesToStart, recoveringStatesToStart } =
           getAllStatesToStart({
             factionFromEvent,
             currentDbStatesByType,
           })
+
+        logger.info(
+          {
+            activeStatesToStart,
+            pendingStatesToStart,
+            recoveringStatesToStart,
+          },
+          `systemProcessingWorker: ${systemName} - ${trackedFaction.name} - STARTING STATES`
+        )
 
         await trx.factionState.createMany({
           data: [
@@ -108,13 +121,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
           ],
         })
 
-        logger.info(
-          `systemProcessingWorker: ${systemName} - ${trackedFaction.name} - ${JSON.stringify({
-            activeStatesToStart,
-            pendingStatesToStart,
-            recoveringStatesToStart,
-          })}`
-        )
+        logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
       })
     }
   },

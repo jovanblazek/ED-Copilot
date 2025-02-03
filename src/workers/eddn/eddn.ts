@@ -8,21 +8,24 @@ const SYSTEM_PROCESS_JOB_NAME = 'system-processing'
 const FILE_NAME = 'eddnWorker.js'
 
 export default function startEDDNWorker() {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && process.env.DEBUG_EDDN_WORKER !== 'true') {
     throw new Error('EDDN worker is only available in production')
   }
 
   const worker = new Worker(path.join(__dirname, FILE_NAME))
-  
+
   worker.on('online', () => {
     logger.info('EDDN worker online')
   })
 
   worker.on('message', async (eddnEventToProcess: EDDNEventToProcess) => {
-    await SystemProcessingQueue.add(
-      `${SYSTEM_PROCESS_JOB_NAME}:${eddnEventToProcess.StarSystem}`,
-      eddnEventToProcess
-    )
+    // TODO: For some reason, messages with 'shutdown_complete' are added to queue?
+    if (eddnEventToProcess?.StarSystem) {
+      await SystemProcessingQueue.add(
+        `${SYSTEM_PROCESS_JOB_NAME}:${eddnEventToProcess.StarSystem}`,
+        eddnEventToProcess
+      )
+    }
   })
 
   worker.on('error', (error) => {

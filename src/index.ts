@@ -16,7 +16,7 @@ let eddnWorker: ReturnType<typeof startEDDNWorker> | null = null
 Redis.on('ready', () => {
   logger.info('Redis is ready!')
   initMQ()
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EDDN_WORKER === 'true') {
     eddnWorker = startEDDNWorker()
   }
 })
