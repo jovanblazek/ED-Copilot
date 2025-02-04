@@ -4,8 +4,9 @@ import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { EDDNEventToProcess } from '../../../types/eddn'
 import { getAllStatesToEnd, getAllStatesToStart, getTrackedFactionsInSystem } from './utils'
-import { Prisma } from '../../../utils'
+import { getTickTime, Prisma } from '../../../utils'
 import { FactionState, StateType } from '@prisma/client'
+import { RedisKeys } from '../../../constants'
 
 export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
   connection: Redis,
@@ -29,6 +30,21 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
       // Conflicts: conflicts, // TODO: Implement
       timestamp,
     } = job.data
+
+    const tickTime = await getTickTime()
+    if (!tickTime) {
+      logger.warn(`systemProcessingWorker: ${systemName} - No tick time found`)
+      return
+    }
+
+    const tickTimeISO = tickTime.toISOString()
+    const processedSystemRedisKey = RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName })
+    const wasProcessed = await Redis.exists(processedSystemRedisKey)
+
+    if (wasProcessed) {
+      logger.debug(`systemProcessingWorker: ${systemName} - SKIPPED`)
+      return
+    }
 
     // Get tracked factions in this system
     const trackedFactions = await getTrackedFactionsInSystem(factions)
@@ -121,6 +137,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
           ],
         })
 
+        await Redis.set(processedSystemRedisKey, 1)
         logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
       })
     }

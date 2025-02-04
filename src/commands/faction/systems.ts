@@ -7,7 +7,7 @@ import { DIVIDER, Emojis, InaraUrl } from '../../constants'
 import { createEmbed, usePagination } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionSystemsResponse } from '../../types/eliteBGS'
-import { getTickTime } from '../../utils'
+import { getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
@@ -94,7 +94,7 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
   if (!factionSystems.length) {
     throw new DataParseError({ locale })
   }
-  const tickTime = await getTickTime({ locale, timezone })
+  const tickTime = await getTickTimeInTimezone({ locale, timezone })
 
   const embeds = createFactionSystemsEmbeds(
     {

@@ -6,7 +6,7 @@ import { DataParseError, SystemNotFoundError } from '../classes'
 import { CommandNames, DIVIDER } from '../constants'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
-import { getTickTime } from '../utils'
+import { getTickTimeInTimezone } from '../utils'
 import { isAfterTime } from '../utils/time'
 import { Command } from './types'
 
@@ -92,7 +92,7 @@ const SystemInfo: Command = {
       throw new DataParseError({ locale })
     }
     const { systemName, systemData, lastUpdate } = parsedData
-    const tickTime = await getTickTime({ locale, timezone })
+    const tickTime = await getTickTimeInTimezone({ locale, timezone })
 
     const embed = createEmbed({
       title: L[locale].systemInfo.title({ systemName }),

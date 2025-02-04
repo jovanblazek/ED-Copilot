@@ -77,7 +77,7 @@ model FactionState {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime? @default(now()) @updatedAt
 
-  faction Faction @relation(fields: [factionId], references: [id])
+  faction Faction @relation(fields: [factionId], references: [id], onDelete: Cascade)
 
   @@index([factionId, systemName])
 }

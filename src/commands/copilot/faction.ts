@@ -67,25 +67,39 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        // Upsert faction
-        const upsertedFaction = await Prisma.faction.upsert({
-          where: { ebgsId },
-          create: { eddbId, ebgsId, name: factionName },
-          update: { eddbId, name: factionName },
-        })
+        // TODO test what happens if error is thrown here
+        await Prisma.$transaction(async (trx) => {
+          // Upsert faction
+          const upsertedFaction = await trx.faction.upsert({
+            where: { ebgsId },
+            create: { eddbId, ebgsId, name: factionName },
+            update: { eddbId, name: factionName },
+          })
 
-        // Upsert guild faction
-        await Prisma.guildFaction.upsert({
-          where: { guildId },
-          create: {
-            guildId,
-            factionId: upsertedFaction.id,
-            shortName: factionShorthand,
-            notificationChannelId: notificationChannel?.id,
-          },
-          update: { shortName: factionShorthand, notificationChannelId: notificationChannel?.id },
-        })
+          // Upsert guild faction
+          await trx.guildFaction.upsert({
+            where: { guildId },
+            create: {
+              guildId,
+              factionId: upsertedFaction.id,
+              shortName: factionShorthand,
+              notificationChannelId: notificationChannel?.id,
+            },
+            update: {
+              shortName: factionShorthand,
+              factionId: upsertedFaction.id,
+              notificationChannelId: notificationChannel?.id,
+            },
+          })
 
+          await trx.faction.deleteMany({
+            where: {
+              GuildFactions: {
+                none: {},
+              },
+            },
+          })
+        })
         await loadTrackedFactionsFromDBToRedis()
 
         await buttonInteraction.update({
