@@ -4,7 +4,7 @@ import { initEventHandlers } from './events'
 import { BullMQWorkers, initMQ } from './mq'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
-import { Redis } from './utils/redis'
+import { loadTrackedFactionsFromDBToRedis, Redis } from './utils/redis'
 import initTickDetector from './utils/tickDetector'
 import startEDDNWorker from './workers/eddn/eddn'
 import './i18n/dayjsLocales'
@@ -13,8 +13,9 @@ import './utils/sentry'
 
 let eddnWorker: ReturnType<typeof startEDDNWorker> | null = null
 
-Redis.on('ready', () => {
+Redis.on('ready', async () => {
   logger.info('Redis is ready!')
+  await loadTrackedFactionsFromDBToRedis()
   initMQ()
   if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EDDN_WORKER === 'true') {
     eddnWorker = startEDDNWorker()
