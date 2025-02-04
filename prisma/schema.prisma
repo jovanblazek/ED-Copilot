@@ -22,30 +22,42 @@ model User {
 }
 
 model Preferences {
-  id                           Int       @id @default(autoincrement())
-  guildId                      String    @unique
-  language                     String    @default("en")
-  timezone                     String
-  tickReportChannelId          String?
-  factionNotificationChannelId String?
-  createdAt                    DateTime  @default(now())
-  updatedAt                    DateTime? @default(now()) @updatedAt
+  id                  Int       @id @default(autoincrement())
+  guildId             String    @unique
+  language            String    @default("en")
+  timezone            String
+  tickReportChannelId String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime? @default(now()) @updatedAt
 
   @@index([guildId])
 }
 
+model GuildFaction {
+  id                    Int       @id @default(autoincrement())
+  guildId               String    @unique
+  factionId             Int
+  shortName             String
+  notificationChannelId String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime? @default(now()) @updatedAt
+
+  faction Faction @relation(fields: [factionId], references: [id])
+
+  @@index([guildId, factionId])
+}
+
 model Faction {
   id           Int            @id @default(autoincrement())
-  guildId      String         @unique
   name         String
-  shortName    String
-  ebgsId       String
-  eddbId       Int
+  ebgsId       String         @unique
+  eddbId       Int            @unique
   createdAt    DateTime       @default(now())
   updatedAt    DateTime?      @default(now()) @updatedAt
-  FactionState FactionState[]
+  FactionStates FactionState[]
+  GuildFactions GuildFaction[]
 
-  @@index([guildId, eddbId, ebgsId, name])
+  @@index([eddbId, ebgsId, name])
 }
 
 enum StateType {

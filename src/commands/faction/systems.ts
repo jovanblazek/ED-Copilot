@@ -46,14 +46,14 @@ const createFactionSystemsEmbeds = (
     factionSystems: ReturnType<typeof parseSystemsData>
     tickTime: Dayjs
   },
-  { faction, locale }: Parameters<FactionCommandHandler>[0]['context']
+  { faction, guildFaction, locale }: Parameters<FactionCommandHandler>[0]['context']
 ) => {
   const factionSystemsChunks = chunk(factionSystems, 25)
 
   return factionSystemsChunks.map((factionSystemsChunk) =>
     createEmbed({
       title: L[locale].faction.systems.title({
-        factionName: faction.shortName,
+        factionName: guildFaction.shortName,
       }),
       description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}`,
     }).addFields(
@@ -77,7 +77,7 @@ const createFactionSystemsEmbeds = (
 
 export const factionSystemsHandler: FactionCommandHandler = async ({
   interaction,
-  context: { faction, locale, timezone },
+  context: { faction, guildFaction, locale, timezone },
 }) => {
   const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&count=2`
   const fetchedData = await got(url).json<FactionSystemsResponse>()
@@ -88,6 +88,7 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
       locale,
       faction,
       timezone,
+      guildFaction,
     },
   })
   if (!factionSystems.length) {
@@ -100,7 +101,7 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
       factionSystems,
       tickTime,
     },
-    { locale, faction, timezone }
+    { locale, faction, guildFaction, timezone }
   )
 
   await usePagination({

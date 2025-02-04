@@ -94,7 +94,7 @@ const printConflict = ({
   tickTime,
   isLastConflict,
   conflictData: { conflict, targetFaction, enemyFaction },
-  commandContext: { locale, faction },
+  commandContext: { locale, guildFaction },
 }: {
   tickTime: Dayjs
   isLastConflict: boolean
@@ -123,7 +123,7 @@ const printConflict = ({
       )}`,
     },
     {
-      name: `${inlineCode(targetFaction.daysWon.toString())} - ${faction.shortName}`,
+      name: `${inlineCode(targetFaction.daysWon.toString())} - ${guildFaction.shortName}`,
       value: `${inlineCode(enemyFaction.daysWon.toString())} - ${enemyFaction.name}`,
       inline: true,
     },
@@ -155,12 +155,12 @@ const createFactionConflictsEmbeds = (
   },
   context: Parameters<FactionCommandHandler>[0]['context']
 ) => {
-  const { faction, locale } = context
+  const { faction, guildFaction, locale } = context
   const conflictsLength = factionConflicts.length
 
   const embedHeader = {
     title: L[locale].faction.conflicts.title({
-      factionName: faction.shortName,
+      factionName: guildFaction.shortName,
     }),
     description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}${
       !conflictsLength ? `\n${L[locale].faction.conflicts.noConflicts()}` : ''

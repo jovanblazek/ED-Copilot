@@ -21,18 +21,6 @@ export const getTrackedFactions = async () => {
   return JSON.parse(trackedFactionsStringified) as TrackedFaction[]
 }
 
-export const removeTrackedFaction = async ({ id }: { id: number }) => {
-  const trackedFactionsParsed = await getTrackedFactions()
-  const updatedFactions = trackedFactionsParsed.filter((faction) => faction.id !== id)
-  await Redis.set(RedisKeys.trackedFactions, JSON.stringify(updatedFactions))
-}
-
-export const addTrackedFaction = async ({ id, name }: TrackedFaction) => {
-  const trackedFactionsParsed = await getTrackedFactions()
-  const updatedFactions = [...trackedFactionsParsed, { id, name }]
-  await Redis.set(RedisKeys.trackedFactions, JSON.stringify(updatedFactions))
-}
-
 export const loadTrackedFactionsFromDBToRedis = async () => {
   const trackedFactions = await Prisma.faction.findMany()
   await Redis.set(RedisKeys.trackedFactions, JSON.stringify(trackedFactions))

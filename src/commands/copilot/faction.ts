@@ -5,7 +5,7 @@ import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import { CommandHandler } from '../types'
 import { ChannelType } from 'discord.js'
-import { addTrackedFaction, removeTrackedFaction } from '../../utils/redis'
+import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
 
 type EliteBgsResponse = {
   docs: {
@@ -67,32 +67,26 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        const existingFaction = await Prisma.faction.findFirst({
-          where: { guildId },
-        })
-
-        if (existingFaction) {
-          await removeTrackedFaction({ id: existingFaction.id })
-        }
-
+        // Upsert faction
         const upsertedFaction = await Prisma.faction.upsert({
-          where: { guildId },
-          create: { guildId, ebgsId, eddbId, name: factionName, shortName: factionShorthand },
-          update: { ebgsId, eddbId, name: factionName, shortName: factionShorthand },
+          where: { ebgsId },
+          create: { eddbId, ebgsId, name: factionName },
+          update: { eddbId, name: factionName },
         })
 
-        if (notificationChannel?.id) {
-          await Prisma.preferences.update({
-            data: {
-              factionNotificationChannelId: notificationChannel.id,
-            },
-            where: {
-              guildId,
-            },
-          })
+        // Upsert guild faction
+        await Prisma.guildFaction.upsert({
+          where: { guildId },
+          create: {
+            guildId,
+            factionId: upsertedFaction.id,
+            shortName: factionShorthand,
+            notificationChannelId: notificationChannel?.id,
+          },
+          update: { shortName: factionShorthand, notificationChannelId: notificationChannel?.id },
+        })
 
-          await addTrackedFaction({ id: upsertedFaction.id, name: factionName })
-        }
+        await loadTrackedFactionsFromDBToRedis()
 
         await buttonInteraction.update({
           content: L[locale].copilot.faction.saved(),
