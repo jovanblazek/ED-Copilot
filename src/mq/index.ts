@@ -1,10 +1,10 @@
 import logger from '../utils/logger'
-import { DiscordNotificationWorker } from './queues/discordNotification'
+import { CreateDiscordNotificationWorker } from './queues/discordNotification'
 import { SystemProcessingWorker } from './queues/systemProcessing'
+import { Client } from 'discord.js'
 
-export const BullMQWorkers = [DiscordNotificationWorker, SystemProcessingWorker]
-
-export const initMQ = () => {
+export const initMQ = ({ client }: { client: Client }) => {
+  const BullMQWorkers = [CreateDiscordNotificationWorker({ client }), SystemProcessingWorker]
   BullMQWorkers.forEach((worker) => {
     worker.on('failed', (job) => {
       if (job) {
@@ -22,5 +22,10 @@ export const initMQ = () => {
     worker.on('completed', (job) => {
       logger.info(job.returnvalue, `Job: ${job.name}:${job.id} - COMPLETED`)
     })
+    worker.on('closed', () => {
+      logger.info(`Worker: ${worker.name} - CLOSED`)
+    })
   })
+
+  return BullMQWorkers
 }

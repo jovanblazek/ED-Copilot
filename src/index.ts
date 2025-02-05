@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 import Koa from 'koa'
 import { initEventHandlers } from './events'
-import { BullMQWorkers, initMQ } from './mq'
+import { initMQ } from './mq'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
 import { loadTrackedFactionsFromDBToRedis, Redis } from './utils/redis'
@@ -10,18 +10,10 @@ import startEDDNWorker from './workers/eddn/eddn'
 import './i18n/dayjsLocales'
 import './utils/environment'
 import './utils/sentry'
+import { Worker } from 'bullmq'
 
 let eddnWorker: ReturnType<typeof startEDDNWorker> | null = null
-
-Redis.on('ready', async () => {
-  logger.info('Redis is ready!')
-  await loadTrackedFactionsFromDBToRedis()
-  initMQ()
-  if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EDDN_WORKER === 'true') {
-    eddnWorker = startEDDNWorker()
-  }
-})
-
+let BullMQWorkers: Worker[] = []
 const BotClient = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 })
@@ -48,6 +40,15 @@ KoaApp.use((ctx) => {
 })
 KoaApp.listen(process.env.PORT, () => {
   logger.info(`Koa server is running on port ${process.env.PORT!}`)
+})
+
+Redis.on('ready', async () => {
+  logger.info('Redis is ready!')
+  await loadTrackedFactionsFromDBToRedis()
+  BullMQWorkers = initMQ({ client: BotClient })
+  if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EDDN_WORKER === 'true') {
+    eddnWorker = startEDDNWorker()
+  }
 })
 
 // TODO: solve segfault on shutdown

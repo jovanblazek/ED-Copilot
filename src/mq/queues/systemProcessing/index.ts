@@ -7,6 +7,10 @@ import { getAllStatesToEnd, getAllStatesToStart, getTrackedFactionsInSystem } fr
 import { getTickTime, Prisma } from '../../../utils'
 import { FactionState, StateType } from '@prisma/client'
 import { RedisKeys } from '../../../constants'
+// import { DiscordNotificationQueue } from '../discordNotification'
+// import { DiscordNotificationJobData, EventTypeMap } from '../discordNotification/types'
+
+// const DISCORD_NOTIFICATION_JOB_NAME = 'discord-notification'
 
 export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
   connection: Redis,
@@ -38,7 +42,10 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
     }
 
     const tickTimeISO = tickTime.toISOString()
-    const processedSystemRedisKey = RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName })
+    const processedSystemRedisKey = RedisKeys.processedSystem({
+      tickTimestamp: tickTimeISO,
+      systemName,
+    })
     const wasProcessed = await Redis.exists(processedSystemRedisKey)
 
     if (wasProcessed) {
@@ -138,6 +145,26 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         })
 
         await Redis.set(processedSystemRedisKey, 1)
+
+        // const generalDiscordNotificationJobData: Omit<
+        //   DiscordNotificationJobData<keyof EventTypeMap>,
+        //   'event'
+        // > = {
+        //   systemName,
+        //   factionName: trackedFaction.name,
+        //   factionInfluence: factionFromEvent.Influence,
+        //   timestamp,
+        // }
+
+        // TODO: Add event to queue based on conditions
+
+        // await DiscordNotificationQueue.add(
+        //   `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
+        //   {
+        //     ...generalDiscordNotificationJobData,
+        //   }
+        // )
+
         logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
       })
     }
