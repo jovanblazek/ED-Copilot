@@ -2,21 +2,19 @@ import { Queue, Worker } from 'bullmq'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
-import { EDDNEventToProcess } from '../../../types/eddn'
 import {
-  getAllStatesToEnd,
-  getAllStatesToStart,
+  EDDNEventToProcess,
+} from '../../../types/eddn'
+import {
   getConflictByFactionName,
   getTrackedFactionsInSystem,
-  isConflictInEDDNStateArray,
-  transformConflictToDiscordNotificationData,
+  isSystemAlreadyProcessed,
+  handleStateChanges,
+  addConflictNotificationsToQueue,
 } from './utils'
 import { getTickTime, Prisma } from '../../../utils'
 import { FactionState, StateType } from '@prisma/client'
 import { RedisKeys } from '../../../constants'
-import { DiscordNotificationQueue } from '../discordNotification'
-import { DiscordNotificationJobData, EventTypeMap } from '../discordNotification/types'
-import { DISCORD_NOTIFICATION_JOB_NAME } from './constants'
 
 export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
   connection: Redis,
@@ -34,12 +32,7 @@ export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
 export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
   QueueNames.systemProcessing,
   async (job) => {
-    const {
-      StarSystem: systemName,
-      Factions: factions,
-      Conflicts: conflicts, // TODO: Implement
-      timestamp,
-    } = job.data
+    const { StarSystem: systemName, Factions: factions, Conflicts: conflicts, timestamp } = job.data
 
     const tickTime = await getTickTime()
     if (!tickTime) {
@@ -48,25 +41,21 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
     }
 
     const tickTimeISO = tickTime.toISOString()
-    const processedSystemRedisKey = RedisKeys.processedSystem({
-      tickTimestamp: tickTimeISO,
+    const wasProcessed = await isSystemAlreadyProcessed({
       systemName,
+      tickTimeISO,
     })
-    const wasProcessed = await Redis.exists(processedSystemRedisKey)
-
     if (wasProcessed) {
       logger.debug(`systemProcessingWorker: ${systemName} - SKIPPED`)
       return
     }
 
-    // Get tracked factions in this system
     const trackedFactions = await getTrackedFactionsInSystem(factions)
 
     for (const trackedFaction of trackedFactions) {
       logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - START`)
-      const factionFromEvent = factions.find(({ Name }) => Name === trackedFaction.name)
 
-      // Should never happen
+      const factionFromEvent = factions.find(({ Name }) => Name === trackedFaction.name)
       if (!factionFromEvent) {
         throw new Error(`Faction ${trackedFaction.name} not found in event`)
       }
@@ -79,6 +68,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             endedAt: null,
           },
         })
+
         const currentDbStatesByType = currentDbStates.reduce(
           (acc, state) => {
             acc[state.stateType] = acc[state.stateType] || []
@@ -92,121 +82,29 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
           }
         )
 
-        const statesToEnd = getAllStatesToEnd({
-          currentDbStatesByType,
+        const stateChanges = await handleStateChanges(trx, {
+          trackedFaction,
           factionFromEvent,
-        })
-
-        logger.info(
-          statesToEnd,
-          `systemProcessingWorker: ${systemName} - ${trackedFaction.name} - ENDING STATES`
-        )
-
-        await trx.factionState.updateMany({
-          where: {
-            id: { in: statesToEnd.map((state) => state.id) },
-          },
-          data: { endedAt: new Date(timestamp) },
-        })
-
-        const { activeStatesToStart, pendingStatesToStart, recoveringStatesToStart } =
-          getAllStatesToStart({
-            factionFromEvent,
-            currentDbStatesByType,
-          })
-
-        logger.info(
-          {
-            activeStatesToStart,
-            pendingStatesToStart,
-            recoveringStatesToStart,
-          },
-          `systemProcessingWorker: ${systemName} - ${trackedFaction.name} - STARTING STATES`
-        )
-
-        await trx.factionState.createMany({
-          data: [
-            ...activeStatesToStart.map((state) => ({
-              factionId: trackedFaction.id,
-              systemName,
-              stateName: state.State,
-              stateType: StateType.Active,
-              startedAt: new Date(timestamp),
-            })),
-            ...pendingStatesToStart.map((state) => ({
-              factionId: trackedFaction.id,
-              systemName,
-              stateName: state.State,
-              stateType: StateType.Pending,
-              startedAt: new Date(timestamp),
-            })),
-            ...recoveringStatesToStart.map((state) => ({
-              factionId: trackedFaction.id,
-              systemName,
-              stateName: state.State,
-              stateType: StateType.Recovering,
-              startedAt: new Date(timestamp),
-            })),
-          ],
-        })
-
-        await Redis.set(processedSystemRedisKey, 1)
-
-        const generalDiscordNotificationJobData: Omit<
-          DiscordNotificationJobData<keyof EventTypeMap>,
-          'event'
-        > = {
           systemName,
-          factionName: trackedFaction.name,
-          factionInfluence: factionFromEvent.Influence,
           timestamp,
-        }
+          currentDbStatesByType,
+        })
+
+        await Redis.set(
+          RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName }),
+          1
+        )
 
         const conflict = getConflictByFactionName(conflicts, trackedFaction.name)
-
-        if (conflict && isConflictInEDDNStateArray(pendingStatesToStart)) {
-          await DiscordNotificationQueue.add(
-            `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
-            {
-              ...generalDiscordNotificationJobData,
-              event: {
-                type: 'conflictPending',
-                data: {
-                  conflict: transformConflictToDiscordNotificationData(conflict),
-                },
-              },
-            }
-          )
-        }
-
-        if (conflict && isConflictInEDDNStateArray(activeStatesToStart)) {
-          await DiscordNotificationQueue.add(
-            `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
-            {
-              ...generalDiscordNotificationJobData,
-              event: {
-                type: 'conflictStarted',
-                data: {
-                  conflict: transformConflictToDiscordNotificationData(conflict),
-                },
-              },
-            }
-          )
-        }
-
-        if (conflict && isConflictInEDDNStateArray(recoveringStatesToStart)) {
-          await DiscordNotificationQueue.add(
-            `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
-            {
-              ...generalDiscordNotificationJobData,
-              event: {
-                type: 'conflictEnded',
-                data: {
-                  conflict: transformConflictToDiscordNotificationData(conflict),
-                },
-              },
-            }
-          )
+        if (conflict) {
+          await addConflictNotificationsToQueue({
+            conflict,
+            ...stateChanges,
+            systemName,
+            trackedFaction,
+            factionFromEvent,
+            timestamp,
+          })
         }
 
         logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
