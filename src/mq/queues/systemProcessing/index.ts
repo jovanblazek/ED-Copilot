@@ -3,14 +3,20 @@ import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { EDDNEventToProcess } from '../../../types/eddn'
-import { getAllStatesToEnd, getAllStatesToStart, getTrackedFactionsInSystem } from './utils'
+import {
+  getAllStatesToEnd,
+  getAllStatesToStart,
+  getConflictByFactionName,
+  getTrackedFactionsInSystem,
+  isConflictInEDDNStateArray,
+  transformConflictToDiscordNotificationData,
+} from './utils'
 import { getTickTime, Prisma } from '../../../utils'
 import { FactionState, StateType } from '@prisma/client'
 import { RedisKeys } from '../../../constants'
-// import { DiscordNotificationQueue } from '../discordNotification'
-// import { DiscordNotificationJobData, EventTypeMap } from '../discordNotification/types'
-
-// const DISCORD_NOTIFICATION_JOB_NAME = 'discord-notification'
+import { DiscordNotificationQueue } from '../discordNotification'
+import { DiscordNotificationJobData, EventTypeMap } from '../discordNotification/types'
+import { DISCORD_NOTIFICATION_JOB_NAME } from './constants'
 
 export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
   connection: Redis,
@@ -31,7 +37,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
     const {
       StarSystem: systemName,
       Factions: factions,
-      // Conflicts: conflicts, // TODO: Implement
+      Conflicts: conflicts, // TODO: Implement
       timestamp,
     } = job.data
 
@@ -146,24 +152,62 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
 
         await Redis.set(processedSystemRedisKey, 1)
 
-        // const generalDiscordNotificationJobData: Omit<
-        //   DiscordNotificationJobData<keyof EventTypeMap>,
-        //   'event'
-        // > = {
-        //   systemName,
-        //   factionName: trackedFaction.name,
-        //   factionInfluence: factionFromEvent.Influence,
-        //   timestamp,
-        // }
+        const generalDiscordNotificationJobData: Omit<
+          DiscordNotificationJobData<keyof EventTypeMap>,
+          'event'
+        > = {
+          systemName,
+          factionName: trackedFaction.name,
+          factionInfluence: factionFromEvent.Influence,
+          timestamp,
+        }
 
-        // TODO: Add event to queue based on conditions
+        const conflict = getConflictByFactionName(conflicts, trackedFaction.name)
 
-        // await DiscordNotificationQueue.add(
-        //   `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
-        //   {
-        //     ...generalDiscordNotificationJobData,
-        //   }
-        // )
+        if (conflict && isConflictInEDDNStateArray(pendingStatesToStart)) {
+          await DiscordNotificationQueue.add(
+            `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
+            {
+              ...generalDiscordNotificationJobData,
+              event: {
+                type: 'conflictPending',
+                data: {
+                  conflict: transformConflictToDiscordNotificationData(conflict),
+                },
+              },
+            }
+          )
+        }
+
+        if (conflict && isConflictInEDDNStateArray(activeStatesToStart)) {
+          await DiscordNotificationQueue.add(
+            `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
+            {
+              ...generalDiscordNotificationJobData,
+              event: {
+                type: 'conflictStarted',
+                data: {
+                  conflict: transformConflictToDiscordNotificationData(conflict),
+                },
+              },
+            }
+          )
+        }
+
+        if (conflict && isConflictInEDDNStateArray(recoveringStatesToStart)) {
+          await DiscordNotificationQueue.add(
+            `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
+            {
+              ...generalDiscordNotificationJobData,
+              event: {
+                type: 'conflictEnded',
+                data: {
+                  conflict: transformConflictToDiscordNotificationData(conflict),
+                },
+              },
+            }
+          )
+        }
 
         logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
       })

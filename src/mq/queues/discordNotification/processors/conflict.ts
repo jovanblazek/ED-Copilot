@@ -3,22 +3,23 @@ import { InaraUrl } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
 import { Prisma } from '../../../../utils'
 import { DiscordNotificationJobData, Conflict } from '../types'
+import { EDDNWarType, EDDNConflictStatus } from '../../../../types/eddn'
 
 const CONFLICT_TYPE_MAP = {
-  election: 'Election',
-  civilwar: 'Civil War',
-  war: 'War',
+  [EDDNWarType.Election]: 'Election',
+  [EDDNWarType.CivilWar]: 'Civil War',
+  [EDDNWarType.War]: 'War',
 }
 
 const CONFLICT_STATUS_MAP = {
-  pending: 'Pending',
-  active: 'Active',
-  ended: 'Ended',
+  [EDDNConflictStatus.Pending]: 'Pending',
+  [EDDNConflictStatus.Active]: 'Active',
+  [EDDNConflictStatus.Ended]: 'Ended',
 }
 
 const getEmbedTitle = ({ systemName, conflict }: { systemName: string; conflict: Conflict }) => {
   const { status, conflictType } = conflict
-  const emoji = status === 'ended' ? '🕊️' : '🚨'
+  const emoji = status === EDDNConflictStatus.Ended ? '🕊️' : '🚨'
 
   return `${emoji} ${CONFLICT_TYPE_MAP[conflictType]} ${CONFLICT_STATUS_MAP[status]} in ${systemName} ${emoji}`
 }

@@ -1,6 +1,8 @@
 import { FactionState, StateType } from '@prisma/client'
 import { getTrackedFactions } from '../../../utils/redis'
-import { EDDNFaction, EDDNFactionState } from '../../../types/eddn'
+import { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn'
+import { CONFLICT_STATES } from './constants'
+import { Conflict } from '../discordNotification/types'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
   const trackedFactions = await getTrackedFactions()
@@ -21,7 +23,7 @@ export const getAllStatesToEnd = ({
 }: {
   currentDbStatesByType: Record<StateType, FactionState[]>
   factionFromEvent: EDDNFaction
-}) => {
+}): FactionState[] => {
   const activeStatesFromEvent = factionFromEvent?.ActiveStates ?? []
   const pendingStatesFromEvent = factionFromEvent?.PendingStates ?? []
   const recoveringStatesFromEvent = factionFromEvent?.RecoveringStates ?? []
@@ -73,3 +75,26 @@ export const getAllStatesToStart = ({
     recoveringStatesToStart,
   }
 }
+
+export const isConflictInEDDNStateArray = (stateArray: EDDNFactionState[]) =>
+  stateArray.some((state) => CONFLICT_STATES.includes(state.State))
+
+export const getConflictByFactionName = (conflicts: EDDNConflict[], factionName: string) =>
+  conflicts.find(
+    (conflict) => conflict.Faction1.Name === factionName || conflict.Faction2.Name === factionName
+  )
+
+export const transformConflictToDiscordNotificationData = (conflict: EDDNConflict): Conflict => ({
+  faction1: {
+    name: conflict.Faction1.Name,
+    stake: conflict.Faction1.Stake,
+    wonDays: conflict.Faction1.WonDays,
+  },
+  faction2: {
+    name: conflict.Faction2.Name,
+    stake: conflict.Faction2.Stake,
+    wonDays: conflict.Faction2.WonDays,
+  },
+  status: conflict.Status,
+  conflictType: conflict.WarType,
+})

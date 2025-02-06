@@ -1,3 +1,5 @@
+import { EDDNWarType, EDDNConflictStatus } from "../../../types/eddn"
+
 type ConflictFaction = {
   name: string
   stake: string
@@ -7,8 +9,8 @@ type ConflictFaction = {
 export type Conflict = {
   faction1: ConflictFaction
   faction2: ConflictFaction
-  status: 'pending' | 'active' | 'ended'
-  conflictType: 'election' | 'civilwar' | 'war'
+  status: EDDNConflictStatus
+  conflictType: EDDNWarType
 }
 
 type ConflictEventData = {
