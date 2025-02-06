@@ -51,7 +51,7 @@ export enum EDDNWarType {
 export enum EDDNConflictStatus {
   Pending = 'pending',
   Active = 'active',
-  Ended = 'ended', // TODO: Confirm this
+  Ended = '', // Journal events have no status for ended conflicts
 }
 
 export type EDDNConflict = {
