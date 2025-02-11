@@ -88,6 +88,35 @@ const sk = {
       saved: 'Nastavenia profilu uložené.',
     },
   },
+  discordNotification: {
+    conflict: {
+      conflictType: {
+        election: 'Voľby',
+        civilWar: 'Civilná vojna',
+        war: 'Vojna',
+      },
+      status: {
+        pending: 'Nadchádzajúca',
+        active: 'Aktívna',
+        ended: 'Ukončená',
+      },
+      title: '{emoji} {status} {conflictType} v {systemName} {emoji}', // TODO: incorrect gender of `status` in case of election
+      fields: {
+        status: {
+          title: 'Status',
+        },
+        oponent: {
+          title: 'Oponent:',
+        },
+        yourStake: {
+          title: '🏆 Získané pri víťazstve',
+        },
+        opponentStake: {
+          title: '💥 Stratené pri prehre',
+        },
+      },
+    },
+  },
 } satisfies Translation
 
 export default sk

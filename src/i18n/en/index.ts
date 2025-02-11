@@ -87,6 +87,35 @@ const en = {
       saved: 'Profile settings saved.',
     },
   },
+  discordNotification: {
+    conflict: {
+      conflictType: {
+        election: 'Election',
+        civilWar: 'Civil War',
+        war: 'War',
+      },
+      status: {
+        pending: 'Pending',
+        active: 'Active',
+        ended: 'Ended',
+      },
+      title: '{emoji} {conflictType} {status} in {systemName} {emoji}',
+      fields: {
+        status: {
+          title: 'Status',
+        },
+        oponent: {
+          title: 'Oponent:',
+        },
+        yourStake: {
+          title: '🏆 Gained on Victory',
+        },
+        opponentStake: {
+          title: '💥 Lost on Defeat',
+        },
+      },
+    },
+  },
 } satisfies BaseTranslation
 
 export default en

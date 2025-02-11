@@ -236,6 +236,72 @@ type RootTranslation = {
 			saved: string
 		}
 	}
+	discordNotification: {
+		conflict: {
+			conflictType: {
+				/**
+				 * E​l​e​c​t​i​o​n
+				 */
+				election: string
+				/**
+				 * C​i​v​i​l​ ​W​a​r
+				 */
+				civilWar: string
+				/**
+				 * W​a​r
+				 */
+				war: string
+			}
+			status: {
+				/**
+				 * P​e​n​d​i​n​g
+				 */
+				pending: string
+				/**
+				 * A​c​t​i​v​e
+				 */
+				active: string
+				/**
+				 * E​n​d​e​d
+				 */
+				ended: string
+			}
+			/**
+			 * {​e​m​o​j​i​}​ ​{​c​o​n​f​l​i​c​t​T​y​p​e​}​ ​{​s​t​a​t​u​s​}​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+			 * @param {unknown} conflictType
+			 * @param {unknown} emoji
+			 * @param {unknown} status
+			 * @param {unknown} systemName
+			 */
+			title: RequiredParams<'conflictType' | 'emoji' | 'emoji' | 'status' | 'systemName'>
+			fields: {
+				status: {
+					/**
+					 * S​t​a​t​u​s
+					 */
+					title: string
+				}
+				oponent: {
+					/**
+					 * O​p​o​n​e​n​t​:
+					 */
+					title: string
+				}
+				yourStake: {
+					/**
+					 * �​�​ ​G​a​i​n​e​d​ ​o​n​ ​V​i​c​t​o​r​y
+					 */
+					title: string
+				}
+				opponentStake: {
+					/**
+					 * �​�​ ​L​o​s​t​ ​o​n​ ​D​e​f​e​a​t
+					 */
+					title: string
+				}
+			}
+		}
+	}
 }
 
 export type TranslationFunctions = {
@@ -444,6 +510,68 @@ export type TranslationFunctions = {
 			 * Profile settings saved.
 			 */
 			saved: () => LocalizedString
+		}
+	}
+	discordNotification: {
+		conflict: {
+			conflictType: {
+				/**
+				 * Election
+				 */
+				election: () => LocalizedString
+				/**
+				 * Civil War
+				 */
+				civilWar: () => LocalizedString
+				/**
+				 * War
+				 */
+				war: () => LocalizedString
+			}
+			status: {
+				/**
+				 * Pending
+				 */
+				pending: () => LocalizedString
+				/**
+				 * Active
+				 */
+				active: () => LocalizedString
+				/**
+				 * Ended
+				 */
+				ended: () => LocalizedString
+			}
+			/**
+			 * {emoji} {conflictType} {status} in {systemName} {emoji}
+			 */
+			title: (arg: { conflictType: unknown, emoji: unknown, status: unknown, systemName: unknown }) => LocalizedString
+			fields: {
+				status: {
+					/**
+					 * Status
+					 */
+					title: () => LocalizedString
+				}
+				oponent: {
+					/**
+					 * Oponent:
+					 */
+					title: () => LocalizedString
+				}
+				yourStake: {
+					/**
+					 * 🏆 Gained on Victory
+					 */
+					title: () => LocalizedString
+				}
+				opponentStake: {
+					/**
+					 * 💥 Lost on Defeat
+					 */
+					title: () => LocalizedString
+				}
+			}
 		}
 	}
 }
