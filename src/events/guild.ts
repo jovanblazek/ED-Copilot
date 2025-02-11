@@ -5,7 +5,7 @@ import logger from '../utils/logger'
 import { Prisma } from '../utils/prismaClient'
 
 export const onGuildJoin = async ({ id, name }: Guild) => {
-  logger.info(`Joined guild ${name}, id: ${id}`)
+  logger.info(`Joined guild '${name}', id: ${id}`)
   try {
     await Prisma.guild.create({
       data: {
@@ -16,7 +16,7 @@ export const onGuildJoin = async ({ id, name }: Guild) => {
       },
     })
   } catch (error) {
-    logger.error(`Error while creating guild preferences for guild ${name}`, error)
+    logger.error(`Error while creating guild '${name}' in DB`, error)
     Sentry.setContext('Guild', {
       id,
       name,
@@ -26,11 +26,11 @@ export const onGuildJoin = async ({ id, name }: Guild) => {
 }
 
 export const onGuildLeave = async ({ id, name }: Guild) => {
-  logger.info(`Left guild ${name}, id: ${id}`)
+  logger.info(`Left guild '${name}', id: ${id}`)
   try {
     await Prisma.guild.delete({ where: { id } })
   } catch (error) {
-    logger.error(`Error while deleting guild preferences for guild ${name}`, error)
+    logger.error(`Error while deleting guild '${name}' in DB`, error)
     Sentry.setContext('Guild', {
       id,
       name,

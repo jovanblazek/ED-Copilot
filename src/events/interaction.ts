@@ -8,7 +8,7 @@ import { errorHandler, Prisma } from '../utils'
 import { onGuildJoin } from './guild'
 import logger from '../utils/logger'
 
-const getGuildPreferences = async ({ guildId }: { guildId: string }) => {
+const getGuildFromDb = async ({ guildId }: { guildId: string }) => {
   return Prisma.guild.findFirst({
     where: { id: guildId },
   })
@@ -39,19 +39,19 @@ export const onInteractionCreate = async (interaction: Interaction) => {
   const handler = CommandHandlers[commandName]
 
   try {
-    let guildPreferences = await getGuildPreferences({ guildId: interaction.guildId! })
-    if (!guildPreferences && interaction?.guild?.id) {
-      logger.warn(`Guild preferences not found for guild ${interaction.guildId}, joining...`)
+    let guild = await getGuildFromDb({ guildId: interaction.guildId! })
+    if (!guild && interaction?.guild?.id) {
+      logger.warn(`Guild not found for guildId '${interaction.guildId}', joining...`)
       await onGuildJoin(interaction.guild)
-      guildPreferences = await getGuildPreferences({ guildId: interaction.guild.id })
+      guild = await getGuildFromDb({ guildId: interaction.guild.id })
     }
-    if (handler && guildPreferences) {
-      dayjs.locale(guildPreferences.language)
+    if (handler && guild) {
+      dayjs.locale(guild.language)
       await handler({
         interaction,
         context: {
-          locale: (guildPreferences.language as Locales) || baseLocale,
-          timezone: guildPreferences.timezone || 'UTC',
+          locale: (guild.language as Locales) || baseLocale,
+          timezone: guild.timezone || 'UTC',
         },
       })
       return
