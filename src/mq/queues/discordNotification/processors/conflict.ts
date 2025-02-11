@@ -119,6 +119,9 @@ export const processConflictEvent = async ({
         name: factionName,
       },
     },
+    include: {
+      guild: true,
+    }
   })
 
   if (guildFactions.length === 0) {
@@ -128,15 +131,6 @@ export const processConflictEvent = async ({
   const messagePromises = guildFactions.map(async (guildFaction) => {
     const { notificationChannelId } = guildFaction
     if (!notificationChannelId) {
-      return
-    }
-
-    const guild = await Prisma.guild.findUnique({
-      where: {
-        id: guildFaction.guildId,
-      },
-    })
-    if (!guild) {
       return
     }
 
@@ -154,7 +148,7 @@ export const processConflictEvent = async ({
           systemName,
           factionName,
           conflict,
-          locale: guild.language as Locales,
+          locale: guildFaction.guild.language as Locales,
         }),
       ],
     })
