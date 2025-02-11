@@ -24,7 +24,7 @@ const CommanderProfile: Command = {
 
     const user = await Prisma.user.findFirst({
       where: {
-        userId: interaction.user.id,
+        id: interaction.user.id,
       },
     })
     if (!user) {

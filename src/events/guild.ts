@@ -7,9 +7,9 @@ import { Prisma } from '../utils/prismaClient'
 export const onGuildJoin = async ({ id, name }: Guild) => {
   logger.info(`Joined guild ${name}, id: ${id}`)
   try {
-    await Prisma.preferences.create({
+    await Prisma.guild.create({
       data: {
-        guildId: id,
+        id,
         tickReportChannelId: null,
         language: Languages.english,
         timezone: 'UTC',
@@ -28,7 +28,7 @@ export const onGuildJoin = async ({ id, name }: Guild) => {
 export const onGuildLeave = async ({ id, name }: Guild) => {
   logger.info(`Left guild ${name}, id: ${id}`)
   try {
-    await Prisma.preferences.delete({ where: { guildId: id } })
+    await Prisma.guild.delete({ where: { id } })
   } catch (error) {
     logger.error(`Error while deleting guild preferences for guild ${name}`, error)
     Sentry.setContext('Guild', {

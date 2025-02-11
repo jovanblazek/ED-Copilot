@@ -131,12 +131,12 @@ export const processConflictEvent = async ({
       return
     }
 
-    const guildPreferences = await Prisma.preferences.findUnique({
+    const guild = await Prisma.guild.findUnique({
       where: {
-        guildId: guildFaction.guildId,
+        id: guildFaction.guildId,
       },
     })
-    if (!guildPreferences) {
+    if (!guild) {
       return
     }
 
@@ -154,7 +154,7 @@ export const processConflictEvent = async ({
           systemName,
           factionName,
           conflict,
-          locale: guildPreferences.language as Locales,
+          locale: guild.language as Locales,
         }),
       ],
     })

@@ -10,27 +10,23 @@ datasource db {
   url      = env("POSTGRES_CONNECTION_STRING")
 }
 
-model User {
-  id         Int       @id @default(autoincrement())
-  userId     String    @unique
-  cmdrName   String
-  edsmApiKey String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @default(now()) @updatedAt
-
-  @@index([userId])
-}
-
-model Preferences {
-  id                  Int       @id @default(autoincrement())
-  guildId             String    @unique
+model Guild {
+  id                  String    @id // Discord guild ID
   language            String    @default("en")
   timezone            String
   tickReportChannelId String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime? @default(now()) @updatedAt
 
-  @@index([guildId])
+  guildFaction GuildFaction?
+}
+
+model User {
+  id         String       @id // Discord user ID
+  cmdrName   String
+  edsmApiKey String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @default(now()) @updatedAt
 }
 
 model GuildFaction {
@@ -43,19 +39,21 @@ model GuildFaction {
   updatedAt             DateTime? @default(now()) @updatedAt
 
   faction Faction @relation(fields: [factionId], references: [id])
+  guild   Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
   @@index([guildId, factionId])
 }
 
 model Faction {
-  id           Int            @id @default(autoincrement())
-  name         String
-  ebgsId       String         @unique
-  eddbId       Int            @unique
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime?      @default(now()) @updatedAt
-  FactionStates FactionState[]
-  GuildFactions GuildFaction[]
+  id        Int       @id @default(autoincrement())
+  name      String
+  ebgsId    String    @unique
+  eddbId    Int       @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now()) @updatedAt
+
+  factionStates FactionState[]
+  guildFactions GuildFaction[]
 
   @@index([eddbId, ebgsId, name])
 }

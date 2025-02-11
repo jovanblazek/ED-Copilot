@@ -9,8 +9,8 @@ import { onGuildJoin } from './guild'
 import logger from '../utils/logger'
 
 const getGuildPreferences = async ({ guildId }: { guildId: string }) => {
-  return Prisma.preferences.findFirst({
-    where: { guildId },
+  return Prisma.guild.findFirst({
+    where: { id: guildId },
   })
 }
 

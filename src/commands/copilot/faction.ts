@@ -61,7 +61,7 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
               factionShorthand,
               allegiance,
               systemsCount: factionPresence.length,
-              notificationChannel: notificationChannel?.id ?? 'None',
+              notificationChannel: notificationChannel?.id ? `<#${notificationChannel.id}>` : 'None',
             }),
           }),
         ],
@@ -94,7 +94,7 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
 
           await trx.faction.deleteMany({
             where: {
-              GuildFactions: {
+              guildFactions: {
                 none: {},
               },
             },

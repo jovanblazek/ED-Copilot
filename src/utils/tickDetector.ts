@@ -9,7 +9,7 @@ import { Prisma } from './prismaClient'
 import { Redis } from './redis'
 
 const reportTick = async (client: Client, tickTime: Dayjs) => {
-  const guilds = await Prisma.preferences.findMany({
+  const guilds = await Prisma.guild.findMany({
     where: {
       tickReportChannelId: {
         not: null,
