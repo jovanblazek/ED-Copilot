@@ -2,18 +2,16 @@ import { Queue, Worker } from 'bullmq'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
-import {
-  EDDNEventToProcess,
-} from '../../../types/eddn'
+import { EDDNEventToProcess } from '../../../types/eddn'
 import {
   getConflictByFactionName,
   getTrackedFactionsInSystem,
   isSystemAlreadyProcessed,
   handleStateChanges,
   addConflictNotificationsToQueue,
+  groupFactionStatesByType,
 } from './utils'
 import { getTickTime, Prisma } from '../../../utils'
-import { FactionState, StateType } from '@prisma/client'
 import { RedisKeys } from '../../../constants'
 
 export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
@@ -68,19 +66,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             endedAt: null,
           },
         })
-
-        const currentDbStatesByType = currentDbStates.reduce(
-          (acc, state) => {
-            acc[state.stateType] = acc[state.stateType] || []
-            acc[state.stateType].push(state)
-            return acc
-          },
-          {
-            [StateType.Active]: [] as FactionState[],
-            [StateType.Pending]: [] as FactionState[],
-            [StateType.Recovering]: [] as FactionState[],
-          }
-        )
+        const currentDbStatesByType = groupFactionStatesByType(currentDbStates)
 
         const stateChanges = await handleStateChanges(trx, {
           trackedFaction,
@@ -106,9 +92,8 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             timestamp,
           })
         }
-
-        logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
       })
+      logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
     }
   },
   { connection: Redis }

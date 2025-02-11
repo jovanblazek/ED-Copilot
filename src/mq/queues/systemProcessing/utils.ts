@@ -199,7 +199,6 @@ export const isSystemAlreadyProcessed = async ({
   return Redis.exists(processedSystemRedisKey)
 }
 
-
 export const addConflictNotificationsToQueue = async ({
   conflict,
   activeStatesToStart,
@@ -260,3 +259,17 @@ export const addConflictNotificationsToQueue = async ({
     }
   }
 }
+
+export const groupFactionStatesByType = (factionStates: FactionState[]) =>
+  factionStates.reduce(
+    (acc, state) => {
+      acc[state.stateType] = acc[state.stateType] || []
+      acc[state.stateType].push(state)
+      return acc
+    },
+    {
+      [StateType.Active]: [] as FactionState[],
+      [StateType.Pending]: [] as FactionState[],
+      [StateType.Recovering]: [] as FactionState[],
+    }
+  )
