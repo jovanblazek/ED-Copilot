@@ -16,7 +16,9 @@ Rest.put(
 )
   .then(() => {
     logger.info('Successfully reloaded application slash commands.')
+    process.exit(0)
   })
   .catch((error) => {
     logger.error('Failed to reload application slash commands.', error)
+    process.exit(1)
   })
