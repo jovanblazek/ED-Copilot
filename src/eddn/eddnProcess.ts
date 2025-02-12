@@ -1,7 +1,7 @@
 import { Subscriber } from 'zeromq'
 import zlib from 'zlib'
-import { EDDNConflict, EDDNEventToProcess, EDDNFaction } from '../../types/eddn'
-import logger from '../../utils/logger'
+import { EDDNConflict, EDDNEventToProcess, EDDNFaction } from '../types/eddn'
+import logger from '../utils/logger'
 import { HttpsEddnEdcdIoSchemasJournal1 } from './types'
 
 const EDDN_URL = 'tcp://eddn.edcd.io:9500'
@@ -18,15 +18,15 @@ async function run() {
   process.on('message', (message) => {
     if (message === 'shutdown' && !isShuttingDown) {
       isShuttingDown = true
-      logger.info('EDDN listener process received shutdown signal')
+      logger.info('[EDDN Listener] Received shutdown signal')
 
       try {
         socket.close()
-        logger.info('EDDN socket closed successfully')
+        logger.debug('[EDDN Listener] ZeroMQ connection closed')
         process.send?.('shutdown_complete')
         process.exit(0)
       } catch (error) {
-        logger.error(error, 'Error closing EDDN socket')
+        logger.error(error, '[EDDN Listener] Failed to close connections')
         process.exit(1)
       }
     }
@@ -34,14 +34,14 @@ async function run() {
 
   // Handle uncaught errors
   process.on('uncaughtException', (error) => {
-    logger.error(error, 'Uncaught exception in EDDN listener process')
+    logger.error(error, '[EDDN Listener] Uncaught exception')
     if (!isShuttingDown) {
       process.exit(1)
     }
   })
 
   process.on('unhandledRejection', (error) => {
-    logger.error(error, 'Unhandled rejection in EDDN listener process')
+    logger.error(error, '[EDDN Listener] Unhandled promise rejection')
     if (!isShuttingDown) {
       process.exit(1)
     }
@@ -51,7 +51,7 @@ async function run() {
     socket = new Subscriber()
     socket.connect(EDDN_URL)
     socket.subscribe('')
-    logger.info(`EDDN listener process connected to: ${EDDN_URL}`)
+    logger.info(`[EDDN Listener] Connected to EDDN at ${EDDN_URL}`)
 
     for await (const [src] of socket) {
       if (isShuttingDown) {
@@ -83,11 +83,11 @@ async function run() {
 
         process.send?.(eddnEventToProcess)
       } catch (error) {
-        logger.error(error, 'Error processing EDDN message:')
+        logger.error(error, '[EDDN Listener] Message processing failed')
       }
     }
   } catch (error) {
-    logger.error(error, 'Fatal error in EDDN listener process')
+    logger.error(error, '[EDDN Listener] Fatal error')
     if (!isShuttingDown) {
       process.exit(1)
     }
