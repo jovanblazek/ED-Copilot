@@ -14,6 +14,7 @@ import {
 } from './utils'
 import { getTickTime, Prisma } from '../../../utils'
 import { RedisKeys } from '../../../constants'
+import { EXPANSION_REDIS_EXPIRATION } from './constants'
 
 export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
   connection: Redis,
@@ -117,7 +118,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
               timestamp,
               type: isExpansionPending ? 'expansionPending' : 'expansionStarted',
             })
-            await Redis.expire(expansionRedisKey, 950_400) // 11 days
+            await Redis.expire(expansionRedisKey, EXPANSION_REDIS_EXPIRATION)
           }
         }
 
