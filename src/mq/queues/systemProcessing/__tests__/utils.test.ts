@@ -11,9 +11,22 @@ import {
   transformConflictToDiscordNotificationData,
 } from '../utils'
 
-// Mock redis module
+// Mock the redis module
 jest.mock('../../../../utils/redis', () => ({
   getTrackedFactions: jest.fn(),
+  Redis: {
+    exists: jest.fn(),
+    set: jest.fn(),
+    get: jest.fn(),
+    del: jest.fn(),
+  },
+}))
+
+// Mock BullMQ queue
+jest.mock('../../discordNotification', () => ({
+  DiscordNotificationQueue: {
+    add: jest.fn(),
+  },
 }))
 
 describe('systemProcessing utils', () => {
