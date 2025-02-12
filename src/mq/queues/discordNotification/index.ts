@@ -5,6 +5,8 @@ import { QueueNames } from '../../constants'
 import { DiscordNotificationJobData, EventTypeMap } from './types'
 import { processConflictEvent } from './processors/conflict'
 import { Client } from 'discord.js'
+import { Prisma } from '../../../utils'
+import { processExpansionEvent } from './processors/expansion'
 
 const ConflictEventTypes = ['conflictPending', 'conflictStarted', 'conflictEnded'] as const
 const ExpansionEventTypes = ['expansionPending', 'expansionStarted', 'expansionEnded'] as const
@@ -33,15 +35,39 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
     async (job) => {
       logger.info(job.data, 'Processing discord notification job')
 
-      const { event } = job.data
+      const { event, factionName } = job.data
+
+      const guildFactions = await Prisma.guildFaction.findMany({
+        where: {
+          notificationChannelId: {
+            not: null,
+          },
+          faction: {
+            name: factionName,
+          },
+        },
+        include: {
+          guild: true,
+          faction: true,
+        }
+      })
+    
+      if (guildFactions.length === 0) {
+        return
+      }
 
       if (ConflictEventTypes.includes(event.type as ConflictEventType)) {
         await processConflictEvent({
           client,
           jobData: job.data as DiscordNotificationJobData<ConflictEventType>,
+          guildFactions,
         })
       } else if (ExpansionEventTypes.includes(event.type as ExpansionEventType)) {
-        // TODO: Send expansion notification
+        await processExpansionEvent({
+          client,
+          jobData: job.data as DiscordNotificationJobData<ExpansionEventType>,
+          guildFactions,
+        })
       } else if (RetreatEventTypes.includes(event.type as RetreatEventType)) {
         // TODO: Send retreat notification
       }

@@ -1,13 +1,13 @@
 import { FactionState, StateType } from '@prisma/client'
 import { getTrackedFactions, Redis } from '../../../utils/redis'
 import { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn'
-import { CONFLICT_STATES, DISCORD_NOTIFICATION_JOB_NAME } from './constants'
-import { Conflict, DiscordNotificationJobData, EventTypeMap } from '../discordNotification/types'
+import { CONFLICT_STATES } from './constants'
+import { Conflict } from '../discordNotification/types'
 import { RedisKeys } from '../../../constants'
 import logger from '../../../utils/logger'
 import { Prisma as PrismaClientType } from '@prisma/client'
 import { TrackedFaction } from '../../../types/redis'
-import { DiscordNotificationQueue } from '../discordNotification'
+import { addNotificationToQueue } from '../discordNotification/utils'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
   const trackedFactions = await getTrackedFactions()
@@ -218,13 +218,8 @@ export const addConflictNotificationsToQueue = async ({
   factionFromEvent: EDDNFaction
   timestamp: string
 }) => {
-  if (!conflict) return
-
-  const baseNotificationData: Omit<DiscordNotificationJobData<keyof EventTypeMap>, 'event'> = {
-    systemName,
-    factionName: trackedFaction.name,
-    factionInfluence: factionFromEvent.Influence,
-    timestamp,
+  if (!conflict) {
+    return
   }
 
   const notificationConfigs = [
@@ -244,18 +239,18 @@ export const addConflictNotificationsToQueue = async ({
 
   for (const config of notificationConfigs) {
     if (isConflictInEDDNStateArray(config.states)) {
-      await DiscordNotificationQueue.add(
-        `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}`,
-        {
-          ...baseNotificationData,
-          event: {
-            type: config.type,
-            data: {
-              conflict: transformConflictToDiscordNotificationData(conflict),
-            },
+      await addNotificationToQueue<typeof config.type>({
+        systemName,
+        trackedFaction,
+        eddnFaction: factionFromEvent,
+        timestamp,
+        event: {
+          type: config.type,
+          data: {
+            conflict: transformConflictToDiscordNotificationData(conflict),
           },
-        }
-      )
+        },
+      })
     }
   }
 }
@@ -273,3 +268,28 @@ export const groupFactionStatesByType = (factionStates: FactionState[]) =>
       [StateType.Recovering]: [] as FactionState[],
     }
   )
+
+export const addExpansionNotificationToQueue = async ({
+  systemName,
+  trackedFaction,
+  factionFromEvent,
+  timestamp,
+  type,
+}: {
+  systemName: string
+  trackedFaction: TrackedFaction
+  factionFromEvent: EDDNFaction
+  timestamp: string
+  type: 'expansionPending' | 'expansionStarted' | 'expansionEnded'
+}) => {
+  await addNotificationToQueue<typeof type>({
+    systemName,
+    trackedFaction,
+    eddnFaction: factionFromEvent,
+    timestamp,
+    event: {
+      type,
+      data: {},
+    },
+  })
+}

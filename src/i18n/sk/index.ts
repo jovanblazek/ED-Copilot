@@ -116,6 +116,23 @@ const sk = {
         },
       },
     },
+    expansion: {
+      title: {
+        pending: 'Nadchádzajúca Expanzia',
+        active: 'Aktívna Expanzia',
+        ended: 'Expansia Ukončená',
+      },
+      description: {
+        pending: 'Detegovaná nadchádzajúca expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+        active: 'Detegovaná aktívna expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detegovania.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+        ended: 'Je príliš skoro na to, aby sme určili, kam sa vaša frakcia expandovala.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+      },
+      fields: {
+        possibleOrigins: {
+          title: 'Možné zdroje expanzie:',
+        },
+      }
+    },
   },
 } satisfies Translation
 

@@ -1,11 +1,12 @@
-import { ChannelType, Client } from 'discord.js'
+import { Client } from 'discord.js'
 import { InaraUrl } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
-import { Prisma } from '../../../../utils'
 import { DiscordNotificationJobData, Conflict } from '../types'
 import { EDDNWarType, EDDNConflictStatus } from '../../../../types/eddn'
 import { Locales, Translations } from '../../../../i18n/i18n-types'
 import L from '../../../../i18n/i18n-node'
+import { Faction, Guild, GuildFaction } from '@prisma/client'
+import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 const CONFLICT_TYPE_TRANSLATION_MAP: Record<
   EDDNWarType,
@@ -98,9 +99,11 @@ const generateEmbed = ({
 export const processConflictEvent = async ({
   client,
   jobData,
+  guildFactions,
 }: {
   client: Client
   jobData: DiscordNotificationJobData<'conflictPending' | 'conflictStarted' | 'conflictEnded'>
+  guildFactions: (GuildFaction & { guild: Guild; faction: Faction })[]
 }) => {
   const {
     systemName,
@@ -110,37 +113,11 @@ export const processConflictEvent = async ({
     },
   } = jobData
 
-  const guildFactions = await Prisma.guildFaction.findMany({
-    where: {
-      notificationChannelId: {
-        not: null,
-      },
-      faction: {
-        name: factionName,
-      },
-    },
-    include: {
-      guild: true,
-    }
-  })
-
-  if (guildFactions.length === 0) {
-    return
-  }
-
   const messagePromises = guildFactions.map(async (guildFaction) => {
-    const { notificationChannelId } = guildFaction
-    if (!notificationChannelId) {
-      return
-    }
-
-    const channel = client.channels.cache.get(notificationChannelId)
-    if (
-      !channel ||
-      !(channel.type === ChannelType.GuildAnnouncement || channel.type === ChannelType.GuildText)
-    ) {
-      return
-    }
+    const channel = await getNotificationChannelFromGuildFactionOrThrow({
+      client,
+      guildFaction,
+    })
 
     return channel.send({
       embeds: [

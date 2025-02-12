@@ -115,6 +115,23 @@ const en = {
         },
       },
     },
+    expansion: {
+      title: {
+        pending: 'Expansion Pending',
+        active: 'Expansion Active',
+        ended: 'Expansion Ended',
+      },
+      description: {
+        pending: 'Pending expansion was detected in {systemName}.\nDue to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.\nCheck the [INARA]({inaraUrl}) or in game for more information.',
+        active: 'Detected active expansion in {systemName}.\nDue to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.\nCheck the [INARA]({inaraUrl}) or in game for more information.',
+        ended: 'It is too early to determine where your faction expanded to.\nCheck the [INARA]({inaraUrl}) or in game for more information.',
+      },
+      fields: {
+        possibleOrigins: {
+          title: 'Possible expansion origins:',
+        },
+      }
+    },
   },
 } satisfies BaseTranslation
 

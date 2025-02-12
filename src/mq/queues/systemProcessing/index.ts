@@ -2,7 +2,7 @@ import { Queue, Worker } from 'bullmq'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
-import { EDDNEventToProcess } from '../../../types/eddn'
+import { EDDNEventToProcess, EDDNState } from '../../../types/eddn'
 import {
   getConflictByFactionName,
   getTrackedFactionsInSystem,
@@ -10,6 +10,7 @@ import {
   handleStateChanges,
   addConflictNotificationsToQueue,
   groupFactionStatesByType,
+  addExpansionNotificationToQueue,
 } from './utils'
 import { getTickTime, Prisma } from '../../../utils'
 import { RedisKeys } from '../../../constants'
@@ -76,11 +77,9 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
           currentDbStatesByType,
         })
 
-        await Redis.set(
-          RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName }),
-          1
-        )
+        await Redis.set(RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName }), 1)
 
+        // Handle conflict notifications
         const conflict = getConflictByFactionName(conflicts, trackedFaction.name)
         if (conflict) {
           await addConflictNotificationsToQueue({
@@ -91,6 +90,48 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             factionFromEvent,
             timestamp,
           })
+        }
+
+        // Handle expansion notifications
+        const isExpansionPending =
+          stateChanges.pendingStatesToStart.some(
+            (s) => s.State === EDDNState.Expansion
+          ) 
+        const isExpansionActive = stateChanges.activeStatesToStart.some(
+            (s) => s.State === EDDNState.Expansion
+          )
+        const isExpansionEnding = stateChanges.statesToEnd.some(
+          (s) => s.stateName === EDDNState.Expansion
+        )
+
+        const expansionRedisKey = RedisKeys.expansion({ factionId: trackedFaction.id })
+
+        if (isExpansionPending || isExpansionActive) {
+          const isFirstOccurrence = await Redis.setnx(expansionRedisKey, 1)
+
+          if (isFirstOccurrence) {
+            await addExpansionNotificationToQueue({
+              systemName,
+              trackedFaction,
+              factionFromEvent,
+              timestamp,
+              type: isExpansionPending ? 'expansionPending' : 'expansionStarted',
+            })
+            await Redis.expire(expansionRedisKey, 950_400) // 11 days
+          }
+        }
+
+        if (isExpansionEnding) {
+          const isDeletedFromRedis = await Redis.del(expansionRedisKey)
+          if (isDeletedFromRedis) {
+            await addExpansionNotificationToQueue({
+              systemName,
+              trackedFaction,
+              factionFromEvent,
+              timestamp,
+              type: 'expansionEnded',
+            })
+          }
         }
       })
       logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
