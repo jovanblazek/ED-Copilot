@@ -67,7 +67,6 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        // TODO test what happens if error is thrown here
         await Prisma.$transaction(async (trx) => {
           // Upsert faction
           const upsertedFaction = await trx.faction.upsert({
