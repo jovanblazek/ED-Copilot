@@ -1,3 +1,17 @@
+## [3.0.0](https://github.com/jovanblazek/ed-copilot/compare/v2.4.0...v3.0.0) (2025-02-12)
+
+### ⚠ BREAKING CHANGES
+
+* Refactored database schema - DATA LOSS IS EXPECTED - I did not bother to create a proper migration since the bot is not public yet. If you are running a fork, or self hosting the bot you would have to migrate the data manually
+
+### :sparkles: Features
+
+* Faction state monitoring using EDDN ([#32](https://github.com/jovanblazek/ed-copilot/issues/32)) ([545b6d2](https://github.com/jovanblazek/ed-copilot/commit/545b6d2229be3cf0efa93031ec2ad0b26304c126))
+
+### :up: Enhancements
+
+* Enable lazy connection for Redis and update logging ([#31](https://github.com/jovanblazek/ed-copilot/issues/31)) ([1044f4a](https://github.com/jovanblazek/ed-copilot/commit/1044f4af988bc90dd7a16608fe7611c52551ddbc))
+
 ## [2.4.0](https://github.com/jovanblazek/ed-copilot/compare/v2.3.2...v2.4.0) (2024-09-08)
 
 ### :sparkles: Features
