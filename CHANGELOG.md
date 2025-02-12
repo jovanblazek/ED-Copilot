@@ -1,3 +1,9 @@
+## [3.0.1](https://github.com/jovanblazek/ed-copilot/compare/v3.0.0...v3.0.1) (2025-02-12)
+
+### :bug: Bug Fixes
+
+* Zeromq arm64 linux support ([#33](https://github.com/jovanblazek/ed-copilot/issues/33)) ([4e8fc9a](https://github.com/jovanblazek/ed-copilot/commit/4e8fc9acf24a1fd6dc20f46d30a3878763285091))
+
 ## [3.0.0](https://github.com/jovanblazek/ed-copilot/compare/v2.4.0...v3.0.0) (2025-02-12)
 
 ### ⚠ BREAKING CHANGES
