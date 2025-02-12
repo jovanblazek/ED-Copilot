@@ -5,7 +5,7 @@ declare global {
       BOT_TOKEN: string
       INARA_API_KEY: string
       SENTRY_DSN: string
-      DEBUG_EDDN_WORKER: 'true' | undefined
+      DEBUG_EDDN_LISTENER: 'true' | undefined
 
       // Postgres
       POSTGRES_PORT: string

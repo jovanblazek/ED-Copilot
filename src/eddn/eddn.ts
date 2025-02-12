@@ -9,7 +9,7 @@ const FILE_NAME = 'eddnProcess.js'
 const MAX_RESTARTS = 3
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
-const IS_DEBUG_EDDN_WORKER = process.env.DEBUG_EDDN_WORKER === 'true'
+const IS_DEBUG_EDDN_WORKER = process.env.DEBUG_EDDN_LISTENER === 'true'
 
 export default function startEDDNListenerProcess() {
   if (!IS_PRODUCTION && !IS_DEBUG_EDDN_WORKER) {

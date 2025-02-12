@@ -47,7 +47,7 @@ Redis.on('ready', async () => {
   logger.info('[Redis] Connection established')
   await loadTrackedFactionsFromDBToRedis()
   BullMQWorkers = initMQ({ client: BotClient })
-  if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EDDN_WORKER === 'true') {
+  if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EDDN_LISTENER === 'true') {
     eddnProcess = startEDDNListenerProcess()
   }
 })
