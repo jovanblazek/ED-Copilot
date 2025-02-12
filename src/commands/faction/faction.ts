@@ -43,12 +43,15 @@ const Faction: Command = {
     }
     const subcommand = interaction.options.getSubcommand() as keyof typeof SubcommandHandlers
     if (SubcommandHandlers[subcommand]) {
-      const faction = await Prisma.faction.findFirst({
+      const guildFaction = await Prisma.guildFaction.findFirst({
         where: {
           guildId: interaction.guildId,
         },
+        include: {
+          faction: true,
+        },
       })
-      if (!faction) {
+      if (!guildFaction) {
         await interaction.editReply({
           content: L[context.locale].faction.notSetup(),
         })
@@ -58,7 +61,8 @@ const Faction: Command = {
         interaction,
         context: {
           ...context,
-          faction,
+          guildFaction,
+          faction: guildFaction.faction,
         },
       })
     }

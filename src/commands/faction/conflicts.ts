@@ -7,7 +7,7 @@ import { DIVIDER, Emojis, InaraUrl } from '../../constants'
 import { createEmbed, usePagination } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionConflicsResponse } from '../../types/eliteBGS'
-import { getTickTime } from '../../utils'
+import { getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
@@ -94,7 +94,7 @@ const printConflict = ({
   tickTime,
   isLastConflict,
   conflictData: { conflict, targetFaction, enemyFaction },
-  commandContext: { locale, faction },
+  commandContext: { locale, guildFaction },
 }: {
   tickTime: Dayjs
   isLastConflict: boolean
@@ -123,7 +123,7 @@ const printConflict = ({
       )}`,
     },
     {
-      name: `${inlineCode(targetFaction.daysWon.toString())} - ${faction.shortName}`,
+      name: `${inlineCode(targetFaction.daysWon.toString())} - ${guildFaction.shortName}`,
       value: `${inlineCode(enemyFaction.daysWon.toString())} - ${enemyFaction.name}`,
       inline: true,
     },
@@ -155,12 +155,12 @@ const createFactionConflictsEmbeds = (
   },
   context: Parameters<FactionCommandHandler>[0]['context']
 ) => {
-  const { faction, locale } = context
+  const { faction, guildFaction, locale } = context
   const conflictsLength = factionConflicts.length
 
   const embedHeader = {
     title: L[locale].faction.conflicts.title({
-      factionName: faction.shortName,
+      factionName: guildFaction.shortName,
     }),
     description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}${
       !conflictsLength ? `\n${L[locale].faction.conflicts.noConflicts()}` : ''
@@ -211,7 +211,7 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
     resposne: fetchedData,
     commandContext: context,
   })
-  const tickTime = await getTickTime({ locale, timezone })
+  const tickTime = await getTickTimeInTimezone({ locale, timezone })
   const embeds = createFactionConflictsEmbeds(
     {
       factionConflicts,

@@ -34,13 +34,13 @@ export const scrapeInaraFactionAssets = async (factionName: string) => {
 // TODO include note that only major stations (non odyssey) are included, this command is experimental
 export const factionStationsHandler: FactionCommandHandler = async ({
   interaction,
-  context: { faction, locale },
+  context: { faction, guildFaction, locale },
 }) => {
   const result = await scrapeInaraFactionAssets(faction.name)
   console.log(result)
   const embed = createEmbed({
     title: L[locale].faction.stations.title({
-      factionName: faction.shortName,
+      factionName: guildFaction.shortName,
     }),
     description: `[INARA](${InaraUrl.minorFaction(faction.name)})\n${DIVIDER}`,
   })

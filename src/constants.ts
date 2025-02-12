@@ -79,11 +79,10 @@ export const Languages = {
 
 export const RedisKeys = {
   ticktime: 'ticktime',
-} as const
-
-// Expiration in seconds
-export const RedisExpiration = {
-  [RedisKeys.ticktime]: 4 * 60 * 60, // 4 hours
+  trackedFactions: 'trackedFactions',
+  processedSystem: ({ tickTimestamp, systemName }: { tickTimestamp: string; systemName: string }) =>
+    `processedSystem:${tickTimestamp}:${systemName}`,
+  expansion: ({ factionId }: { factionId: number }) => `expansion:${factionId}`,
 } as const
 
 export const RankNames = {

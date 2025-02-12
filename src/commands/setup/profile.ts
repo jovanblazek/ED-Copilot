@@ -9,10 +9,10 @@ export const setupProfileHandler: CommandHandler = async ({ interaction, context
 
   await Prisma.user.upsert({
     where: {
-      userId: interaction.user.id,
+      id: interaction.user.id,
     },
     create: {
-      userId: interaction.user.id,
+      id: interaction.user.id,
       cmdrName,
       edsmApiKey,
     },

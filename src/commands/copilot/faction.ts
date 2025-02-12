@@ -1,8 +1,10 @@
+import { ChannelType } from 'discord.js'
 import got from 'got'
 import { createEmbed, useConfirmation } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
+import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
 import { CommandHandler } from '../types'
 
 type EliteBgsResponse = {
@@ -23,6 +25,9 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
 
   const factionNameInput = interaction.options.getString('name')!
   const factionShorthand = interaction.options.getString('shorthand')!
+  const notificationChannel = interaction.options.getChannel<
+    ChannelType.GuildText | ChannelType.GuildAnnouncement
+  >('notification_channel')
   const factionNameEncoded = encodeURIComponent(factionNameInput)
 
   logger.info(`Setting up faction for guild ${guildId}, ${factionNameInput}, ${factionShorthand}`)
@@ -56,16 +61,45 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
               factionShorthand,
               allegiance,
               systemsCount: factionPresence.length,
+              notificationChannel: notificationChannel?.id ? `<#${notificationChannel.id}>` : '-',
             }),
           }),
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        await Prisma.faction.upsert({
-          where: { guildId },
-          create: { guildId, ebgsId, eddbId, name: factionName, shortName: factionShorthand },
-          update: { ebgsId, eddbId, name: factionName, shortName: factionShorthand },
+        await Prisma.$transaction(async (trx) => {
+          // Upsert faction
+          const upsertedFaction = await trx.faction.upsert({
+            where: { ebgsId },
+            create: { eddbId, ebgsId, name: factionName },
+            update: { eddbId, name: factionName },
+          })
+
+          // Upsert guild faction
+          await trx.guildFaction.upsert({
+            where: { guildId },
+            create: {
+              guildId,
+              factionId: upsertedFaction.id,
+              shortName: factionShorthand,
+              notificationChannelId: notificationChannel?.id,
+            },
+            update: {
+              shortName: factionShorthand,
+              factionId: upsertedFaction.id,
+              notificationChannelId: notificationChannel?.id,
+            },
+          })
+
+          await trx.faction.deleteMany({
+            where: {
+              guildFactions: {
+                none: {},
+              },
+            },
+          })
         })
+        await loadTrackedFactionsFromDBToRedis()
 
         await buttonInteraction.update({
           content: L[locale].copilot.faction.saved(),

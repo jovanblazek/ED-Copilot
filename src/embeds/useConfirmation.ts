@@ -11,6 +11,7 @@ import {
 } from 'discord.js'
 import L from '../i18n/i18n-node'
 import { Locales } from '../i18n/i18n-types'
+import logger from '../utils/logger'
 
 const BUTTON_INTERACTION_TIME = 20000
 const ButtonNames = {
@@ -51,15 +52,23 @@ export const useConfirmation = async ({
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('collect', async (buttonInteraction) => {
-    if (buttonInteraction.user.id === interaction.user.id) {
-      if (buttonInteraction.customId === ButtonNames.YES) {
-        await onConfirm(buttonInteraction)
+    try {
+      if (buttonInteraction.user.id === interaction.user.id) {
+        if (buttonInteraction.customId === ButtonNames.YES) {
+          await onConfirm(buttonInteraction)
+        } else {
+          await onCancel(buttonInteraction)
+        }
       } else {
-        await onCancel(buttonInteraction)
+        await buttonInteraction.reply({
+          content: L[locale].error.buttonsDisabled(),
+          ephemeral: true,
+        })
       }
-    } else {
+    } catch (error) {
+      logger.error(error)
       await buttonInteraction.reply({
-        content: L[locale].error.buttonsDisabled(),
+        content: L[locale].error.unknown(),
         ephemeral: true,
       })
     }

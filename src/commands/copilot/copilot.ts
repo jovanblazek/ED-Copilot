@@ -30,6 +30,12 @@ const Copilot: Command = {
         .addStringOption((option) =>
           option.setName('shorthand').setDescription('Faction name shorthand').setRequired(true)
         )
+        .addChannelOption((option) =>
+          option
+            .setName('notification_channel')
+            .setDescription('Notification channel')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand

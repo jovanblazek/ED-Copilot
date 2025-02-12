@@ -19,8 +19,8 @@ export const setupTickReportChannelHandler: CommandHandler = async ({
   ])
 
   if (selectedChannel) {
-    await Prisma.preferences.update({
-      where: { guildId },
+    await Prisma.guild.update({
+      where: { id: guildId },
       data: { tickReportChannelId: selectedChannel.id },
     })
     await interaction.editReply(
@@ -31,11 +31,11 @@ export const setupTickReportChannelHandler: CommandHandler = async ({
     return
   }
 
-  const guildPreferences = await Prisma.preferences.findFirst({
-    where: { guildId },
+  const guild = await Prisma.guild.findFirst({
+    where: { id: guildId },
     select: { tickReportChannelId: true },
   })
-  const currentTickReportChannelId = guildPreferences?.tickReportChannelId
+  const currentTickReportChannelId = guild?.tickReportChannelId
 
   if (!currentTickReportChannelId) {
     await interaction.editReply({
@@ -64,8 +64,8 @@ export const setupTickReportChannelHandler: CommandHandler = async ({
       ],
     },
     onConfirm: async (buttonInteraction) => {
-      await Prisma.preferences.update({
-        where: { guildId },
+      await Prisma.guild.update({
+        where: { id: guildId },
         data: { tickReportChannelId: null },
       })
 

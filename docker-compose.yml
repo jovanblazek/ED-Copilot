@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     image: postgres
@@ -14,6 +13,7 @@ services:
   dragonfly:
     image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
     restart: always
+    command: --cluster_mode=emulated --lock_on_hashtags
     ulimits:
       memlock: -1
     ports:

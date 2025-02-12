@@ -17,9 +17,9 @@ export const setupLanguagenHandler: CommandHandler = async ({
     await interaction.editReply(L[locale].error.general())
     return
   }
-  await Prisma.preferences.upsert({
-    where: { guildId },
-    create: { guildId, language: newLocale, timezone: 'UTC' },
+  await Prisma.guild.upsert({
+    where: { id: guildId },
+    create: { id: guildId, language: newLocale, timezone: 'UTC' },
     update: { language: newLocale },
   })
   await interaction.editReply(L[newLocale].copilot.language.saved())

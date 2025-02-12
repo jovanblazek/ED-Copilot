@@ -31,6 +31,7 @@
   "dependencies": {
     "@prisma/client": "^5.15.1",
     "@sentry/node": "^8.11.0",
+    "bullmq": "^5.13.2",
     "dayjs": "^1.11.11",
     "discord.js": "14.15.3",
     "dotenv": "^16.4.5",
@@ -43,7 +44,8 @@
     "pino": "^9.2.0",
     "pino-pretty": "^11.2.1",
     "socket.io-client": "^4.7.5",
-    "typesafe-i18n": "^5.26.2"
+    "typesafe-i18n": "^5.26.2",
+    "zeromq": "^6.1.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -79,7 +81,7 @@
   "engines": {
     "node": "^20"
   },
-  "packageManager": "pnpm@9.4.0",
+  "packageManager": "pnpm@9.15.5",
   "release": {
     "branches": [
       "main"

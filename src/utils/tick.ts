@@ -5,7 +5,7 @@ import timezonePlugin from 'dayjs/plugin/timezone'
 import utcPlugin from 'dayjs/plugin/utc'
 import got from 'got'
 import { TickFetchError } from '../classes'
-import { RedisExpiration, RedisKeys } from '../constants'
+import { RedisKeys } from '../constants'
 import { Locales } from '../i18n/i18n-types'
 import logger from './logger'
 import { Redis } from './redis'
@@ -27,7 +27,7 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
     const tickTime = fetchedData.length === 0 ? null : dayjs.utc(fetchedData[0].time)
     if (tickTime) {
       logger.info('Caching tick time')
-      await Redis.set(RedisKeys.ticktime, tickTime.toISOString(), 'EX', RedisExpiration.ticktime)
+      await Redis.set(RedisKeys.ticktime, tickTime.toISOString())
     }
     return tickTime
   } catch (error) {
@@ -37,7 +37,15 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
   }
 }
 
-export const getTickTime = async ({
+export const getTickTime = async () => {
+  const cachedTickTime = await Redis.get(RedisKeys.ticktime)
+  if (cachedTickTime) {
+    return dayjs(cachedTickTime).utc()
+  }
+  return fetchTickTime()
+}
+
+export const getTickTimeInTimezone = async ({
   locale,
   timezone,
 }: {

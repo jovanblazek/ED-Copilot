@@ -17,7 +17,7 @@ const sk = {
       confirm: {
         title: 'Sú tieto informácie správne?',
         description:
-          'Názov: {factionName}\nSkratka: {factionShorthand}\nVernosť: {allegiance}\nPrítomná v systémoch: {systemsCount}',
+          'Názov: {factionName}\nSkratka: {factionShorthand}\nVernosť: {allegiance}\nPrítomná v systémoch: {systemsCount}\nKanál pre notifikácie: {notificationChannel}',
       },
       saved: 'Frakcia uložená.',
       canceled: 'Nastavenie frakcie bolo zrušené.',
@@ -86,6 +86,55 @@ const sk = {
   setup: {
     profile: {
       saved: 'Nastavenia profilu uložené.',
+    },
+  },
+  discordNotification: {
+    conflict: {
+      conflictType: {
+        election: 'Voľby',
+        civilWar: 'Civilná vojna',
+        war: 'Vojna',
+      },
+      status: {
+        pending: 'Nadchádzajúca',
+        active: 'Aktívna',
+        ended: 'Ukončená',
+      },
+      title: '{emoji} {status} {conflictType} v {systemName} {emoji}', // TODO: incorrect gender of `status` in case of election
+      fields: {
+        status: {
+          title: 'Status',
+        },
+        oponent: {
+          title: 'Oponent:',
+        },
+        yourStake: {
+          title: '🏆 Získané pri víťazstve',
+        },
+        opponentStake: {
+          title: '💥 Stratené pri prehre',
+        },
+      },
+    },
+    expansion: {
+      title: {
+        pending: 'Nadchádzajúca Expanzia',
+        active: 'Aktívna Expanzia',
+        ended: 'Expansia Ukončená',
+      },
+      description: {
+        pending:
+          'Detegovaná nadchádzajúca expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+        active:
+          'Detegovaná aktívna expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detegovania.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+        ended:
+          'Je príliš skoro na to, aby sme určili, kam sa vaša frakcia expandovala.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+      },
+      fields: {
+        possibleOrigins: {
+          title: 'Možné zdroje expanzie:',
+        },
+      },
     },
   },
 } satisfies Translation

@@ -9,7 +9,7 @@ import { Prisma } from './prismaClient'
 import { Redis } from './redis'
 
 const reportTick = async (client: Client, tickTime: Dayjs) => {
-  const guilds = await Prisma.preferences.findMany({
+  const guilds = await Prisma.guild.findMany({
     where: {
       tickReportChannelId: {
         not: null,
@@ -47,6 +47,13 @@ const reportTick = async (client: Client, tickTime: Dayjs) => {
   )
 }
 
+const cleanupProcessedSystems = async () => {
+  const oldKeys = await Redis.keys('processedSystem:*')
+  if (oldKeys.length > 0) {
+    await Redis.del(oldKeys)
+  }
+}
+
 export default (client: Client) => {
   const socket = io('https://tick.edcd.io/', {
     reconnectionDelay: 60000, // 1 minute
@@ -63,6 +70,7 @@ export default (client: Client) => {
     logger.info('Tick detected', tickTime)
     await Redis.set(RedisKeys.ticktime, tickTime.toISOString())
     void reportTick(client, tickTime)
+    await cleanupProcessedSystems()
   })
 
   socket.on('connect_error', (error) => {

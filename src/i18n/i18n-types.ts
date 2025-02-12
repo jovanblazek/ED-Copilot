@@ -57,13 +57,15 @@ type RootTranslation = {
 				 * N​a​m​e​:​ ​{​f​a​c​t​i​o​n​N​a​m​e​}​
 			​S​h​o​r​t​h​a​n​d​:​ ​{​f​a​c​t​i​o​n​S​h​o​r​t​h​a​n​d​}​
 			​A​l​l​e​g​i​a​n​c​e​:​ ​{​a​l​l​e​g​i​a​n​c​e​}​
-			​S​y​s​t​e​m​s​ ​p​r​e​s​e​n​t​:​ ​{​s​y​s​t​e​m​s​C​o​u​n​t​}
+			​S​y​s​t​e​m​s​ ​p​r​e​s​e​n​t​:​ ​{​s​y​s​t​e​m​s​C​o​u​n​t​}​
+			​N​o​t​i​f​i​c​a​t​i​o​n​ ​c​h​a​n​n​e​l​:​ ​{​n​o​t​i​f​i​c​a​t​i​o​n​C​h​a​n​n​e​l​}
 				 * @param {unknown} allegiance
 				 * @param {unknown} factionName
 				 * @param {unknown} factionShorthand
+				 * @param {unknown} notificationChannel
 				 * @param {unknown} systemsCount
 				 */
-				description: RequiredParams<'allegiance' | 'factionName' | 'factionShorthand' | 'systemsCount'>
+				description: RequiredParams<'allegiance' | 'factionName' | 'factionShorthand' | 'notificationChannel' | 'systemsCount'>
 			}
 			/**
 			 * F​a​c​t​i​o​n​ ​s​a​v​e​d​.
@@ -234,6 +236,120 @@ type RootTranslation = {
 			saved: string
 		}
 	}
+	discordNotification: {
+		conflict: {
+			conflictType: {
+				/**
+				 * E​l​e​c​t​i​o​n
+				 */
+				election: string
+				/**
+				 * C​i​v​i​l​ ​W​a​r
+				 */
+				civilWar: string
+				/**
+				 * W​a​r
+				 */
+				war: string
+			}
+			status: {
+				/**
+				 * P​e​n​d​i​n​g
+				 */
+				pending: string
+				/**
+				 * A​c​t​i​v​e
+				 */
+				active: string
+				/**
+				 * E​n​d​e​d
+				 */
+				ended: string
+			}
+			/**
+			 * {​e​m​o​j​i​}​ ​{​c​o​n​f​l​i​c​t​T​y​p​e​}​ ​{​s​t​a​t​u​s​}​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+			 * @param {unknown} conflictType
+			 * @param {unknown} emoji
+			 * @param {unknown} status
+			 * @param {unknown} systemName
+			 */
+			title: RequiredParams<'conflictType' | 'emoji' | 'emoji' | 'status' | 'systemName'>
+			fields: {
+				status: {
+					/**
+					 * S​t​a​t​u​s
+					 */
+					title: string
+				}
+				oponent: {
+					/**
+					 * O​p​o​n​e​n​t​:
+					 */
+					title: string
+				}
+				yourStake: {
+					/**
+					 * �​�​ ​G​a​i​n​e​d​ ​o​n​ ​V​i​c​t​o​r​y
+					 */
+					title: string
+				}
+				opponentStake: {
+					/**
+					 * �​�​ ​L​o​s​t​ ​o​n​ ​D​e​f​e​a​t
+					 */
+					title: string
+				}
+			}
+		}
+		expansion: {
+			title: {
+				/**
+				 * E​x​p​a​n​s​i​o​n​ ​P​e​n​d​i​n​g
+				 */
+				pending: string
+				/**
+				 * E​x​p​a​n​s​i​o​n​ ​A​c​t​i​v​e
+				 */
+				active: string
+				/**
+				 * E​x​p​a​n​s​i​o​n​ ​E​n​d​e​d
+				 */
+				ended: string
+			}
+			description: {
+				/**
+				 * P​e​n​d​i​n​g​ ​e​x​p​a​n​s​i​o​n​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​.​
+			​D​u​e​ ​t​o​ ​t​e​c​h​n​i​c​a​l​ ​l​i​m​i​t​a​t​i​o​n​s​,​ ​i​t​ ​i​s​ ​n​o​t​ ​p​o​s​s​i​b​l​e​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​t​h​e​ ​e​x​a​c​t​ ​o​r​i​g​i​n​ ​o​f​ ​t​h​e​ ​e​x​p​a​n​s​i​o​n​ ​a​t​ ​t​h​e​ ​t​i​m​e​ ​i​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​.​
+			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.
+				 * @param {unknown} inaraUrl
+				 * @param {unknown} systemName
+				 */
+				pending: RequiredParams<'inaraUrl' | 'systemName'>
+				/**
+				 * D​e​t​e​c​t​e​d​ ​a​c​t​i​v​e​ ​e​x​p​a​n​s​i​o​n​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​.​
+			​D​u​e​ ​t​o​ ​t​e​c​h​n​i​c​a​l​ ​l​i​m​i​t​a​t​i​o​n​s​,​ ​i​t​ ​i​s​ ​n​o​t​ ​p​o​s​s​i​b​l​e​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​t​h​e​ ​e​x​a​c​t​ ​o​r​i​g​i​n​ ​o​f​ ​t​h​e​ ​e​x​p​a​n​s​i​o​n​ ​a​t​ ​t​h​e​ ​t​i​m​e​ ​i​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​.​
+			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.
+				 * @param {unknown} inaraUrl
+				 * @param {unknown} systemName
+				 */
+				active: RequiredParams<'inaraUrl' | 'systemName'>
+				/**
+				 * I​t​ ​i​s​ ​t​o​o​ ​e​a​r​l​y​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​w​h​e​r​e​ ​y​o​u​r​ ​f​a​c​t​i​o​n​ ​e​x​p​a​n​d​e​d​ ​t​o​.​
+			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.
+				 * @param {unknown} inaraUrl
+				 */
+				ended: RequiredParams<'inaraUrl'>
+			}
+			fields: {
+				possibleOrigins: {
+					/**
+					 * P​o​s​s​i​b​l​e​ ​e​x​p​a​n​s​i​o​n​ ​o​r​i​g​i​n​s​:
+					 */
+					title: string
+				}
+			}
+		}
+	}
 }
 
 export type TranslationFunctions = {
@@ -280,8 +396,9 @@ export type TranslationFunctions = {
 			Shorthand: {factionShorthand}
 			Allegiance: {allegiance}
 			Systems present: {systemsCount}
+			Notification channel: {notificationChannel}
 				 */
-				description: (arg: { allegiance: unknown, factionName: unknown, factionShorthand: unknown, systemsCount: unknown }) => LocalizedString
+				description: (arg: { allegiance: unknown, factionName: unknown, factionShorthand: unknown, notificationChannel: unknown, systemsCount: unknown }) => LocalizedString
 			}
 			/**
 			 * Faction saved.
@@ -441,6 +558,111 @@ export type TranslationFunctions = {
 			 * Profile settings saved.
 			 */
 			saved: () => LocalizedString
+		}
+	}
+	discordNotification: {
+		conflict: {
+			conflictType: {
+				/**
+				 * Election
+				 */
+				election: () => LocalizedString
+				/**
+				 * Civil War
+				 */
+				civilWar: () => LocalizedString
+				/**
+				 * War
+				 */
+				war: () => LocalizedString
+			}
+			status: {
+				/**
+				 * Pending
+				 */
+				pending: () => LocalizedString
+				/**
+				 * Active
+				 */
+				active: () => LocalizedString
+				/**
+				 * Ended
+				 */
+				ended: () => LocalizedString
+			}
+			/**
+			 * {emoji} {conflictType} {status} in {systemName} {emoji}
+			 */
+			title: (arg: { conflictType: unknown, emoji: unknown, status: unknown, systemName: unknown }) => LocalizedString
+			fields: {
+				status: {
+					/**
+					 * Status
+					 */
+					title: () => LocalizedString
+				}
+				oponent: {
+					/**
+					 * Oponent:
+					 */
+					title: () => LocalizedString
+				}
+				yourStake: {
+					/**
+					 * 🏆 Gained on Victory
+					 */
+					title: () => LocalizedString
+				}
+				opponentStake: {
+					/**
+					 * 💥 Lost on Defeat
+					 */
+					title: () => LocalizedString
+				}
+			}
+		}
+		expansion: {
+			title: {
+				/**
+				 * Expansion Pending
+				 */
+				pending: () => LocalizedString
+				/**
+				 * Expansion Active
+				 */
+				active: () => LocalizedString
+				/**
+				 * Expansion Ended
+				 */
+				ended: () => LocalizedString
+			}
+			description: {
+				/**
+				 * Pending expansion was detected in {systemName}.
+			Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.
+			Check the [INARA]({inaraUrl}) or in game for more information.
+				 */
+				pending: (arg: { inaraUrl: unknown, systemName: unknown }) => LocalizedString
+				/**
+				 * Detected active expansion in {systemName}.
+			Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.
+			Check the [INARA]({inaraUrl}) or in game for more information.
+				 */
+				active: (arg: { inaraUrl: unknown, systemName: unknown }) => LocalizedString
+				/**
+				 * It is too early to determine where your faction expanded to.
+			Check the [INARA]({inaraUrl}) or in game for more information.
+				 */
+				ended: (arg: { inaraUrl: unknown }) => LocalizedString
+			}
+			fields: {
+				possibleOrigins: {
+					/**
+					 * Possible expansion origins:
+					 */
+					title: () => LocalizedString
+				}
+			}
 		}
 	}
 }

@@ -30,9 +30,9 @@ export const setupTimezoneHandler: CommandHandler = async ({
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        await Prisma.preferences.upsert({
-          where: { guildId: interaction.guildId! },
-          create: { guildId: interaction.guildId!, timezone },
+        await Prisma.guild.upsert({
+          where: { id: interaction.guildId! },
+          create: { id: interaction.guildId!, timezone },
           update: { timezone },
         })
 
