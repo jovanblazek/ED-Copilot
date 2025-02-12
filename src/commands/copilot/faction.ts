@@ -61,9 +61,7 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
               factionShorthand,
               allegiance,
               systemsCount: factionPresence.length,
-              notificationChannel: notificationChannel?.id
-                ? `<#${notificationChannel.id}>`
-                : 'None',
+              notificationChannel: notificationChannel?.id ? `<#${notificationChannel.id}>` : '-',
             }),
           }),
         ],

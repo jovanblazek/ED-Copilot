@@ -22,7 +22,7 @@ async function run() {
 
       try {
         socket.close()
-        logger.debug('[EDDN Listener] ZeroMQ connection closed')
+        logger.info('[EDDN Listener] ZeroMQ connection closed')
         process.send?.('shutdown_complete')
         process.exit(0)
       } catch (error) {

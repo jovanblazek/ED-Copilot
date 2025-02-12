@@ -36,7 +36,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
 
     const tickTime = await getTickTime()
     if (!tickTime) {
-      logger.warn(`systemProcessingWorker: ${systemName} - No tick time found`)
+      logger.warn(`[BullMQ] systemProcessingWorker: ${systemName} - No tick time found`)
       return
     }
 
@@ -46,14 +46,14 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
       tickTimeISO,
     })
     if (wasProcessed) {
-      logger.debug(`systemProcessingWorker: ${systemName} - SKIPPED`)
+      logger.info(`[BullMQ] systemProcessingWorker: ${systemName} - SKIPPED`)
       return
     }
 
     const trackedFactions = await getTrackedFactionsInSystem(factions)
 
     for (const trackedFaction of trackedFactions) {
-      logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - START`)
+      logger.info(`[BullMQ] systemProcessingWorker: ${systemName} - ${trackedFaction.name} - START`)
 
       const factionFromEvent = factions.find(({ Name }) => Name === trackedFaction.name)
       if (!factionFromEvent) {
@@ -135,7 +135,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
           }
         }
       })
-      logger.info(`systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
+      logger.info(`[BullMQ] systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
     }
   },
   { connection: Redis }

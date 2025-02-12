@@ -318,7 +318,7 @@ type RootTranslation = {
 			}
 			description: {
 				/**
-				 * E​x​p​a​n​s​i​o​n​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​.​
+				 * P​e​n​d​i​n​g​ ​e​x​p​a​n​s​i​o​n​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​.​
 			​D​u​e​ ​t​o​ ​t​e​c​h​n​i​c​a​l​ ​l​i​m​i​t​a​t​i​o​n​s​,​ ​i​t​ ​i​s​ ​n​o​t​ ​p​o​s​s​i​b​l​e​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​t​h​e​ ​e​x​a​c​t​ ​o​r​i​g​i​n​ ​o​f​ ​t​h​e​ ​e​x​p​a​n​s​i​o​n​ ​a​t​ ​t​h​e​ ​t​i​m​e​ ​i​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​.​
 			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.
 				 * @param {unknown} inaraUrl
@@ -343,7 +343,7 @@ type RootTranslation = {
 			fields: {
 				possibleOrigins: {
 					/**
-					 * P​o​s​s​i​b​l​e​ ​O​r​i​g​i​n​s​:
+					 * P​o​s​s​i​b​l​e​ ​e​x​p​a​n​s​i​o​n​ ​o​r​i​g​i​n​s​:
 					 */
 					title: string
 				}
@@ -638,7 +638,7 @@ export type TranslationFunctions = {
 			}
 			description: {
 				/**
-				 * Expansion was detected in {systemName}.
+				 * Pending expansion was detected in {systemName}.
 			Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.
 			Check the [INARA]({inaraUrl}) or in game for more information.
 				 */
@@ -658,7 +658,7 @@ export type TranslationFunctions = {
 			fields: {
 				possibleOrigins: {
 					/**
-					 * Possible Origins:
+					 * Possible expansion origins:
 					 */
 					title: () => LocalizedString
 				}

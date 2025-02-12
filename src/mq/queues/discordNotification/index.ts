@@ -1,7 +1,6 @@
 import { Queue, Worker } from 'bullmq'
 import { Client } from 'discord.js'
 import { Prisma } from '../../../utils'
-import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { processConflictEvent } from './processors/conflict'
@@ -36,8 +35,6 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
   new Worker<DiscordNotificationJobData<keyof EventTypeMap>>(
     QueueNames.discordNotification,
     async (job) => {
-      logger.info(job.data, 'Processing discord notification job')
-
       const { event, factionName } = job.data
 
       const guildFactions = await Prisma.guildFaction.findMany({
