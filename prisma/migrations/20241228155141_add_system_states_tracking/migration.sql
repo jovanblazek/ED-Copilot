@@ -1,3 +1,10 @@
+-- TRUNCATE ALL TABLES - RELEASE 3.0.0 contains breaking changes
+-- Since the app is not open to public yet, we can safely truncate all tables
+-- IF YOU ARE SELF HOSTING, PLEASE COMMENT THIS OUT AND PREPARE AND TEST YOUR DATA MIGRATION
+TRUNCATE TABLE "Faction" CASCADE;
+TRUNCATE TABLE "Preferences" CASCADE;
+TRUNCATE TABLE "User" CASCADE;
+
 -- CreateEnum
 CREATE TYPE "StateType" AS ENUM ('Pending', 'Active', 'Recovering');
 
