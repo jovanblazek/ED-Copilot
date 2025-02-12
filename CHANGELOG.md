@@ -1,3 +1,9 @@
+## [3.0.3](https://github.com/jovanblazek/ed-copilot/compare/v3.0.2...v3.0.3) (2025-02-12)
+
+### :bug: Bug Fixes
+
+* Bullmq crashing in production ([#35](https://github.com/jovanblazek/ed-copilot/issues/35)) ([603ba6e](https://github.com/jovanblazek/ed-copilot/commit/603ba6e7ed454d77a28c798c992f2739bdc29518))
+
 ## [3.0.2](https://github.com/jovanblazek/ed-copilot/compare/v3.0.1...v3.0.2) (2025-02-12)
 
 ### :bug: Bug Fixes
