@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres
-    restart: always
+    restart: unless-stopped
     ports:
       - '${POSTGRES_PORT}:5432'
     environment:
@@ -10,16 +10,13 @@ services:
       POSTGRES_DB: '${POSTGRES_DB_NAME}'
     volumes:
       - copilot-db-volume:/var/lib/postgresql/data
-  dragonfly:
-    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
-    restart: always
-    command: --cluster_mode=emulated --lock_on_hashtags
-    ulimits:
-      memlock: -1
+  redis:
+    image: 'redis:latest'
+    restart: unless-stopped
     ports:
-      - "${DRAGONFLY_PORT}:6379"
+      - "${REDIS_PORT}:6379"
     volumes:
-      - copilot-dragonfly-volume:/data
+      - copilot-redis-volume:/data
 volumes:
   copilot-db-volume:
-  copilot-dragonfly-volume:
+  copilot-redis-volume:
