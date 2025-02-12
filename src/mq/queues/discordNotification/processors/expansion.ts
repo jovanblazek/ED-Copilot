@@ -1,14 +1,14 @@
+import { Faction, Guild, GuildFaction } from '@prisma/client'
 import { Client } from 'discord.js'
-import { DiscordNotificationJobData } from '../types'
+import got from 'got'
+import { orderBy, round, uniqBy } from 'lodash'
+import { InaraUrl } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
 import L from '../../../../i18n/i18n-node'
-import { Faction, Guild, GuildFaction } from '@prisma/client'
 import { Locales } from '../../../../i18n/i18n-types'
-import { InaraUrl } from '../../../../constants'
-import got from 'got'
 import { FactionSystemsResponse } from '../../../../types/eliteBGS'
 import logger from '../../../../utils/logger'
-import { round, sortBy, uniqBy } from 'lodash'
+import { DiscordNotificationJobData } from '../types'
 import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 type PossibleExpansionOrigin = {
@@ -79,7 +79,7 @@ const generateEmbed = async ({
     }
 
     const uniqueSortedPossibleExpansionOrigins = uniqBy(
-      sortBy(possibleExpansionOrigins, 'influence'),
+      orderBy(possibleExpansionOrigins, 'influence', 'desc'),
       'systemName'
     )
 
@@ -87,7 +87,10 @@ const generateEmbed = async ({
       embed.addFields({
         name: L[locale].discordNotification.expansion.fields.possibleOrigins.title(),
         value: uniqueSortedPossibleExpansionOrigins
-          .map(({ systemName, influence }) => `- ${systemName} (${round(influence * 100, 1)} INF)`)
+          .map(
+            (expansionOrigin) =>
+              `- ${round(expansionOrigin.influence * 100, 1)}% ${expansionOrigin.systemName}`
+          )
           .join('\n'),
       })
     }
@@ -126,7 +129,7 @@ export const processExpansionEvent = async ({
 
   await Promise.allSettled(
     guildFactions.map(async (guildFaction) => {
-      const channel = await getNotificationChannelFromGuildFactionOrThrow({
+      const channel = getNotificationChannelFromGuildFactionOrThrow({
         client,
         guildFaction,
       })

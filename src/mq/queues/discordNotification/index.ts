@@ -1,12 +1,12 @@
 import { Queue, Worker } from 'bullmq'
+import { Client } from 'discord.js'
+import { Prisma } from '../../../utils'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
-import { DiscordNotificationJobData, EventTypeMap } from './types'
 import { processConflictEvent } from './processors/conflict'
-import { Client } from 'discord.js'
-import { Prisma } from '../../../utils'
 import { processExpansionEvent } from './processors/expansion'
+import { DiscordNotificationJobData, EventTypeMap } from './types'
 
 const ConflictEventTypes = ['conflictPending', 'conflictStarted', 'conflictEnded'] as const
 const ExpansionEventTypes = ['expansionPending', 'expansionStarted', 'expansionEnded'] as const
@@ -16,18 +16,21 @@ type ConflictEventType = (typeof ConflictEventTypes)[number]
 type ExpansionEventType = (typeof ExpansionEventTypes)[number]
 type RetreatEventType = (typeof RetreatEventTypes)[number]
 
-export const DiscordNotificationQueue = new Queue<DiscordNotificationJobData<keyof EventTypeMap>>(QueueNames.discordNotification, {
-  connection: Redis,
-  defaultJobOptions: {
-    attempts: 3,
-    backoff: {
-      type: 'exponential',
-      delay: 1000 * 60,
+export const DiscordNotificationQueue = new Queue<DiscordNotificationJobData<keyof EventTypeMap>>(
+  QueueNames.discordNotification,
+  {
+    connection: Redis,
+    defaultJobOptions: {
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 1000 * 60,
+      },
+      removeOnComplete: 100,
+      removeOnFail: 1000,
     },
-    removeOnComplete: 100,
-    removeOnFail: 1000,
-  },
-})
+  }
+)
 
 export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) =>
   new Worker<DiscordNotificationJobData<keyof EventTypeMap>>(
@@ -49,9 +52,9 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
         include: {
           guild: true,
           faction: true,
-        }
+        },
       })
-    
+
       if (guildFactions.length === 0) {
         return
       }
@@ -71,8 +74,6 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
       } else if (RetreatEventTypes.includes(event.type as RetreatEventType)) {
         // TODO: Send retreat notification
       }
-
-      return job.data
     },
     {
       connection: Redis,

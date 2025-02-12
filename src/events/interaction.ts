@@ -5,14 +5,13 @@ import { CommandHandlers } from '../commands'
 import { Locales } from '../i18n/i18n-types'
 import { baseLocale } from '../i18n/i18n-util'
 import { errorHandler, Prisma } from '../utils'
-import { onGuildJoin } from './guild'
 import logger from '../utils/logger'
+import { onGuildJoin } from './guild'
 
-const getGuildFromDb = async ({ guildId }: { guildId: string }) => {
-  return Prisma.guild.findFirst({
+const getGuildFromDb = ({ guildId }: { guildId: string }) =>
+  Prisma.guild.findFirst({
     where: { id: guildId },
   })
-}
 
 export const onInteractionCreate = async (interaction: Interaction) => {
   if (!interaction.isChatInputCommand()) {

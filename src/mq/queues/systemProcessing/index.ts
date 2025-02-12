@@ -1,20 +1,20 @@
 import { Queue, Worker } from 'bullmq'
+import { RedisKeys } from '../../../constants'
+import { EDDNEventToProcess, EDDNState } from '../../../types/eddn'
+import { getTickTime, Prisma } from '../../../utils'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
-import { EDDNEventToProcess, EDDNState } from '../../../types/eddn'
+import { EXPANSION_REDIS_EXPIRATION } from './constants'
 import {
+  addConflictNotificationsToQueue,
+  addExpansionNotificationToQueue,
   getConflictByFactionName,
   getTrackedFactionsInSystem,
-  isSystemAlreadyProcessed,
-  handleStateChanges,
-  addConflictNotificationsToQueue,
   groupFactionStatesByType,
-  addExpansionNotificationToQueue,
+  handleStateChanges,
+  isSystemAlreadyProcessed,
 } from './utils'
-import { getTickTime, Prisma } from '../../../utils'
-import { RedisKeys } from '../../../constants'
-import { EXPANSION_REDIS_EXPIRATION } from './constants'
 
 export const SystemProcessingQueue = new Queue(QueueNames.systemProcessing, {
   connection: Redis,
@@ -60,6 +60,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         throw new Error(`Faction ${trackedFaction.name} not found in event`)
       }
 
+      // eslint-disable-next-line no-await-in-loop
       await Prisma.$transaction(async (trx) => {
         const currentDbStates = await trx.factionState.findMany({
           where: {
@@ -94,15 +95,14 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         }
 
         // Handle expansion notifications
-        const isExpansionPending =
-          stateChanges.pendingStatesToStart.some(
-            (s) => s.State === EDDNState.Expansion
-          ) 
+        const isExpansionPending = stateChanges.pendingStatesToStart.some(
+          (s) => s.State === EDDNState.Expansion
+        )
         const isExpansionActive = stateChanges.activeStatesToStart.some(
-            (s) => s.State === EDDNState.Expansion
-          )
+          (s) => s.State === EDDNState.Expansion
+        )
         const isExpansionEnding = stateChanges.statesToEnd.some(
-          (s) => s.stateName === EDDNState.Expansion
+          (s) => s.stateName === EDDNState.Expansion.toString()
         )
 
         const expansionRedisKey = RedisKeys.expansion({ factionId: trackedFaction.id })

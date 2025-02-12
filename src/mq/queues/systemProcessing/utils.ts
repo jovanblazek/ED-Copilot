@@ -1,13 +1,12 @@
-import { FactionState, StateType } from '@prisma/client'
-import { getTrackedFactions, Redis } from '../../../utils/redis'
-import { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn'
-import { CONFLICT_STATES } from './constants'
-import { Conflict } from '../discordNotification/types'
+import { FactionState, Prisma as PrismaClientType, StateType } from '@prisma/client'
 import { RedisKeys } from '../../../constants'
-import logger from '../../../utils/logger'
-import { Prisma as PrismaClientType } from '@prisma/client'
+import { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn'
 import { TrackedFaction } from '../../../types/redis'
-import { addNotificationToQueue } from '../discordNotification/utils'
+import logger from '../../../utils/logger'
+import { getTrackedFactions, Redis } from '../../../utils/redis'
+import { DiscordNotificationQueue } from '../discordNotification'
+import { Conflict, EventTypeMap } from '../discordNotification/types'
+import { CONFLICT_STATES, DISCORD_NOTIFICATION_JOB_NAME } from './constants'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
   const trackedFactions = await getTrackedFactions()
@@ -17,9 +16,11 @@ export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) =
 }
 
 const getStatesToEnd = (currentDbStates: FactionState[], statesFromEvent: EDDNFactionState[]) =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
   currentDbStates.filter((state) => !statesFromEvent.some((s) => s.State === state.stateName))
 
 const getStatesToStart = (currentDbStates: FactionState[], statesFromEvent: EDDNFactionState[]) =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
   statesFromEvent.filter((state) => !currentDbStates.some((s) => s.stateName === state.State))
 
 export const getAllStatesToEnd = ({
@@ -185,7 +186,7 @@ export const transformConflictToDiscordNotificationData = (conflict: EDDNConflic
   conflictType: conflict.WarType,
 })
 
-export const isSystemAlreadyProcessed = async ({
+export const isSystemAlreadyProcessed = ({
   systemName,
   tickTimeISO,
 }: {
@@ -198,6 +199,33 @@ export const isSystemAlreadyProcessed = async ({
   })
   return Redis.exists(processedSystemRedisKey)
 }
+
+const addNotificationToQueue = <T extends keyof EventTypeMap>({
+  systemName,
+  trackedFaction,
+  eddnFaction,
+  timestamp,
+  event,
+}: {
+  systemName: string
+  trackedFaction: TrackedFaction
+  eddnFaction: EDDNFaction
+  timestamp: string
+  event: {
+    type: T
+    data: EventTypeMap[T]
+  }
+}) =>
+  DiscordNotificationQueue.add(
+    `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}:${event.type}`,
+    {
+      systemName,
+      factionName: trackedFaction.name,
+      factionInfluence: eddnFaction.Influence,
+      timestamp,
+      event,
+    }
+  )
 
 export const addConflictNotificationsToQueue = async ({
   conflict,
@@ -239,6 +267,7 @@ export const addConflictNotificationsToQueue = async ({
 
   for (const config of notificationConfigs) {
     if (isConflictInEDDNStateArray(config.states)) {
+      // eslint-disable-next-line no-await-in-loop
       await addNotificationToQueue<typeof config.type>({
         systemName,
         trackedFaction,

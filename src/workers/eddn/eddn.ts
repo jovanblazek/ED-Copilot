@@ -1,72 +1,78 @@
-import { Worker } from 'worker_threads'
+import { ChildProcess, fork } from 'child_process'
 import path from 'path'
-import logger from '../../utils/logger'
 import { SystemProcessingQueue } from '../../mq/queues/systemProcessing'
 import { EDDNEventToProcess } from '../../types/eddn'
+import logger from '../../utils/logger'
 
 const SYSTEM_PROCESS_JOB_NAME = 'system-processing'
-const FILE_NAME = 'eddnWorker.js'
+const FILE_NAME = 'eddnProcess.js'
+const MAX_RESTARTS = 3
 
-export default function startEDDNWorker() {
-  if (process.env.NODE_ENV !== 'production' && process.env.DEBUG_EDDN_WORKER !== 'true') {
-    throw new Error('EDDN worker is only available in production')
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+const IS_DEBUG_EDDN_WORKER = process.env.DEBUG_EDDN_WORKER === 'true'
+
+export default function startEDDNListenerProcess() {
+  if (!IS_PRODUCTION && !IS_DEBUG_EDDN_WORKER) {
+    throw new Error('EDDN listener is only available in production')
   }
 
-  const worker = new Worker(path.join(__dirname, FILE_NAME))
+  let process: ChildProcess | null = null
+  let restartCount = 0
+  let isShuttingDown = false
 
-  worker.on('online', () => {
-    logger.info('EDDN worker online')
-  })
+  const start = () => {
+    process = fork(path.join(__dirname, FILE_NAME))
 
-  worker.on('message', async (eddnEventToProcess: EDDNEventToProcess) => {
-    // TODO: For some reason, messages with 'shutdown_complete' are added to queue?
-    if (eddnEventToProcess?.StarSystem) {
-      await SystemProcessingQueue.add(
-        `${SYSTEM_PROCESS_JOB_NAME}:${eddnEventToProcess.StarSystem}`,
-        eddnEventToProcess
-      )
-    }
-  })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    process.on('message', async (eddnEventToProcess: EDDNEventToProcess) => {
+      if (eddnEventToProcess?.StarSystem) {
+        await SystemProcessingQueue.add(
+          `${SYSTEM_PROCESS_JOB_NAME}:${eddnEventToProcess.StarSystem}`,
+          eddnEventToProcess
+        )
+      }
+    })
 
-  worker.on('error', (error) => {
-    logger.error(error, 'EDDN worker error')
-    // Don't restart on error when shutting down
-    if (!worker.threadId) {
-      return
-    }
-    startEDDNWorker()
-  })
-
-  worker.on('exit', (code) => {
-    logger.info(`EDDN worker stopped with exit code ${code}`)
-    if (code !== 0 && worker.threadId) {
-      logger.error(`EDDN worker stopped with exit code ${code}`)
-      startEDDNWorker()
-    }
-  })
-
-  const shutdown = async () => {
-    logger.info('Shutting down EDDN worker...')
-    return new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('EDDN worker shutdown timeout'))
-      }, 5000)
-
-      worker.once('message', (message) => {
-        if (message === 'shutdown_complete') {
-          clearTimeout(timeout)
-          resolve()
-        }
-      })
-
-      worker.once('error', (error) => {
-        clearTimeout(timeout)
-        reject(error)
-      })
-
-      worker.postMessage('shutdown')
+    process.on('exit', (code) => {
+      if (!isShuttingDown && code !== 0 && code !== null && restartCount < MAX_RESTARTS) {
+        logger.warn(`EDDN listener process exited with code ${code}. Restarting...`)
+        restartCount += 1
+        start()
+      }
     })
   }
 
-  return { worker, shutdown }
+  const shutdown = () => {
+    if (!process) {
+      return
+    }
+    isShuttingDown = true
+
+    // eslint-disable-next-line consistent-return
+    return new Promise<void>((resolve) => {
+      const timeout = setTimeout(() => {
+        if (process) {
+          process.kill('SIGKILL')
+        }
+        resolve()
+      }, 5000)
+
+      if (process && process.connected) {
+        process.once('message', (message) => {
+          if (message === 'shutdown_complete') {
+            clearTimeout(timeout)
+            resolve()
+          }
+        })
+        process.send('shutdown')
+      } else {
+        // If process is not connected, resolve immediately
+        clearTimeout(timeout)
+        resolve()
+      }
+    })
+  }
+
+  start()
+  return { process, shutdown }
 }

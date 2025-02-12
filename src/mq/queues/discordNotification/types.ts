@@ -1,4 +1,4 @@
-import { EDDNWarType, EDDNConflictStatus } from '../../../types/eddn'
+import { EDDNConflictStatus, EDDNWarType } from '../../../types/eddn'
 
 type ConflictFaction = {
   name: string
@@ -17,9 +17,9 @@ type ConflictEventData = {
   conflict: Conflict
 }
 
-type ExpansionEventData = {}
+type ExpansionEventData = Record<string, never>
 
-type RetreatEventData = {}
+type RetreatEventData = Record<string, never>
 
 export type EventTypeMap = {
   conflictPending: ConflictEventData

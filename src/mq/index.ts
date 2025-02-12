@@ -1,11 +1,11 @@
+import { Client } from 'discord.js'
 import logger from '../utils/logger'
 import { CreateDiscordNotificationWorker } from './queues/discordNotification'
 import { SystemProcessingWorker } from './queues/systemProcessing'
-import { Client } from 'discord.js'
 
 export const initMQ = ({ client }: { client: Client }) => {
-  const BullMQWorkers = [CreateDiscordNotificationWorker({ client }), SystemProcessingWorker]
-  BullMQWorkers.forEach((worker) => {
+  const bullMQWorkers = [CreateDiscordNotificationWorker({ client }), SystemProcessingWorker]
+  bullMQWorkers.forEach((worker) => {
     worker.on('failed', (job) => {
       if (job) {
         logger.error(new Error(job.failedReason), `Job: ${job.name}:${job.id} - FAILED`)
@@ -27,5 +27,5 @@ export const initMQ = ({ client }: { client: Client }) => {
     })
   })
 
-  return BullMQWorkers
+  return bullMQWorkers
 }

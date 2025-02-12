@@ -1,11 +1,11 @@
+import { ChannelType } from 'discord.js'
 import got from 'got'
 import { createEmbed, useConfirmation } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
-import { CommandHandler } from '../types'
-import { ChannelType } from 'discord.js'
 import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
+import { CommandHandler } from '../types'
 
 type EliteBgsResponse = {
   docs: {
@@ -61,7 +61,9 @@ export const setupFactionHandler: CommandHandler = async ({ interaction, context
               factionShorthand,
               allegiance,
               systemsCount: factionPresence.length,
-              notificationChannel: notificationChannel?.id ? `<#${notificationChannel.id}>` : 'None',
+              notificationChannel: notificationChannel?.id
+                ? `<#${notificationChannel.id}>`
+                : 'None',
             }),
           }),
         ],

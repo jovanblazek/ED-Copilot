@@ -1,6 +1,6 @@
 import RedisClient from 'ioredis'
-import { TrackedFaction } from '../types/redis'
 import { RedisKeys } from '../constants'
+import { TrackedFaction } from '../types/redis'
 import { Prisma } from './prismaClient'
 
 const { DRAGONFLY_PORT, DRAGONFLY_PASSWORD, DRAGONFLY_HOST } = process.env

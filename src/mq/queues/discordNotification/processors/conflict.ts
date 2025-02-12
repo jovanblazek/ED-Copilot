@@ -1,14 +1,14 @@
+import { Faction, Guild, GuildFaction } from '@prisma/client'
 import { Client } from 'discord.js'
 import { InaraUrl } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
-import { DiscordNotificationJobData, Conflict } from '../types'
-import { EDDNWarType, EDDNConflictStatus } from '../../../../types/eddn'
-import { Locales, Translations } from '../../../../i18n/i18n-types'
 import L from '../../../../i18n/i18n-node'
-import { Faction, Guild, GuildFaction } from '@prisma/client'
+import { Locales, Translations } from '../../../../i18n/i18n-types'
+import { EDDNConflictStatus, EDDNWarType } from '../../../../types/eddn'
+import { Conflict, DiscordNotificationJobData } from '../types'
 import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
-const CONFLICT_TYPE_TRANSLATION_MAP: Record<
+const ConflictTypeTranslationMap: Record<
   EDDNWarType,
   keyof Translations['discordNotification']['conflict']['conflictType']
 > = {
@@ -17,7 +17,7 @@ const CONFLICT_TYPE_TRANSLATION_MAP: Record<
   [EDDNWarType.War]: 'war',
 }
 
-const CONFLICT_STATUS_TRANSLATION_MAP: Record<
+const ConflictStatusTranslationMap: Record<
   EDDNConflictStatus,
   keyof Translations['discordNotification']['conflict']['status']
 > = {
@@ -40,8 +40,8 @@ const getEmbedTitle = ({
 
   return L[locale].discordNotification.conflict.title({
     emoji,
-    conflictType: CONFLICT_TYPE_TRANSLATION_MAP[conflictType],
-    status: CONFLICT_STATUS_TRANSLATION_MAP[status],
+    conflictType: ConflictTypeTranslationMap[conflictType],
+    status: ConflictStatusTranslationMap[status],
     systemName,
   })
 }
@@ -113,8 +113,8 @@ export const processConflictEvent = async ({
     },
   } = jobData
 
-  const messagePromises = guildFactions.map(async (guildFaction) => {
-    const channel = await getNotificationChannelFromGuildFactionOrThrow({
+  const messagePromises = guildFactions.map((guildFaction) => {
+    const channel = getNotificationChannelFromGuildFactionOrThrow({
       client,
       guildFaction,
     })

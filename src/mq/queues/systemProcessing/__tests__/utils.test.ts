@@ -1,15 +1,15 @@
+import { StateType } from '@prisma/client'
+import { EDDNConflictStatus, EDDNState, EDDNWarType } from '../../../../types/eddn'
+import * as redis from '../../../../utils/redis'
 import {
-  getTrackedFactionsInSystem,
   getAllStatesToEnd,
   getAllStatesToStart,
-  isConflictInEDDNStateArray,
   getConflictByFactionName,
-  transformConflictToDiscordNotificationData,
+  getTrackedFactionsInSystem,
   groupFactionStatesByType,
+  isConflictInEDDNStateArray,
+  transformConflictToDiscordNotificationData,
 } from '../utils'
-import { EDDNState, EDDNConflictStatus, EDDNWarType } from '../../../../types/eddn'
-import { StateType } from '@prisma/client'
-import * as redis from '../../../../utils/redis'
 
 // Mock redis module
 jest.mock('../../../../utils/redis', () => ({

@@ -16,8 +16,7 @@
     "postbuild": "copyfiles .env ./build",
     "start": "node build/index.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "eddn:listen": "tsx src/workers/eddn/eddn.ts"
+    "lint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
