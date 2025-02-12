@@ -1,3 +1,9 @@
+## [3.0.2](https://github.com/jovanblazek/ed-copilot/compare/v3.0.1...v3.0.2) (2025-02-12)
+
+### :bug: Bug Fixes
+
+* Add process exit to commands registration script ([#34](https://github.com/jovanblazek/ed-copilot/issues/34)) ([fc40542](https://github.com/jovanblazek/ed-copilot/commit/fc40542f3c860bbc777b9e0cb18f6ca3e8f578eb))
+
 ## [3.0.1](https://github.com/jovanblazek/ed-copilot/compare/v3.0.0...v3.0.1) (2025-02-12)
 
 ### :bug: Bug Fixes
