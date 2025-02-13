@@ -304,31 +304,33 @@ type RootTranslation = {
 		expansion: {
 			title: {
 				/**
-				 * E​x​p​a​n​s​i​o​n​ ​P​e​n​d​i​n​g
+				 * ✈​️​ ​E​x​p​a​n​s​i​o​n​ ​P​e​n​d​i​n​g​ ​✈​️
 				 */
 				pending: string
 				/**
-				 * E​x​p​a​n​s​i​o​n​ ​A​c​t​i​v​e
+				 * ✈​️​ ​E​x​p​a​n​s​i​o​n​ ​A​c​t​i​v​e​ ​✈​️
 				 */
 				active: string
 				/**
-				 * E​x​p​a​n​s​i​o​n​ ​E​n​d​e​d
+				 * ✈​️​ ​E​x​p​a​n​s​i​o​n​ ​E​n​d​e​d​ ​✈​️
 				 */
 				ended: string
 			}
 			description: {
 				/**
-				 * P​e​n​d​i​n​g​ ​e​x​p​a​n​s​i​o​n​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​.​
-			​D​u​e​ ​t​o​ ​t​e​c​h​n​i​c​a​l​ ​l​i​m​i​t​a​t​i​o​n​s​,​ ​i​t​ ​i​s​ ​n​o​t​ ​p​o​s​s​i​b​l​e​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​t​h​e​ ​e​x​a​c​t​ ​o​r​i​g​i​n​ ​o​f​ ​t​h​e​ ​e​x​p​a​n​s​i​o​n​ ​a​t​ ​t​h​e​ ​t​i​m​e​ ​i​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​.​
-			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.
+				 * P​e​n​d​i​n​g​ ​e​x​p​a​n​s​i​o​n​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​*​*​{​s​y​s​t​e​m​N​a​m​e​}​*​*​.​
+			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.​
+			​
+			​*​D​u​e​ ​t​o​ ​t​e​c​h​n​i​c​a​l​ ​l​i​m​i​t​a​t​i​o​n​s​,​ ​i​t​ ​i​s​ ​n​o​t​ ​p​o​s​s​i​b​l​e​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​t​h​e​ ​e​x​a​c​t​ ​o​r​i​g​i​n​ ​o​f​ ​t​h​e​ ​e​x​p​a​n​s​i​o​n​ ​a​t​ ​t​h​e​ ​t​i​m​e​ ​i​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​.​*
 				 * @param {unknown} inaraUrl
 				 * @param {unknown} systemName
 				 */
 				pending: RequiredParams<'inaraUrl' | 'systemName'>
 				/**
-				 * D​e​t​e​c​t​e​d​ ​a​c​t​i​v​e​ ​e​x​p​a​n​s​i​o​n​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​.​
-			​D​u​e​ ​t​o​ ​t​e​c​h​n​i​c​a​l​ ​l​i​m​i​t​a​t​i​o​n​s​,​ ​i​t​ ​i​s​ ​n​o​t​ ​p​o​s​s​i​b​l​e​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​t​h​e​ ​e​x​a​c​t​ ​o​r​i​g​i​n​ ​o​f​ ​t​h​e​ ​e​x​p​a​n​s​i​o​n​ ​a​t​ ​t​h​e​ ​t​i​m​e​ ​i​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​.​
-			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.
+				 * A​c​t​i​v​e​ ​e​x​p​a​n​s​i​o​n​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​*​*​{​s​y​s​t​e​m​N​a​m​e​}​*​*​.​
+			​C​h​e​c​k​ ​t​h​e​ ​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)​ ​o​r​ ​i​n​ ​g​a​m​e​ ​f​o​r​ ​m​o​r​e​ ​i​n​f​o​r​m​a​t​i​o​n​.​
+			​
+			​*​D​u​e​ ​t​o​ ​t​e​c​h​n​i​c​a​l​ ​l​i​m​i​t​a​t​i​o​n​s​,​ ​i​t​ ​i​s​ ​n​o​t​ ​p​o​s​s​i​b​l​e​ ​t​o​ ​d​e​t​e​r​m​i​n​e​ ​t​h​e​ ​e​x​a​c​t​ ​o​r​i​g​i​n​ ​o​f​ ​t​h​e​ ​e​x​p​a​n​s​i​o​n​ ​a​t​ ​t​h​e​ ​t​i​m​e​ ​i​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​.​*
 				 * @param {unknown} inaraUrl
 				 * @param {unknown} systemName
 				 */
@@ -624,29 +626,31 @@ export type TranslationFunctions = {
 		expansion: {
 			title: {
 				/**
-				 * Expansion Pending
+				 * ✈️ Expansion Pending ✈️
 				 */
 				pending: () => LocalizedString
 				/**
-				 * Expansion Active
+				 * ✈️ Expansion Active ✈️
 				 */
 				active: () => LocalizedString
 				/**
-				 * Expansion Ended
+				 * ✈️ Expansion Ended ✈️
 				 */
 				ended: () => LocalizedString
 			}
 			description: {
 				/**
-				 * Pending expansion was detected in {systemName}.
-			Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.
+				 * Pending expansion was detected in **{systemName}**.
 			Check the [INARA]({inaraUrl}) or in game for more information.
+		
+			*Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.*
 				 */
 				pending: (arg: { inaraUrl: unknown, systemName: unknown }) => LocalizedString
 				/**
-				 * Detected active expansion in {systemName}.
-			Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.
+				 * Active expansion was detected in **{systemName}**.
 			Check the [INARA]({inaraUrl}) or in game for more information.
+		
+			*Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.*
 				 */
 				active: (arg: { inaraUrl: unknown, systemName: unknown }) => LocalizedString
 				/**

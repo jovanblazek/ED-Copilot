@@ -118,15 +118,15 @@ const sk = {
     },
     expansion: {
       title: {
-        pending: 'Nadchádzajúca Expanzia',
-        active: 'Aktívna Expanzia',
-        ended: 'Expansia Ukončená',
+        pending: '✈️ Nadchádzajúca Expanzia ✈️',
+        active: '✈️ Aktívna Expanzia ✈️',
+        ended: '✈️ Expanzia Ukončená ✈️',
       },
       description: {
         pending:
-          'Detegovaná nadchádzajúca expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+          'Detegovaná nadchádzajúca expanzia v **{systemName}**.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.\n\n*Z technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.*',
         active:
-          'Detegovaná aktívna expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detegovania.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+          'Detegovaná aktívna expanzia v **{systemName}**.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.\n\n*Z technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.*',
         ended:
           'Je príliš skoro na to, aby sme určili, kam sa vaša frakcia expandovala.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
       },
