@@ -1,3 +1,9 @@
+## [3.0.4](https://github.com/jovanblazek/ed-copilot/compare/v3.0.3...v3.0.4) (2025-02-13)
+
+### :bug: Bug Fixes
+
+* Notification embeds text formatting & grammar ([#36](https://github.com/jovanblazek/ed-copilot/issues/36)) ([6320c14](https://github.com/jovanblazek/ed-copilot/commit/6320c14681f698113d858a687360784dd3c2d008))
+
 ## [3.0.3](https://github.com/jovanblazek/ed-copilot/compare/v3.0.2...v3.0.3) (2025-02-12)
 
 ### :bug: Bug Fixes
