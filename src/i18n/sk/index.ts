@@ -109,10 +109,10 @@ const sk = {
           title: 'Oponent:',
         },
         yourStake: {
-          title: '🏆 Získané pri víťazstve',
+          title: '💥 Stratené pri prehre',
         },
         opponentStake: {
-          title: '💥 Stratené pri prehre',
+          title: '🏆 Získané pri víťazstve',
         },
       },
     },

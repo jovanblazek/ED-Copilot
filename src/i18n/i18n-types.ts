@@ -289,13 +289,13 @@ type RootTranslation = {
 				}
 				yourStake: {
 					/**
-					 * �​�​ ​G​a​i​n​e​d​ ​o​n​ ​V​i​c​t​o​r​y
+					 * �​�​ ​L​o​s​t​ ​o​n​ ​D​e​f​e​a​t
 					 */
 					title: string
 				}
 				opponentStake: {
 					/**
-					 * �​�​ ​L​o​s​t​ ​o​n​ ​D​e​f​e​a​t
+					 * �​�​ ​G​a​i​n​e​d​ ​o​n​ ​V​i​c​t​o​r​y
 					 */
 					title: string
 				}
@@ -609,13 +609,13 @@ export type TranslationFunctions = {
 				}
 				yourStake: {
 					/**
-					 * 🏆 Gained on Victory
+					 * 💥 Lost on Defeat
 					 */
 					title: () => LocalizedString
 				}
 				opponentStake: {
 					/**
-					 * 💥 Lost on Defeat
+					 * 🏆 Gained on Victory
 					 */
 					title: () => LocalizedString
 				}

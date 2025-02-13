@@ -108,10 +108,10 @@ const en = {
           title: 'Oponent:',
         },
         yourStake: {
-          title: '🏆 Gained on Victory',
+          title: '💥 Lost on Defeat',
         },
         opponentStake: {
-          title: '💥 Lost on Defeat',
+          title: '🏆 Gained on Victory',
         },
       },
     },

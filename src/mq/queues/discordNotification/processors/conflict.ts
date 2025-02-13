@@ -40,8 +40,9 @@ const getEmbedTitle = ({
 
   return L[locale].discordNotification.conflict.title({
     emoji,
-    conflictType: ConflictTypeTranslationMap[conflictType],
-    status: ConflictStatusTranslationMap[status],
+    conflictType:
+      L[locale].discordNotification.conflict.conflictType[ConflictTypeTranslationMap[conflictType]],
+    status: L[locale].discordNotification.conflict.status[ConflictStatusTranslationMap[status]],
     systemName,
   })
 }
@@ -78,13 +79,13 @@ const generateEmbed = ({
         inline: true,
       },
       {
-        name: L[locale].discordNotification.conflict.fields.yourStake.title(),
+        name: L[locale].discordNotification.conflict.fields.opponentStake.title(),
         value: opponent.stake,
         inline: false,
       },
       {
-        name: L[locale].discordNotification.conflict.fields.opponentStake.title(),
-        value: faction1.stake,
+        name: L[locale].discordNotification.conflict.fields.yourStake.title(),
+        value: trackedFaction.stake,
         inline: false,
       },
       {
