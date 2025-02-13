@@ -238,42 +238,68 @@ type RootTranslation = {
 	}
 	discordNotification: {
 		conflict: {
-			conflictType: {
-				/**
-				 * E​l​e​c​t​i​o​n
-				 */
-				election: string
-				/**
-				 * C​i​v​i​l​ ​W​a​r
-				 */
-				civilWar: string
-				/**
-				 * W​a​r
-				 */
-				war: string
+			title: {
+				war: {
+					/**
+					 * {​e​m​o​j​i​}​ ​P​e​n​d​i​n​g​ ​W​a​r​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					pending: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+					/**
+					 * {​e​m​o​j​i​}​ ​A​c​t​i​v​e​ ​W​a​r​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					active: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+					/**
+					 * {​e​m​o​j​i​}​ ​W​a​r​ ​E​n​d​e​d​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					ended: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+				}
+				civilWar: {
+					/**
+					 * {​e​m​o​j​i​}​ ​P​e​n​d​i​n​g​ ​C​i​v​i​l​ ​W​a​r​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					pending: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+					/**
+					 * {​e​m​o​j​i​}​ ​A​c​t​i​v​e​ ​C​i​v​i​l​ ​W​a​r​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					active: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+					/**
+					 * {​e​m​o​j​i​}​ ​C​i​v​i​l​ ​W​a​r​ ​E​n​d​e​d​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					ended: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+				}
+				election: {
+					/**
+					 * {​e​m​o​j​i​}​ ​P​e​n​d​i​n​g​ ​E​l​e​c​t​i​o​n​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					pending: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+					/**
+					 * {​e​m​o​j​i​}​ ​A​c​t​i​v​e​ ​E​l​e​c​t​i​o​n​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					active: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+					/**
+					 * {​e​m​o​j​i​}​ ​E​l​e​c​t​i​o​n​ ​E​n​d​e​d​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
+					 * @param {unknown} emoji
+					 * @param {unknown} systemName
+					 */
+					ended: RequiredParams<'emoji' | 'emoji' | 'systemName'>
+				}
 			}
-			status: {
-				/**
-				 * P​e​n​d​i​n​g
-				 */
-				pending: string
-				/**
-				 * A​c​t​i​v​e
-				 */
-				active: string
-				/**
-				 * E​n​d​e​d
-				 */
-				ended: string
-			}
-			/**
-			 * {​e​m​o​j​i​}​ ​{​c​o​n​f​l​i​c​t​T​y​p​e​}​ ​{​s​t​a​t​u​s​}​ ​i​n​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​{​e​m​o​j​i​}
-			 * @param {unknown} conflictType
-			 * @param {unknown} emoji
-			 * @param {unknown} status
-			 * @param {unknown} systemName
-			 */
-			title: RequiredParams<'conflictType' | 'emoji' | 'emoji' | 'status' | 'systemName'>
 			fields: {
 				status: {
 					/**
@@ -564,38 +590,50 @@ export type TranslationFunctions = {
 	}
 	discordNotification: {
 		conflict: {
-			conflictType: {
-				/**
-				 * Election
-				 */
-				election: () => LocalizedString
-				/**
-				 * Civil War
-				 */
-				civilWar: () => LocalizedString
-				/**
-				 * War
-				 */
-				war: () => LocalizedString
+			title: {
+				war: {
+					/**
+					 * {emoji} Pending War in {systemName} {emoji}
+					 */
+					pending: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+					/**
+					 * {emoji} Active War in {systemName} {emoji}
+					 */
+					active: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+					/**
+					 * {emoji} War Ended in {systemName} {emoji}
+					 */
+					ended: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+				}
+				civilWar: {
+					/**
+					 * {emoji} Pending Civil War in {systemName} {emoji}
+					 */
+					pending: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+					/**
+					 * {emoji} Active Civil War in {systemName} {emoji}
+					 */
+					active: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+					/**
+					 * {emoji} Civil War Ended in {systemName} {emoji}
+					 */
+					ended: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+				}
+				election: {
+					/**
+					 * {emoji} Pending Election in {systemName} {emoji}
+					 */
+					pending: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+					/**
+					 * {emoji} Active Election in {systemName} {emoji}
+					 */
+					active: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+					/**
+					 * {emoji} Election Ended in {systemName} {emoji}
+					 */
+					ended: (arg: { emoji: unknown, systemName: unknown }) => LocalizedString
+				}
 			}
-			status: {
-				/**
-				 * Pending
-				 */
-				pending: () => LocalizedString
-				/**
-				 * Active
-				 */
-				active: () => LocalizedString
-				/**
-				 * Ended
-				 */
-				ended: () => LocalizedString
-			}
-			/**
-			 * {emoji} {conflictType} {status} in {systemName} {emoji}
-			 */
-			title: (arg: { conflictType: unknown, emoji: unknown, status: unknown, systemName: unknown }) => LocalizedString
 			fields: {
 				status: {
 					/**

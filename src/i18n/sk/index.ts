@@ -90,17 +90,23 @@ const sk = {
   },
   discordNotification: {
     conflict: {
-      conflictType: {
-        election: 'Voľby',
-        civilWar: 'Civilná vojna',
-        war: 'Vojna',
+      title: {
+        war: {
+          pending: '{emoji} Nadchádzajúca Vojna v {systemName} {emoji}',
+          active: '{emoji} Aktívna Vojna v {systemName} {emoji}',
+          ended: '{emoji} Ukončená Vojna v {systemName} {emoji}',
+        },
+        civilWar: {
+          pending: '{emoji} Nadchádzajúca Civilná Vojna v {systemName} {emoji}',
+          active: '{emoji} Aktívna Civilná Vojna v {systemName} {emoji}',
+          ended: '{emoji} Ukončená Civilná Vojna v {systemName} {emoji}',
+        },
+        election: {
+          pending: '{emoji} Nadchádzajúce Voľby v {systemName} {emoji}',
+          active: '{emoji} Aktívne Voľby v {systemName} {emoji}',
+          ended: '{emoji} Voľby ukončené v {systemName} {emoji}',
+        },
       },
-      status: {
-        pending: 'Nadchádzajúca',
-        active: 'Aktívna',
-        ended: 'Ukončená',
-      },
-      title: '{emoji} {status} {conflictType} v {systemName} {emoji}', // TODO: incorrect gender of `status` in case of election
       fields: {
         status: {
           title: 'Status',

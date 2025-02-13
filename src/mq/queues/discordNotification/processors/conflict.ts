@@ -10,21 +10,21 @@ import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 const ConflictTypeTranslationMap: Record<
   EDDNWarType,
-  keyof Translations['discordNotification']['conflict']['conflictType']
+  keyof Translations['discordNotification']['conflict']['title']
 > = {
   [EDDNWarType.Election]: 'election',
   [EDDNWarType.CivilWar]: 'civilWar',
   [EDDNWarType.War]: 'war',
-}
+} as const
 
 const ConflictStatusTranslationMap: Record<
   EDDNConflictStatus,
-  keyof Translations['discordNotification']['conflict']['status']
+  keyof Translations['discordNotification']['conflict']['title']['war']
 > = {
   [EDDNConflictStatus.Pending]: 'pending',
   [EDDNConflictStatus.Active]: 'active',
   [EDDNConflictStatus.Ended]: 'ended',
-}
+} as const
 
 const getEmbedTitle = ({
   systemName,
@@ -37,12 +37,11 @@ const getEmbedTitle = ({
 }) => {
   const { status, conflictType } = conflict
   const emoji = status === EDDNConflictStatus.Ended ? '🕊️' : '🚨'
+  const conflictTypeKey = ConflictTypeTranslationMap[conflictType]
+  const statusKey = ConflictStatusTranslationMap[status]
 
-  return L[locale].discordNotification.conflict.title({
+  return L[locale].discordNotification.conflict.title[conflictTypeKey][statusKey]({
     emoji,
-    conflictType:
-      L[locale].discordNotification.conflict.conflictType[ConflictTypeTranslationMap[conflictType]],
-    status: L[locale].discordNotification.conflict.status[ConflictStatusTranslationMap[status]],
     systemName,
   })
 }

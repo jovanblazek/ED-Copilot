@@ -89,17 +89,23 @@ const en = {
   },
   discordNotification: {
     conflict: {
-      conflictType: {
-        election: 'Election',
-        civilWar: 'Civil War',
-        war: 'War',
+      title: {
+        war: {
+          pending: '{emoji} Pending War in {systemName} {emoji}',
+          active: '{emoji} Active War in {systemName} {emoji}',
+          ended: '{emoji} War Ended in {systemName} {emoji}',
+        },
+        civilWar: {
+          pending: '{emoji} Pending Civil War in {systemName} {emoji}',
+          active: '{emoji} Active Civil War in {systemName} {emoji}',
+          ended: '{emoji} Civil War Ended in {systemName} {emoji}',
+        },
+        election: {
+          pending: '{emoji} Pending Election in {systemName} {emoji}',
+          active: '{emoji} Active Election in {systemName} {emoji}',
+          ended: '{emoji} Election Ended in {systemName} {emoji}',
+        },
       },
-      status: {
-        pending: 'Pending',
-        active: 'Active',
-        ended: 'Ended',
-      },
-      title: '{emoji} {conflictType} {status} in {systemName} {emoji}',
       fields: {
         status: {
           title: 'Status',
