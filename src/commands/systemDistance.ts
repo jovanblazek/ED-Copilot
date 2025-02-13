@@ -4,7 +4,7 @@ import { SystemNotFoundError } from '../classes'
 import { CommandNames } from '../constants'
 import { createEmbed } from '../embeds'
 import { toUpperCaseFirstLetter } from '../utils'
-import { Command } from './types'
+import type { Command } from './types'
 
 type SystemData = {
   name: string

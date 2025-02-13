@@ -1,11 +1,12 @@
 import { Queue, Worker } from 'bullmq'
-import { Client } from 'discord.js'
+import type { Client } from 'discord.js'
 import { Prisma } from '../../../utils'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { processConflictEvent } from './processors/conflict'
 import { processExpansionEvent } from './processors/expansion'
-import { DiscordNotificationJobData, EventTypeMap } from './types'
+import { processRetreatEvent } from './processors/retreat'
+import type { DiscordNotificationJobData, EventTypeMap } from './types'
 
 const ConflictEventTypes = ['conflictPending', 'conflictStarted', 'conflictEnded'] as const
 const ExpansionEventTypes = ['expansionPending', 'expansionStarted', 'expansionEnded'] as const
@@ -69,7 +70,11 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
           guildFactions,
         })
       } else if (RetreatEventTypes.includes(event.type as RetreatEventType)) {
-        // TODO: Send retreat notification
+        await processRetreatEvent({
+          client,
+          jobData: job.data as DiscordNotificationJobData<RetreatEventType>,
+          guildFactions,
+        })
       }
     },
     {

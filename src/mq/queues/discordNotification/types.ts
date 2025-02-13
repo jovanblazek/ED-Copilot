@@ -1,4 +1,4 @@
-import { EDDNConflictStatus, EDDNWarType } from '../../../types/eddn'
+import type { EDDNConflictStatus, EDDNWarType } from '../../../types/eddn'
 
 type ConflictFaction = {
   name: string

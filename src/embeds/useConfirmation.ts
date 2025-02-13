@@ -1,16 +1,13 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
+import type {
   ButtonInteraction,
-  ButtonStyle,
   CacheType,
   ChatInputCommandInteraction,
-  ComponentType,
   MessageActionRowComponentBuilder,
   WebhookMessageEditOptions,
 } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js'
 import L from '../i18n/i18n-node'
-import { Locales } from '../i18n/i18n-types'
+import type { Locales } from '../i18n/i18n-types'
 import logger from '../utils/logger'
 
 const BUTTON_INTERACTION_TIME = 20000

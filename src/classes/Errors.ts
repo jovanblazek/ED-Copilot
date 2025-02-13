@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { BaseError } from 'make-error'
 import L from '../i18n/i18n-node'
-import { Locales } from '../i18n/i18n-types'
+import type { Locales } from '../i18n/i18n-types'
 
 export class SystemNotFoundError extends BaseError {
   constructor({ locale, systemName }: { locale: Locales; systemName: string }) {

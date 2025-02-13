@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames, NearestSubcommands } from '../../constants'
-import { Command } from '../types'
+import type { Command } from '../types'
 import { PARAMS } from './constants'
 import { nearestInterstellarFactorsHandler } from './interstellarFactors'
 import { nearestMaterialTraderHandler } from './materialTrader'

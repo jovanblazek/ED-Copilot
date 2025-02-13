@@ -1,6 +1,6 @@
 import L from '../../i18n/i18n-node'
 import { encrypt, Prisma } from '../../utils'
-import { CommandHandler } from '../types'
+import type { CommandHandler } from '../types'
 
 export const setupProfileHandler: CommandHandler = async ({ interaction, context: { locale } }) => {
   const cmdrName = interaction.options.getString('name')!

@@ -1,4 +1,4 @@
-import { Worker } from 'bullmq'
+import type { Worker } from 'bullmq'
 import { Client, GatewayIntentBits } from 'discord.js'
 import Koa from 'koa'
 import startEDDNListenerProcess from './eddn/eddn'

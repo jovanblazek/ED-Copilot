@@ -1,11 +1,11 @@
-import { ChannelType } from 'discord.js'
+import type { ChannelType } from 'discord.js'
 import got from 'got'
 import { createEmbed, useConfirmation } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
-import { CommandHandler } from '../types'
+import type { CommandHandler } from '../types'
 
 type EliteBgsResponse = {
   docs: {

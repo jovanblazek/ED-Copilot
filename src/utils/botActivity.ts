@@ -1,4 +1,5 @@
-import { ActivityOptions, ActivityType, Client } from 'discord.js'
+import type { ActivityOptions, Client } from 'discord.js'
+import { ActivityType } from 'discord.js'
 import { sample } from 'lodash'
 
 const Activities: ActivityOptions[] = [

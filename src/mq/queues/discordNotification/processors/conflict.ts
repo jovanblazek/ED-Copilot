@@ -1,11 +1,11 @@
-import { Faction, Guild, GuildFaction } from '@prisma/client'
-import { Client } from 'discord.js'
+import type { Faction, Guild, GuildFaction } from '@prisma/client'
+import type { Client } from 'discord.js'
 import { InaraUrl } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
 import L from '../../../../i18n/i18n-node'
-import { Locales, Translations } from '../../../../i18n/i18n-types'
+import type { Locales, Translations } from '../../../../i18n/i18n-types'
 import { EDDNConflictStatus, EDDNWarType } from '../../../../types/eddn'
-import { Conflict, DiscordNotificationJobData } from '../types'
+import type { Conflict, DiscordNotificationJobData } from '../types'
 import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 const ConflictTypeTranslationMap: Record<

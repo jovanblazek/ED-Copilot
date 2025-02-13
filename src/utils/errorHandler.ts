@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/node'
-import { CacheType, CommandInteraction } from 'discord.js'
+import type { CacheType, CommandInteraction } from 'discord.js'
 import { DataParseError, InteractionError, SystemNotFoundError, TickFetchError } from '../classes'
 import L from '../i18n/i18n-node'
 import logger from './logger'

@@ -142,6 +142,21 @@ const sk = {
         },
       },
     },
+    retreat: {
+      title: {
+        pending: '⚠️ Nadchádzajúci Ústup ⚠️',
+        active: '⚠️ Aktívny Ústup ⚠️',
+        ended: '⚠️ Ústup Ukončený ⚠️',
+      },
+      description: {
+        pending:
+          'Detegovaný nadchádzajúci ústup v **{systemName}**.\nVplyv: **{influence}**\n[INARA]({inaraUrl})',
+        active:
+          'Detegovaný aktívny ústup v **{systemName}**.\nVplyv: **{influence}**\n[INARA]({inaraUrl})',
+        ended:
+          'Ústup v **{systemName}** bol ukončený. Zostali ste v systéme.\nVplyv: **{influence}**\n[INARA]({inaraUrl})',
+      },
+    },
   },
 } satisfies Translation
 

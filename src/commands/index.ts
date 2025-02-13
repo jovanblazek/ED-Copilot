@@ -7,7 +7,7 @@ import setup from './setup'
 import systemDistance from './systemDistance'
 import systemInfo from './systemInfo'
 import tick from './tick'
-import { CommandHandlerArgs } from './types'
+import type { CommandHandlerArgs } from './types'
 
 type CommandHandlersType = {
   [key: string]: (args: CommandHandlerArgs) => Promise<void>

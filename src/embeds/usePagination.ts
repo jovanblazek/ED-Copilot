@@ -1,16 +1,13 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
+import type {
   CacheType,
   ChatInputCommandInteraction,
-  ComponentType,
   EmbedBuilder,
   MessageActionRowComponentBuilder,
 } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js'
 import { PAGINATION_COLLECTION_TIME, PaginationButtonNames } from '../constants'
 import L from '../i18n/i18n-node'
-import { Locales } from '../i18n/i18n-types'
+import type { Locales } from '../i18n/i18n-types'
 
 export const createPaginationButtons = (activePage: number, pagesLength: number) =>
   new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(

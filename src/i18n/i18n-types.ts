@@ -377,6 +377,51 @@ type RootTranslation = {
 				}
 			}
 		}
+		retreat: {
+			title: {
+				/**
+				 * ⚠​️​ ​R​e​t​r​e​a​t​ ​P​e​n​d​i​n​g​ ​⚠​️
+				 */
+				pending: string
+				/**
+				 * ⚠​️​ ​R​e​t​r​e​a​t​ ​A​c​t​i​v​e​ ​⚠​️
+				 */
+				active: string
+				/**
+				 * ⚠​️​ ​R​e​t​r​e​a​t​ ​E​n​d​e​d​ ​⚠​️
+				 */
+				ended: string
+			}
+			description: {
+				/**
+				 * P​e​n​d​i​n​g​ ​r​e​t​r​e​a​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​*​*​{​s​y​s​t​e​m​N​a​m​e​}​*​*​.​
+			​I​n​f​l​u​e​n​c​e​:​ ​*​*​{​i​n​f​l​u​e​n​c​e​}​*​*​
+			​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)
+				 * @param {unknown} inaraUrl
+				 * @param {unknown} influence
+				 * @param {unknown} systemName
+				 */
+				pending: RequiredParams<'inaraUrl' | 'influence' | 'systemName'>
+				/**
+				 * A​c​t​i​v​e​ ​r​e​t​r​e​a​t​ ​w​a​s​ ​d​e​t​e​c​t​e​d​ ​i​n​ ​*​*​{​s​y​s​t​e​m​N​a​m​e​}​*​*​.​
+			​I​n​f​l​u​e​n​c​e​:​ ​*​*​{​i​n​f​l​u​e​n​c​e​}​*​*​
+			​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)
+				 * @param {unknown} inaraUrl
+				 * @param {unknown} influence
+				 * @param {unknown} systemName
+				 */
+				active: RequiredParams<'inaraUrl' | 'influence' | 'systemName'>
+				/**
+				 * R​e​t​r​e​a​t​ ​h​a​s​ ​e​n​d​e​d​ ​i​n​ ​*​*​{​s​y​s​t​e​m​N​a​m​e​}​*​*​.​ ​Y​o​u​ ​h​a​v​e​ ​r​e​m​a​i​n​e​d​ ​i​n​ ​t​h​e​ ​s​y​s​t​e​m​.​
+			​I​n​f​l​u​e​n​c​e​:​ ​*​*​{​i​n​f​l​u​e​n​c​e​}​*​*​
+			​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)
+				 * @param {unknown} inaraUrl
+				 * @param {unknown} influence
+				 * @param {unknown} systemName
+				 */
+				ended: RequiredParams<'inaraUrl' | 'influence' | 'systemName'>
+			}
+		}
 	}
 }
 
@@ -704,6 +749,42 @@ export type TranslationFunctions = {
 					 */
 					title: () => LocalizedString
 				}
+			}
+		}
+		retreat: {
+			title: {
+				/**
+				 * ⚠️ Retreat Pending ⚠️
+				 */
+				pending: () => LocalizedString
+				/**
+				 * ⚠️ Retreat Active ⚠️
+				 */
+				active: () => LocalizedString
+				/**
+				 * ⚠️ Retreat Ended ⚠️
+				 */
+				ended: () => LocalizedString
+			}
+			description: {
+				/**
+				 * Pending retreat was detected in **{systemName}**.
+			Influence: **{influence}**
+			[INARA]({inaraUrl})
+				 */
+				pending: (arg: { inaraUrl: unknown, influence: unknown, systemName: unknown }) => LocalizedString
+				/**
+				 * Active retreat was detected in **{systemName}**.
+			Influence: **{influence}**
+			[INARA]({inaraUrl})
+				 */
+				active: (arg: { inaraUrl: unknown, influence: unknown, systemName: unknown }) => LocalizedString
+				/**
+				 * Retreat has ended in **{systemName}**. You have remained in the system.
+			Influence: **{influence}**
+			[INARA]({inaraUrl})
+				 */
+				ended: (arg: { inaraUrl: unknown, influence: unknown, systemName: unknown }) => LocalizedString
 			}
 		}
 	}

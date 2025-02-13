@@ -1,15 +1,14 @@
+import * as Sentry from '@sentry/node'
 import { Queue, Worker } from 'bullmq'
 import { RedisKeys } from '../../../constants'
-import { EDDNEventToProcess, EDDNState } from '../../../types/eddn'
+import type { EDDNEventToProcess } from '../../../types/eddn'
 import { getTickTime, Prisma } from '../../../utils'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
-import { EXPANSION_REDIS_EXPIRATION } from './constants'
+import { StateDetectors } from './stateDetectors'
+import type { StateChanges } from './types'
 import {
-  addConflictNotificationsToQueue,
-  addExpansionNotificationToQueue,
-  getConflictByFactionName,
   getTrackedFactionsInSystem,
   groupFactionStatesByType,
   handleStateChanges,
@@ -60,6 +59,8 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         throw new Error(`Faction ${trackedFaction.name} not found in event`)
       }
 
+      let stateChanges: StateChanges
+      // Handle database changes in transaction
       // eslint-disable-next-line no-await-in-loop
       await Prisma.$transaction(async (trx) => {
         const currentDbStates = await trx.factionState.findMany({
@@ -71,7 +72,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         })
         const currentDbStatesByType = groupFactionStatesByType(currentDbStates)
 
-        const stateChanges = await handleStateChanges(trx, {
+        stateChanges = await handleStateChanges(trx, {
           trackedFaction,
           factionFromEvent,
           systemName,
@@ -80,61 +81,41 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         })
 
         await Redis.set(RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName }), 1)
+      })
 
-        // Handle conflict notifications
-        const conflict = getConflictByFactionName(conflicts, trackedFaction.name)
-        if (conflict) {
-          await addConflictNotificationsToQueue({
-            conflict,
-            ...stateChanges,
+      // Process state detectors outside of transaction
+      // eslint-disable-next-line no-await-in-loop
+      const detectorResults = await Promise.allSettled(
+        StateDetectors.map((detector) =>
+          detector.detect({
             systemName,
             trackedFaction,
             factionFromEvent,
             timestamp,
+            stateChanges,
+            conflicts,
           })
-        }
-
-        // Handle expansion notifications
-        const isExpansionPending = stateChanges.pendingStatesToStart.some(
-          (s) => s.State === EDDNState.Expansion
         )
-        const isExpansionActive = stateChanges.activeStatesToStart.some(
-          (s) => s.State === EDDNState.Expansion
-        )
-        const isExpansionEnding = stateChanges.statesToEnd.some(
-          (s) => s.stateName === EDDNState.Expansion.toString()
-        )
+      )
 
-        const expansionRedisKey = RedisKeys.expansion({ factionId: trackedFaction.id })
-
-        if (isExpansionPending || isExpansionActive) {
-          const isFirstOccurrence = await Redis.setnx(expansionRedisKey, 1)
-
-          if (isFirstOccurrence) {
-            await addExpansionNotificationToQueue({
-              systemName,
-              trackedFaction,
-              factionFromEvent,
-              timestamp,
-              type: isExpansionPending ? 'expansionPending' : 'expansionStarted',
-            })
-            await Redis.expire(expansionRedisKey, EXPANSION_REDIS_EXPIRATION)
-          }
-        }
-
-        if (isExpansionEnding) {
-          const isDeletedFromRedis = await Redis.del(expansionRedisKey)
-          if (isDeletedFromRedis) {
-            await addExpansionNotificationToQueue({
-              systemName,
-              trackedFaction,
-              factionFromEvent,
-              timestamp,
-              type: 'expansionEnded',
-            })
-          }
+      // Log any detector failures
+      detectorResults.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          logger.error(
+            result.reason,
+            `[BullMQ] systemProcessingWorker: ${systemName} - ${
+              trackedFaction.name
+            } - Detector ${index} failed`
+          )
+          Sentry.setContext('SystemProcessingWorker', {
+            systemName,
+            factionName: trackedFaction.name,
+            detectorIndex: index,
+          })
+          Sentry.captureException(result.reason)
         }
       })
+
       logger.info(`[BullMQ] systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
     }
   },

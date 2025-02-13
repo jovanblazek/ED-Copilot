@@ -28,6 +28,7 @@
   },
   "rules": {
     "curly": ["error", "all"],
+    "@typescript-eslint/consistent-type-imports": "error",
     "no-void": ["error", { "allowAsStatement": true }],
     "import/prefer-default-export": "off",
     "simple-import-sort/imports": [

@@ -4,7 +4,7 @@ import timezonePlugin from 'dayjs/plugin/timezone'
 import { createEmbed, useConfirmation } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
-import { CommandHandler } from '../types'
+import type { CommandHandler } from '../types'
 
 dayjs.extend(timezonePlugin)
 dayjs.extend(advancedFormatPlugin)

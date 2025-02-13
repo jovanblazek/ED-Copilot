@@ -141,6 +141,21 @@ const en = {
         },
       },
     },
+    retreat: {
+      title: {
+        pending: '⚠️ Retreat Pending ⚠️',
+        active: '⚠️ Retreat Active ⚠️',
+        ended: '⚠️ Retreat Ended ⚠️',
+      },
+      description: {
+        pending:
+          'Pending retreat was detected in **{systemName}**.\nInfluence: **{influence}**\n[INARA]({inaraUrl})',
+        active:
+          'Active retreat was detected in **{systemName}**.\nInfluence: **{influence}**\n[INARA]({inaraUrl})',
+        ended:
+          'Retreat has ended in **{systemName}**. You have remained in the system.\nInfluence: **{influence}**\n[INARA]({inaraUrl})',
+      },
+    },
   },
 } satisfies BaseTranslation
 

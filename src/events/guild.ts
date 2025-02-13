@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/node'
-import { Guild } from 'discord.js'
+import type { Guild } from 'discord.js'
 import { Languages } from '../constants'
 import logger from '../utils/logger'
 import { Prisma } from '../utils/prismaClient'

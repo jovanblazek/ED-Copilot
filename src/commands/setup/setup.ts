@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js'
 import { CommandNames, SetupSubcommands } from '../../constants'
-import { Command } from '../types'
+import type { Command } from '../types'
 import { setupProfileHandler } from './profile'
 
 const SubcommandHandlers = {

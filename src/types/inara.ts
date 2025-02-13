@@ -1,4 +1,4 @@
-import { Ranks } from '../constants'
+import type { Ranks } from '../constants'
 
 export type InaraEvent = {
   eventCustomID?: number

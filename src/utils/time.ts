@@ -1,4 +1,5 @@
-import dayjs, { Dayjs } from 'dayjs'
+import type { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 
 export const getPastTimeDifferenceFromNow = ({ pastTime }: { pastTime: Dayjs }) => {
   const utcTimeNow = dayjs.utc()
