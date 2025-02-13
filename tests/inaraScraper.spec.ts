@@ -18,6 +18,19 @@ const URLS = {
   },
 }
 
+// Mock the redis module
+// NOTE: This is a hack to avoid the redis module from being loaded
+// I am lazy to do it properly because there are only a few test files
+jest.mock('../src/utils/redis', () => ({
+  getTrackedFactions: jest.fn(),
+  Redis: {
+    exists: jest.fn(),
+    set: jest.fn(),
+    get: jest.fn(),
+    del: jest.fn(),
+  },
+}))
+
 describe('Inara scraper', () => {
   it('should return empty array if no data is found', async () => {
     const data = await scrapeInara(NO_RECORDS_URL, 8)
