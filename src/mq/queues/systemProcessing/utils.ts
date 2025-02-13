@@ -322,3 +322,28 @@ export const addExpansionNotificationToQueue = async ({
     },
   })
 }
+
+export const addRetreatNotificationToQueue = async ({
+  systemName,
+  trackedFaction,
+  factionFromEvent,
+  timestamp,
+  type,
+}: {
+  systemName: string
+  trackedFaction: TrackedFaction
+  factionFromEvent: EDDNFaction
+  timestamp: string
+  type: 'retreatPending' | 'retreatStarted' | 'retreatEnded'
+}) => {
+  await addNotificationToQueue<typeof type>({
+    systemName,
+    trackedFaction,
+    eddnFaction: factionFromEvent,
+    timestamp,
+    event: {
+      type,
+      data: {},
+    },
+  })
+}

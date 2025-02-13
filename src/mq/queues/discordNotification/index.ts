@@ -5,6 +5,7 @@ import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { processConflictEvent } from './processors/conflict'
 import { processExpansionEvent } from './processors/expansion'
+import { processRetreatEvent } from './processors/retreat'
 import { DiscordNotificationJobData, EventTypeMap } from './types'
 
 const ConflictEventTypes = ['conflictPending', 'conflictStarted', 'conflictEnded'] as const
@@ -69,7 +70,11 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
           guildFactions,
         })
       } else if (RetreatEventTypes.includes(event.type as RetreatEventType)) {
-        // TODO: Send retreat notification
+        await processRetreatEvent({
+          client,
+          jobData: job.data as DiscordNotificationJobData<RetreatEventType>,
+          guildFactions,
+        })
       }
     },
     {

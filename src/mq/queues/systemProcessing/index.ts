@@ -9,6 +9,7 @@ import { EXPANSION_REDIS_EXPIRATION } from './constants'
 import {
   addConflictNotificationsToQueue,
   addExpansionNotificationToQueue,
+  addRetreatNotificationToQueue,
   getConflictByFactionName,
   getTrackedFactionsInSystem,
   groupFactionStatesByType,
@@ -134,7 +135,40 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             })
           }
         }
+
+        // Handle retreat notifications
+        const isRetreatPending = stateChanges.pendingStatesToStart.some(
+          (s) => s.State === EDDNState.Retreat
+        )
+        const isRetreatActive = stateChanges.activeStatesToStart.some(
+          (s) => s.State === EDDNState.Retreat
+        )
+        const isRetreatEnding = stateChanges.statesToEnd.some(
+          (s) => s.stateName === EDDNState.Retreat.toString()
+        )
+
+        // eslint-disable-next-line no-nested-ternary
+        const retreatEventType = isRetreatPending
+          ? 'retreatPending'
+          : // eslint-disable-next-line no-nested-ternary
+            isRetreatActive
+            ? 'retreatStarted'
+            : // eslint-disable-next-line no-nested-ternary
+              isRetreatEnding
+              ? 'retreatEnded'
+              : undefined
+
+        if (retreatEventType) {
+          await addRetreatNotificationToQueue({
+            systemName,
+            trackedFaction,
+            factionFromEvent,
+            timestamp,
+            type: retreatEventType,
+          })
+        }
       })
+
       logger.info(`[BullMQ] systemProcessingWorker: ${systemName} - ${trackedFaction.name} - END`)
     }
   },
