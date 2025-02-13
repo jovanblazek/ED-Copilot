@@ -1,4 +1,8 @@
-import { addConflictNotificationsToQueue, getConflictByFactionName } from '../utils'
+import {
+  getConflictByFactionName,
+  isConflictInEDDNStateArray,
+  transformConflictToDiscordNotificationData,
+} from '../utils'
 import { BaseStateDetector } from './BaseStateDetector'
 import { StateDetectorConfig } from './types'
 
@@ -12,17 +16,42 @@ export class ConflictDetector extends BaseStateDetector {
     stateChanges,
     conflicts,
   }: StateDetectorConfig) {
-    // Handle conflict notifications
     const conflict = getConflictByFactionName(conflicts, trackedFaction.name)
-    if (conflict) {
-      await addConflictNotificationsToQueue({
-        conflict,
-        ...stateChanges,
-        systemName,
-        trackedFaction,
-        factionFromEvent,
-        timestamp,
-      })
+    if (!conflict) {
+      return
+    }
+
+    const { pendingStatesToStart, activeStatesToStart, recoveringStatesToStart } = stateChanges
+
+    const notificationConfigs = [
+      {
+        states: pendingStatesToStart,
+        type: 'conflictPending' as const,
+      },
+      {
+        states: activeStatesToStart,
+        type: 'conflictStarted' as const,
+      },
+      {
+        states: recoveringStatesToStart,
+        type: 'conflictEnded' as const,
+      },
+    ]
+
+    for (const config of notificationConfigs) {
+      if (isConflictInEDDNStateArray(config.states)) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.addNotificationToQueue<typeof config.type>({
+          systemName,
+          trackedFaction,
+          factionFromEvent,
+          timestamp,
+          type: config.type,
+          data: {
+            conflict: transformConflictToDiscordNotificationData(conflict),
+          },
+        })
+      }
     }
   }
 }

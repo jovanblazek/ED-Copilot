@@ -2,7 +2,6 @@ import { RedisKeys } from '../../../../constants'
 import { EDDNState } from '../../../../types/eddn'
 import { Redis } from '../../../../utils/redis'
 import { EXPANSION_REDIS_EXPIRATION } from '../constants'
-import { addExpansionNotificationToQueue } from '../utils'
 import { BaseStateDetector } from './BaseStateDetector'
 import { StateDetectorConfig } from './types'
 
@@ -27,12 +26,13 @@ export class ExpansionDetector extends BaseStateDetector {
         const isPending = stateChanges.pendingStatesToStart.some(
           (s) => s.State === EDDNState.Expansion
         )
-        await addExpansionNotificationToQueue({
+        await this.addNotificationToQueue({
           systemName,
           trackedFaction,
           factionFromEvent,
           timestamp,
           type: isPending ? 'expansionPending' : 'expansionStarted',
+          data: {},
         })
         await Redis.expire(expansionRedisKey, EXPANSION_REDIS_EXPIRATION)
       }
@@ -41,12 +41,13 @@ export class ExpansionDetector extends BaseStateDetector {
     if (isExpansionEnding) {
       const isDeletedFromRedis = await Redis.del(expansionRedisKey)
       if (isDeletedFromRedis) {
-        await addExpansionNotificationToQueue({
+        await this.addNotificationToQueue({
           systemName,
           trackedFaction,
           factionFromEvent,
           timestamp,
           type: 'expansionEnded',
+          data: {},
         })
       }
     }

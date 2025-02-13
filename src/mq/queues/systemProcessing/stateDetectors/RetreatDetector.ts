@@ -1,5 +1,4 @@
 import { EDDNState } from '../../../../types/eddn'
-import { addRetreatNotificationToQueue } from '../utils'
 import { BaseStateDetector } from './BaseStateDetector'
 import { StateDetectorConfig } from './types'
 
@@ -34,12 +33,13 @@ export class RetreatDetector extends BaseStateDetector {
           : undefined
 
     if (retreatEventType) {
-      await addRetreatNotificationToQueue({
+      await this.addNotificationToQueue({
         systemName,
         trackedFaction,
         factionFromEvent,
         timestamp,
         type: retreatEventType,
+        data: {},
       })
     }
   }

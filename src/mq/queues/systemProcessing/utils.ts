@@ -4,9 +4,8 @@ import { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn
 import { TrackedFaction } from '../../../types/redis'
 import logger from '../../../utils/logger'
 import { getTrackedFactions, Redis } from '../../../utils/redis'
-import { DiscordNotificationQueue } from '../discordNotification'
-import { Conflict, EventTypeMap } from '../discordNotification/types'
-import { CONFLICT_STATES, DISCORD_NOTIFICATION_JOB_NAME } from './constants'
+import { Conflict } from '../discordNotification/types'
+import { CONFLICT_STATES } from './constants'
 import { StateChanges } from './types'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
@@ -196,90 +195,6 @@ export const isSystemAlreadyProcessed = ({
   return Redis.exists(processedSystemRedisKey)
 }
 
-const addNotificationToQueue = <T extends keyof EventTypeMap>({
-  systemName,
-  trackedFaction,
-  eddnFaction,
-  timestamp,
-  event,
-}: {
-  systemName: string
-  trackedFaction: TrackedFaction
-  eddnFaction: EDDNFaction
-  timestamp: string
-  event: {
-    type: T
-    data: EventTypeMap[T]
-  }
-}) =>
-  DiscordNotificationQueue.add(
-    `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}:${event.type}`,
-    {
-      systemName,
-      factionName: trackedFaction.name,
-      factionInfluence: eddnFaction.Influence,
-      timestamp,
-      event,
-    }
-  )
-
-export const addConflictNotificationsToQueue = async ({
-  conflict,
-  activeStatesToStart,
-  pendingStatesToStart,
-  recoveringStatesToStart,
-  systemName,
-  trackedFaction,
-  factionFromEvent,
-  timestamp,
-}: {
-  conflict: EDDNConflict
-  activeStatesToStart: EDDNFactionState[]
-  pendingStatesToStart: EDDNFactionState[]
-  recoveringStatesToStart: EDDNFactionState[]
-  systemName: string
-  trackedFaction: TrackedFaction
-  factionFromEvent: EDDNFaction
-  timestamp: string
-}) => {
-  if (!conflict) {
-    return
-  }
-
-  const notificationConfigs = [
-    {
-      states: pendingStatesToStart,
-      type: 'conflictPending' as const,
-    },
-    {
-      states: activeStatesToStart,
-      type: 'conflictStarted' as const,
-    },
-    {
-      states: recoveringStatesToStart,
-      type: 'conflictEnded' as const,
-    },
-  ]
-
-  for (const config of notificationConfigs) {
-    if (isConflictInEDDNStateArray(config.states)) {
-      // eslint-disable-next-line no-await-in-loop
-      await addNotificationToQueue<typeof config.type>({
-        systemName,
-        trackedFaction,
-        eddnFaction: factionFromEvent,
-        timestamp,
-        event: {
-          type: config.type,
-          data: {
-            conflict: transformConflictToDiscordNotificationData(conflict),
-          },
-        },
-      })
-    }
-  }
-}
-
 export const groupFactionStatesByType = (factionStates: FactionState[]) =>
   factionStates.reduce(
     (acc, state) => {
@@ -293,53 +208,3 @@ export const groupFactionStatesByType = (factionStates: FactionState[]) =>
       [StateType.Recovering]: [] as FactionState[],
     }
   )
-
-export const addExpansionNotificationToQueue = async ({
-  systemName,
-  trackedFaction,
-  factionFromEvent,
-  timestamp,
-  type,
-}: {
-  systemName: string
-  trackedFaction: TrackedFaction
-  factionFromEvent: EDDNFaction
-  timestamp: string
-  type: 'expansionPending' | 'expansionStarted' | 'expansionEnded'
-}) => {
-  await addNotificationToQueue<typeof type>({
-    systemName,
-    trackedFaction,
-    eddnFaction: factionFromEvent,
-    timestamp,
-    event: {
-      type,
-      data: {},
-    },
-  })
-}
-
-export const addRetreatNotificationToQueue = async ({
-  systemName,
-  trackedFaction,
-  factionFromEvent,
-  timestamp,
-  type,
-}: {
-  systemName: string
-  trackedFaction: TrackedFaction
-  factionFromEvent: EDDNFaction
-  timestamp: string
-  type: 'retreatPending' | 'retreatStarted' | 'retreatEnded'
-}) => {
-  await addNotificationToQueue<typeof type>({
-    systemName,
-    trackedFaction,
-    eddnFaction: factionFromEvent,
-    timestamp,
-    event: {
-      type,
-      data: {},
-    },
-  })
-}
