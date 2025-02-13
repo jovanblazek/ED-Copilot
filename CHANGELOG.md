@@ -1,3 +1,9 @@
+## [3.1.0](https://github.com/jovanblazek/ed-copilot/compare/v3.0.4...v3.1.0) (2025-02-13)
+
+### :sparkles: Features
+
+* Retreat state detection ([#37](https://github.com/jovanblazek/ed-copilot/issues/37)) ([783276b](https://github.com/jovanblazek/ed-copilot/commit/783276b76452d185f6920bce5f92a2387486632e))
+
 ## [3.0.4](https://github.com/jovanblazek/ed-copilot/compare/v3.0.3...v3.0.4) (2025-02-13)
 
 ### :bug: Bug Fixes
