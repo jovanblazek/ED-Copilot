@@ -10,7 +10,7 @@ import {
   parseInaraRanks,
   Prisma,
 } from '../utils'
-import { Command } from './types'
+import type { Command } from './types'
 
 // TODO use image from CDN, or local image
 const FALLBACK_CMDR_AVATAR_URL = 'https://inara.cz/data/users/131/131443x1830.jpg'

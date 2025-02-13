@@ -1,7 +1,8 @@
-import { ChildProcess, fork } from 'child_process'
+import type { ChildProcess } from 'child_process'
+import { fork } from 'child_process'
 import path from 'path'
 import { SystemProcessingQueue } from '../mq/queues/systemProcessing'
-import { EDDNEventToProcess } from '../types/eddn'
+import type { EDDNEventToProcess } from '../types/eddn'
 import logger from '../utils/logger'
 
 const SYSTEM_PROCESS_JOB_NAME = 'system-processing'

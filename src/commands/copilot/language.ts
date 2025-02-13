@@ -1,7 +1,7 @@
 import L from '../../i18n/i18n-node'
 import { baseLocale, isLocale } from '../../i18n/i18n-util'
 import { Prisma } from '../../utils'
-import { CommandHandler } from '../types'
+import type { CommandHandler } from '../types'
 
 export const setupLanguagenHandler: CommandHandler = async ({
   interaction,

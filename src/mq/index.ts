@@ -1,4 +1,4 @@
-import { Client } from 'discord.js'
+import type { Client } from 'discord.js'
 import logger from '../utils/logger'
 import { CreateDiscordNotificationWorker } from './queues/discordNotification'
 import { SystemProcessingWorker } from './queues/systemProcessing'

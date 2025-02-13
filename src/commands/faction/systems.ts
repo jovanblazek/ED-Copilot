@@ -1,4 +1,5 @@
-import dayjs, { Dayjs } from 'dayjs'
+import type { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import { blockQuote, hyperlink } from 'discord.js'
 import got from 'got'
 import { chunk, groupBy, map, round, sortBy } from 'lodash'

@@ -8,7 +8,7 @@ import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
 import { getTickTimeInTimezone } from '../utils'
 import { isAfterTime } from '../utils/time'
-import { Command } from './types'
+import type { Command } from './types'
 
 type Faction = {
   name: string

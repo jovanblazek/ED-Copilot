@@ -4,7 +4,7 @@ import {
   transformConflictToDiscordNotificationData,
 } from '../utils'
 import { BaseStateDetector } from './BaseStateDetector'
-import { StateDetectorConfig } from './types'
+import type { StateDetectorConfig } from './types'
 
 export class ConflictDetector extends BaseStateDetector {
   // eslint-disable-next-line class-methods-use-this

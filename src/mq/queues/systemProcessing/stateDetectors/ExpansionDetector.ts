@@ -3,7 +3,7 @@ import { EDDNState } from '../../../../types/eddn'
 import { Redis } from '../../../../utils/redis'
 import { EXPANSION_REDIS_EXPIRATION } from '../constants'
 import { BaseStateDetector } from './BaseStateDetector'
-import { StateDetectorConfig } from './types'
+import type { StateDetectorConfig } from './types'
 
 export class ExpansionDetector extends BaseStateDetector {
   async detect({

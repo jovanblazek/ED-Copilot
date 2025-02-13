@@ -1,12 +1,13 @@
-import { FactionState, Prisma as PrismaClientType, StateType } from '@prisma/client'
+import type { FactionState, Prisma as PrismaClientType } from '@prisma/client'
+import { StateType } from '@prisma/client'
 import { RedisKeys } from '../../../constants'
-import { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn'
-import { TrackedFaction } from '../../../types/redis'
+import type { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn'
+import type { TrackedFaction } from '../../../types/redis'
 import logger from '../../../utils/logger'
 import { getTrackedFactions, Redis } from '../../../utils/redis'
-import { Conflict } from '../discordNotification/types'
+import type { Conflict } from '../discordNotification/types'
 import { CONFLICT_STATES } from './constants'
-import { StateChanges } from './types'
+import type { StateChanges } from './types'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
   const trackedFactions = await getTrackedFactions()

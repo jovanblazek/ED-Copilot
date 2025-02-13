@@ -1,12 +1,12 @@
 import { Queue, Worker } from 'bullmq'
-import { Client } from 'discord.js'
+import type { Client } from 'discord.js'
 import { Prisma } from '../../../utils'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { processConflictEvent } from './processors/conflict'
 import { processExpansionEvent } from './processors/expansion'
 import { processRetreatEvent } from './processors/retreat'
-import { DiscordNotificationJobData, EventTypeMap } from './types'
+import type { DiscordNotificationJobData, EventTypeMap } from './types'
 
 const ConflictEventTypes = ['conflictPending', 'conflictStarted', 'conflictEnded'] as const
 const ExpansionEventTypes = ['expansionPending', 'expansionStarted', 'expansionEnded'] as const

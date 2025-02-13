@@ -1,9 +1,9 @@
 /* eslint-disable class-methods-use-this */
-import { EDDNState } from '../../../../types/eddn'
+import type { EDDNState } from '../../../../types/eddn'
 import { DiscordNotificationQueue } from '../../discordNotification'
-import { EventTypeMap } from '../../discordNotification/types'
+import type { EventTypeMap } from '../../discordNotification/types'
 import { DISCORD_NOTIFICATION_JOB_NAME } from '../constants'
-import { StateDetector, StateDetectorConfig } from './types'
+import type { StateDetector, StateDetectorConfig } from './types'
 
 export abstract class BaseStateDetector implements StateDetector {
   protected isStatePending(

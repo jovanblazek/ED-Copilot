@@ -2,7 +2,7 @@ import { ChannelType, PermissionFlagsBits, SlashCommandBuilder } from 'discord.j
 import { InteractionError } from '../../classes'
 import { CommandNames, CopilotSubcommands, Languages } from '../../constants'
 import logger from '../../utils/logger'
-import { Command } from '../types'
+import type { Command } from '../types'
 import { setupFactionHandler } from './faction'
 import { setupLanguagenHandler } from './language'
 import { setupTickReportChannelHandler } from './tickReportChannel'

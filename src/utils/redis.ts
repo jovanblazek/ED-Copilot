@@ -1,6 +1,6 @@
 import RedisClient from 'ioredis'
 import { RedisKeys } from '../constants'
-import { TrackedFaction } from '../types/redis'
+import type { TrackedFaction } from '../types/redis'
 import { Prisma } from './prismaClient'
 
 const { REDIS_PORT, REDIS_USERNAME, REDIS_PASSWORD, REDIS_HOST } = process.env

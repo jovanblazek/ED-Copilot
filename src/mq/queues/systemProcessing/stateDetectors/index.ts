@@ -1,7 +1,7 @@
 import { ConflictDetector } from './ConflictDetector'
 import { ExpansionDetector } from './ExpansionDetector'
 import { RetreatDetector } from './RetreatDetector'
-import { StateDetector } from './types'
+import type { StateDetector } from './types'
 
 export const StateDetectors: StateDetector[] = [
   new ConflictDetector(),

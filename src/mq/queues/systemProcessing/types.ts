@@ -1,5 +1,5 @@
-import { FactionState } from '@prisma/client'
-import { EDDNFactionState } from '../../../types/eddn'
+import type { FactionState } from '@prisma/client'
+import type { EDDNFactionState } from '../../../types/eddn'
 
 export type StateChanges = {
   statesToEnd: FactionState[]

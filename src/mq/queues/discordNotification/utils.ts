@@ -1,5 +1,6 @@
-import { GuildFaction } from '@prisma/client'
-import { ChannelType, Client } from 'discord.js'
+import type { GuildFaction } from '@prisma/client'
+import type { Client } from 'discord.js'
+import { ChannelType } from 'discord.js'
 
 export const getNotificationChannelFromGuildFactionOrThrow = ({
   client,

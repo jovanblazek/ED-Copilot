@@ -1,4 +1,4 @@
-import { Awaitable, Client, ClientEvents } from 'discord.js'
+import type { Awaitable, Client, ClientEvents } from 'discord.js'
 import { onGuildJoin, onGuildLeave } from './guild'
 import { onInteractionCreate } from './interaction'
 

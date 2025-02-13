@@ -1,6 +1,6 @@
 import { EDDNState } from '../../../../types/eddn'
 import { BaseStateDetector } from './BaseStateDetector'
-import { StateDetectorConfig } from './types'
+import type { StateDetectorConfig } from './types'
 
 export class RetreatDetector extends BaseStateDetector {
   // eslint-disable-next-line class-methods-use-this

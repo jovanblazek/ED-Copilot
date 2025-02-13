@@ -2,7 +2,7 @@ import { ChannelType } from 'discord.js'
 import { createEmbed, useConfirmation } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
-import { CommandHandler } from '../types'
+import type { CommandHandler } from '../types'
 
 export const setupTickReportChannelHandler: CommandHandler = async ({
   interaction,

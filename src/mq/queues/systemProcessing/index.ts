@@ -1,13 +1,13 @@
 import * as Sentry from '@sentry/node'
 import { Queue, Worker } from 'bullmq'
 import { RedisKeys } from '../../../constants'
-import { EDDNEventToProcess } from '../../../types/eddn'
+import type { EDDNEventToProcess } from '../../../types/eddn'
 import { getTickTime, Prisma } from '../../../utils'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { StateDetectors } from './stateDetectors'
-import { StateChanges } from './types'
+import type { StateChanges } from './types'
 import {
   getTrackedFactionsInSystem,
   groupFactionStatesByType,

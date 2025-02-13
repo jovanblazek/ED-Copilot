@@ -1,11 +1,11 @@
-import {
+import type {
   CacheType,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from 'discord.js'
-import { Locales } from '../i18n/i18n-types'
+import type { Locales } from '../i18n/i18n-types'
 
 export type CommandHandlerArgs<ContextExtension = Record<string, unknown>> = {
   interaction: ChatInputCommandInteraction<CacheType>

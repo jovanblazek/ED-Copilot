@@ -1,8 +1,8 @@
 import { Subscriber } from 'zeromq'
 import zlib from 'zlib'
-import { EDDNConflict, EDDNEventToProcess, EDDNFaction } from '../types/eddn'
+import type { EDDNConflict, EDDNEventToProcess, EDDNFaction } from '../types/eddn'
 import logger from '../utils/logger'
-import { HttpsEddnEdcdIoSchemasJournal1 } from './types'
+import type { HttpsEddnEdcdIoSchemasJournal1 } from './types'
 
 const EDDN_URL = 'tcp://eddn.edcd.io:9500'
 const JOURNAL_EVENT_SCHEMA = 'https://eddn.edcd.io/schemas/journal/1'

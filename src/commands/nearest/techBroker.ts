@@ -2,8 +2,9 @@ import { chunk } from 'lodash'
 import { SystemNotFoundError } from '../../classes'
 import { usePagination } from '../../embeds'
 import L from '../../i18n/i18n-node'
-import { generateInaraEmbed, ScrapedInaraData, scrapeInara } from '../../utils'
-import { CommandHandler } from '../types'
+import type { ScrapedInaraData } from '../../utils'
+import { generateInaraEmbed, scrapeInara } from '../../utils'
+import type { CommandHandler } from '../types'
 import { PARAMS } from './constants'
 
 const CELLS_PER_ROW = 8
