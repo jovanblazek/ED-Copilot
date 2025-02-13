@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { Queue, Worker } from 'bullmq'
 import { RedisKeys } from '../../../constants'
 import { EDDNEventToProcess } from '../../../types/eddn'
@@ -6,6 +7,7 @@ import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { StateDetectors } from './stateDetectors'
+import { StateChanges } from './types'
 import {
   getTrackedFactionsInSystem,
   groupFactionStatesByType,
@@ -57,6 +59,8 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         throw new Error(`Faction ${trackedFaction.name} not found in event`)
       }
 
+      let stateChanges: StateChanges
+      // Handle database changes in transaction
       // eslint-disable-next-line no-await-in-loop
       await Prisma.$transaction(async (trx) => {
         const currentDbStates = await trx.factionState.findMany({
@@ -68,7 +72,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         })
         const currentDbStatesByType = groupFactionStatesByType(currentDbStates)
 
-        const stateChanges = await handleStateChanges(trx, {
+        stateChanges = await handleStateChanges(trx, {
           trackedFaction,
           factionFromEvent,
           systemName,
@@ -77,11 +81,13 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         })
 
         await Redis.set(RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName }), 1)
+      })
 
-        // Process all state detectors
-        for (const detector of StateDetectors) {
-          // eslint-disable-next-line no-await-in-loop
-          await detector.detect({
+      // Process state detectors outside of transaction
+      // eslint-disable-next-line no-await-in-loop
+      const detectorResults = await Promise.allSettled(
+        StateDetectors.map((detector) =>
+          detector.detect({
             systemName,
             trackedFaction,
             factionFromEvent,
@@ -89,6 +95,24 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             stateChanges,
             conflicts,
           })
+        )
+      )
+
+      // Log any detector failures
+      detectorResults.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          logger.error(
+            result.reason,
+            `[BullMQ] systemProcessingWorker: ${systemName} - ${
+              trackedFaction.name
+            } - Detector ${index} failed`
+          )
+          Sentry.setContext('SystemProcessingWorker', {
+            systemName,
+            factionName: trackedFaction.name,
+            detectorIndex: index,
+          })
+          Sentry.captureException(result.reason)
         }
       })
 
