@@ -1,16 +1,12 @@
 import { Queue, Worker } from 'bullmq'
 import { RedisKeys } from '../../../constants'
-import { EDDNEventToProcess, EDDNState } from '../../../types/eddn'
+import { EDDNEventToProcess } from '../../../types/eddn'
 import { getTickTime, Prisma } from '../../../utils'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
-import { EXPANSION_REDIS_EXPIRATION } from './constants'
+import { StateDetectors } from './stateDetectors'
 import {
-  addConflictNotificationsToQueue,
-  addExpansionNotificationToQueue,
-  addRetreatNotificationToQueue,
-  getConflictByFactionName,
   getTrackedFactionsInSystem,
   groupFactionStatesByType,
   handleStateChanges,
@@ -82,89 +78,16 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
 
         await Redis.set(RedisKeys.processedSystem({ tickTimestamp: tickTimeISO, systemName }), 1)
 
-        // Handle conflict notifications
-        const conflict = getConflictByFactionName(conflicts, trackedFaction.name)
-        if (conflict) {
-          await addConflictNotificationsToQueue({
-            conflict,
-            ...stateChanges,
+        // Process all state detectors
+        for (const detector of StateDetectors) {
+          // eslint-disable-next-line no-await-in-loop
+          await detector.detect({
             systemName,
             trackedFaction,
             factionFromEvent,
             timestamp,
-          })
-        }
-
-        // Handle expansion notifications
-        const isExpansionPending = stateChanges.pendingStatesToStart.some(
-          (s) => s.State === EDDNState.Expansion
-        )
-        const isExpansionActive = stateChanges.activeStatesToStart.some(
-          (s) => s.State === EDDNState.Expansion
-        )
-        const isExpansionEnding = stateChanges.statesToEnd.some(
-          (s) => s.stateName === EDDNState.Expansion.toString()
-        )
-
-        const expansionRedisKey = RedisKeys.expansion({ factionId: trackedFaction.id })
-
-        if (isExpansionPending || isExpansionActive) {
-          const isFirstOccurrence = await Redis.setnx(expansionRedisKey, 1)
-
-          if (isFirstOccurrence) {
-            await addExpansionNotificationToQueue({
-              systemName,
-              trackedFaction,
-              factionFromEvent,
-              timestamp,
-              type: isExpansionPending ? 'expansionPending' : 'expansionStarted',
-            })
-            await Redis.expire(expansionRedisKey, EXPANSION_REDIS_EXPIRATION)
-          }
-        }
-
-        if (isExpansionEnding) {
-          const isDeletedFromRedis = await Redis.del(expansionRedisKey)
-          if (isDeletedFromRedis) {
-            await addExpansionNotificationToQueue({
-              systemName,
-              trackedFaction,
-              factionFromEvent,
-              timestamp,
-              type: 'expansionEnded',
-            })
-          }
-        }
-
-        // Handle retreat notifications
-        const isRetreatPending = stateChanges.pendingStatesToStart.some(
-          (s) => s.State === EDDNState.Retreat
-        )
-        const isRetreatActive = stateChanges.activeStatesToStart.some(
-          (s) => s.State === EDDNState.Retreat
-        )
-        const isRetreatEnding = stateChanges.statesToEnd.some(
-          (s) => s.stateName === EDDNState.Retreat.toString()
-        )
-
-        // eslint-disable-next-line no-nested-ternary
-        const retreatEventType = isRetreatPending
-          ? 'retreatPending'
-          : // eslint-disable-next-line no-nested-ternary
-            isRetreatActive
-            ? 'retreatStarted'
-            : // eslint-disable-next-line no-nested-ternary
-              isRetreatEnding
-              ? 'retreatEnded'
-              : undefined
-
-        if (retreatEventType) {
-          await addRetreatNotificationToQueue({
-            systemName,
-            trackedFaction,
-            factionFromEvent,
-            timestamp,
-            type: retreatEventType,
+            stateChanges,
+            conflicts,
           })
         }
       })

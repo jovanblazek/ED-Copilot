@@ -7,6 +7,7 @@ import { getTrackedFactions, Redis } from '../../../utils/redis'
 import { DiscordNotificationQueue } from '../discordNotification'
 import { Conflict, EventTypeMap } from '../discordNotification/types'
 import { CONFLICT_STATES, DISCORD_NOTIFICATION_JOB_NAME } from './constants'
+import { StateChanges } from './types'
 
 export const getTrackedFactionsInSystem = async (eventFactions: EDDNFaction[]) => {
   const trackedFactions = await getTrackedFactions()
@@ -97,12 +98,7 @@ export const handleStateChanges = async (
     timestamp: string
     currentDbStatesByType: Record<StateType, FactionState[]>
   }
-): Promise<{
-  statesToEnd: FactionState[]
-  activeStatesToStart: EDDNFactionState[]
-  pendingStatesToStart: EDDNFactionState[]
-  recoveringStatesToStart: EDDNFactionState[]
-}> => {
+): Promise<StateChanges> => {
   const statesToEnd = getAllStatesToEnd({
     currentDbStatesByType,
     factionFromEvent,
