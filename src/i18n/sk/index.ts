@@ -90,17 +90,23 @@ const sk = {
   },
   discordNotification: {
     conflict: {
-      conflictType: {
-        election: 'Voľby',
-        civilWar: 'Civilná vojna',
-        war: 'Vojna',
+      title: {
+        war: {
+          pending: '{emoji} Nadchádzajúca Vojna v {systemName} {emoji}',
+          active: '{emoji} Aktívna Vojna v {systemName} {emoji}',
+          ended: '{emoji} Ukončená Vojna v {systemName} {emoji}',
+        },
+        civilWar: {
+          pending: '{emoji} Nadchádzajúca Civilná Vojna v {systemName} {emoji}',
+          active: '{emoji} Aktívna Civilná Vojna v {systemName} {emoji}',
+          ended: '{emoji} Ukončená Civilná Vojna v {systemName} {emoji}',
+        },
+        election: {
+          pending: '{emoji} Nadchádzajúce Voľby v {systemName} {emoji}',
+          active: '{emoji} Aktívne Voľby v {systemName} {emoji}',
+          ended: '{emoji} Voľby ukončené v {systemName} {emoji}',
+        },
       },
-      status: {
-        pending: 'Nadchádzajúca',
-        active: 'Aktívna',
-        ended: 'Ukončená',
-      },
-      title: '{emoji} {status} {conflictType} v {systemName} {emoji}', // TODO: incorrect gender of `status` in case of election
       fields: {
         status: {
           title: 'Status',
@@ -109,24 +115,24 @@ const sk = {
           title: 'Oponent:',
         },
         yourStake: {
-          title: '🏆 Získané pri víťazstve',
+          title: '💥 Stratené pri prehre',
         },
         opponentStake: {
-          title: '💥 Stratené pri prehre',
+          title: '🏆 Získané pri víťazstve',
         },
       },
     },
     expansion: {
       title: {
-        pending: 'Nadchádzajúca Expanzia',
-        active: 'Aktívna Expanzia',
-        ended: 'Expansia Ukončená',
+        pending: '✈️ Nadchádzajúca Expanzia ✈️',
+        active: '✈️ Aktívna Expanzia ✈️',
+        ended: '✈️ Expanzia Ukončená ✈️',
       },
       description: {
         pending:
-          'Detegovaná nadchádzajúca expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+          'Detegovaná nadchádzajúca expanzia v **{systemName}**.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.\n\n*Z technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.*',
         active:
-          'Detegovaná aktívna expanzia v {systemName}.\nZ technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detegovania.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
+          'Detegovaná aktívna expanzia v **{systemName}**.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.\n\n*Z technických dôvodov nie je možné určiť presný pôvod expanzie v čase jej detekcie.*',
         ended:
           'Je príliš skoro na to, aby sme určili, kam sa vaša frakcia expandovala.\nSkontrolujte [INARU]({inaraUrl}) alebo hru pre viac informácií.',
       },

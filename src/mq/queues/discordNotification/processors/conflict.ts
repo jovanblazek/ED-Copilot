@@ -10,21 +10,21 @@ import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 const ConflictTypeTranslationMap: Record<
   EDDNWarType,
-  keyof Translations['discordNotification']['conflict']['conflictType']
+  keyof Translations['discordNotification']['conflict']['title']
 > = {
   [EDDNWarType.Election]: 'election',
   [EDDNWarType.CivilWar]: 'civilWar',
   [EDDNWarType.War]: 'war',
-}
+} as const
 
 const ConflictStatusTranslationMap: Record<
   EDDNConflictStatus,
-  keyof Translations['discordNotification']['conflict']['status']
+  keyof Translations['discordNotification']['conflict']['title']['war']
 > = {
   [EDDNConflictStatus.Pending]: 'pending',
   [EDDNConflictStatus.Active]: 'active',
   [EDDNConflictStatus.Ended]: 'ended',
-}
+} as const
 
 const getEmbedTitle = ({
   systemName,
@@ -37,11 +37,11 @@ const getEmbedTitle = ({
 }) => {
   const { status, conflictType } = conflict
   const emoji = status === EDDNConflictStatus.Ended ? '🕊️' : '🚨'
+  const conflictTypeKey = ConflictTypeTranslationMap[conflictType]
+  const statusKey = ConflictStatusTranslationMap[status]
 
-  return L[locale].discordNotification.conflict.title({
+  return L[locale].discordNotification.conflict.title[conflictTypeKey][statusKey]({
     emoji,
-    conflictType: ConflictTypeTranslationMap[conflictType],
-    status: ConflictStatusTranslationMap[status],
     systemName,
   })
 }
@@ -78,13 +78,13 @@ const generateEmbed = ({
         inline: true,
       },
       {
-        name: L[locale].discordNotification.conflict.fields.yourStake.title(),
+        name: L[locale].discordNotification.conflict.fields.opponentStake.title(),
         value: opponent.stake,
         inline: false,
       },
       {
-        name: L[locale].discordNotification.conflict.fields.opponentStake.title(),
-        value: faction1.stake,
+        name: L[locale].discordNotification.conflict.fields.yourStake.title(),
+        value: trackedFaction.stake,
         inline: false,
       },
       {

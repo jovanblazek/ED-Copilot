@@ -89,17 +89,23 @@ const en = {
   },
   discordNotification: {
     conflict: {
-      conflictType: {
-        election: 'Election',
-        civilWar: 'Civil War',
-        war: 'War',
+      title: {
+        war: {
+          pending: '{emoji} Pending War in {systemName} {emoji}',
+          active: '{emoji} Active War in {systemName} {emoji}',
+          ended: '{emoji} War Ended in {systemName} {emoji}',
+        },
+        civilWar: {
+          pending: '{emoji} Pending Civil War in {systemName} {emoji}',
+          active: '{emoji} Active Civil War in {systemName} {emoji}',
+          ended: '{emoji} Civil War Ended in {systemName} {emoji}',
+        },
+        election: {
+          pending: '{emoji} Pending Election in {systemName} {emoji}',
+          active: '{emoji} Active Election in {systemName} {emoji}',
+          ended: '{emoji} Election Ended in {systemName} {emoji}',
+        },
       },
-      status: {
-        pending: 'Pending',
-        active: 'Active',
-        ended: 'Ended',
-      },
-      title: '{emoji} {conflictType} {status} in {systemName} {emoji}',
       fields: {
         status: {
           title: 'Status',
@@ -108,24 +114,24 @@ const en = {
           title: 'Oponent:',
         },
         yourStake: {
-          title: '🏆 Gained on Victory',
+          title: '💥 Lost on Defeat',
         },
         opponentStake: {
-          title: '💥 Lost on Defeat',
+          title: '🏆 Gained on Victory',
         },
       },
     },
     expansion: {
       title: {
-        pending: 'Expansion Pending',
-        active: 'Expansion Active',
-        ended: 'Expansion Ended',
+        pending: '✈️ Expansion Pending ✈️',
+        active: '✈️ Expansion Active ✈️',
+        ended: '✈️ Expansion Ended ✈️',
       },
       description: {
         pending:
-          'Pending expansion was detected in {systemName}.\nDue to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.\nCheck the [INARA]({inaraUrl}) or in game for more information.',
+          'Pending expansion was detected in **{systemName}**.\nCheck the [INARA]({inaraUrl}) or in game for more information.\n\n*Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.*',
         active:
-          'Detected active expansion in {systemName}.\nDue to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.\nCheck the [INARA]({inaraUrl}) or in game for more information.',
+          'Active expansion was detected in **{systemName}**.\nCheck the [INARA]({inaraUrl}) or in game for more information.\n\n*Due to technical limitations, it is not possible to determine the exact origin of the expansion at the time it was detected.*',
         ended:
           'It is too early to determine where your faction expanded to.\nCheck the [INARA]({inaraUrl}) or in game for more information.',
       },
