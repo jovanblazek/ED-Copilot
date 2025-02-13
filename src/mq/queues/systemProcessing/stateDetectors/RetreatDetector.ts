@@ -21,16 +21,17 @@ export class RetreatDetector extends BaseStateDetector {
       (s) => s.stateName === EDDNState.Retreat.toString()
     )
 
-    // eslint-disable-next-line no-nested-ternary
-    const retreatEventType = isRetreatPending
-      ? 'retreatPending'
-      : // eslint-disable-next-line no-nested-ternary
-        isRetreatActive
-        ? 'retreatStarted'
-        : // eslint-disable-next-line no-nested-ternary
-          isRetreatEnding
-          ? 'retreatEnded'
-          : undefined
+    let retreatEventType: 'retreatPending' | 'retreatStarted' | 'retreatEnded' | undefined
+
+    if (isRetreatPending) {
+      retreatEventType = 'retreatPending'
+    } else if (isRetreatActive) {
+      retreatEventType = 'retreatStarted'
+    } else if (isRetreatEnding) {
+      retreatEventType = 'retreatEnded'
+    } else {
+      retreatEventType = undefined
+    }
 
     if (retreatEventType) {
       await this.addNotificationToQueue({
