@@ -10,5 +10,6 @@ if (SENTRY_DSN && IS_PRODUCTION) {
     tracesSampleRate: 1.0,
     release: process.env.npm_package_version,
     normalizeDepth: 6,
+    integrations: [Sentry.prismaIntegration()],
   })
 }

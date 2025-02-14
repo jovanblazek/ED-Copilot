@@ -30,7 +30,7 @@
   "homepage": "https://github.com/jovanblazek/ED-Copilot#readme",
   "dependencies": {
     "@prisma/client": "^6.3.1",
-    "@sentry/node": "^8.55.0",
+    "@sentry/node": "^9.1.0",
     "bullmq": "^5.40.3",
     "dayjs": "^1.11.13",
     "discord.js": "14.18.0",
