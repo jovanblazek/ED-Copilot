@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/node'
 import { Queue, Worker } from 'bullmq'
 import { RedisKeys } from '../../../constants'
 import type { EDDNEventToProcess } from '../../../types/eddn'
-import { getTickTime, Prisma } from '../../../utils'
+import { getTickTimeUTC, Prisma } from '../../../utils'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
@@ -33,7 +33,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
   async (job) => {
     const { StarSystem: systemName, Factions: factions, Conflicts: conflicts, timestamp } = job.data
 
-    const tickTime = await getTickTime()
+    const tickTime = await getTickTimeUTC()
     if (!tickTime) {
       logger.warn(`[BullMQ] systemProcessingWorker: ${systemName} - No tick time found`)
       return

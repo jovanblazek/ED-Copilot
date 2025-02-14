@@ -2,13 +2,19 @@ import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import type { Client } from 'discord.js'
 import { bold, ChannelType, hyperlink } from 'discord.js'
-import { io } from 'socket.io-client'
-import { RedisKeys } from '../constants'
+import { Subscriber } from 'zeromq'
+import zlib from 'zlib'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
 import logger from './logger'
 import { Prisma } from './prismaClient'
 import { Redis } from './redis'
+import { saveTickTimeToRedis } from './tick'
+
+const TICK_DETECTOR_URL = 'tcp://infomancer.uk:5551'
+const TOPIC = 'GalaxyTick'
+const RECONNECT_DELAY = 60000 // 1 minute
+const MAX_RECONNECT_DELAY = 480000 // 8 minutes
 
 const reportTick = async (client: Client, tickTime: Dayjs) => {
   const guilds = await Prisma.guild.findMany({
@@ -56,27 +62,84 @@ const cleanupProcessedSystems = async () => {
   }
 }
 
-export default (client: Client) => {
-  const socket = io('https://tick.edcd.io/', {
-    reconnectionDelay: 60000, // 1 minute
-    reconnectionDelayMax: 480000, // 8 minutes
-    transports: ['websocket'],
-  })
+const connect = (socket: Subscriber) => {
+  try {
+    socket.connect(TICK_DETECTOR_URL)
+    socket.subscribe(TOPIC)
+    logger.info('[Tick Detector] Connected')
+    return true
+  } catch (error) {
+    logger.error(error, '[Tick Detector] Failed to connect')
+    return false
+  }
+}
 
-  socket.on('connect', () => {
-    logger.info('Connected to Tick Detector')
-  })
+export default async (client: Client) => {
+  let currentDelay = RECONNECT_DELAY
+  let socket: Subscriber | null = null
+  let isShuttingDown = false
 
-  socket.on('tick', async (data: string | number | Date) => {
-    const tickTime = dayjs.utc(data)
-    logger.info('Tick detected', tickTime)
-    await Redis.set(RedisKeys.ticktime, tickTime.toISOString())
-    void reportTick(client, tickTime)
-    await cleanupProcessedSystems()
-  })
+  const cleanup = () => {
+    isShuttingDown = true
+    if (socket) {
+      try {
+        socket.close()
+        logger.info('[Tick Detector] Closed connection')
+      } catch (error) {
+        logger.error(error, '[Tick Detector] Error closing connection')
+      }
+    }
+  }
 
-  socket.on('connect_error', (error) => {
-    // We don't want to spam the logs with connection errors
-    logger.warn(error, 'Error while connecting to Tick Detector')
-  })
+  const initializeSocket = async () => {
+    if (isShuttingDown) {
+      return
+    }
+
+    socket = new Subscriber()
+    const isConnected = connect(socket)
+
+    if (!isConnected) {
+      socket.close()
+      currentDelay = Math.min(currentDelay * 2, MAX_RECONNECT_DELAY)
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      setTimeout(initializeSocket, currentDelay)
+      return
+    }
+
+    currentDelay = RECONNECT_DELAY // Reset delay on successful connection
+
+    try {
+      for await (const [topic, msg] of socket) {
+        if (isShuttingDown) {
+          break
+        }
+
+        if (topic.toString() === TOPIC) {
+          try {
+            const decompressed = zlib.inflateSync(msg)
+            const data = JSON.parse(decompressed.toString()) as { timestamp: string }
+            const tickTime = dayjs.utc(data.timestamp)
+
+            logger.info('[Tick Detector] Tick detected', tickTime)
+            await saveTickTimeToRedis(tickTime)
+            void reportTick(client, tickTime)
+            await cleanupProcessedSystems()
+          } catch (error) {
+            logger.error(error, '[Tick Detector] Error processing tick message')
+          }
+        }
+      }
+    } catch (error) {
+      if (!isShuttingDown) {
+        logger.error(error, '[Tick Detector] Socket error - attempting reconnection')
+        cleanup()
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        setTimeout(initializeSocket, currentDelay)
+      }
+    }
+  }
+
+  await initializeSocket()
+  return cleanup
 }

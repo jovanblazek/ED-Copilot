@@ -18,13 +18,15 @@ const BotClient = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 })
 
-BotClient.once('ready', () => {
+let tickDetectorCleanup: (() => void) | null = null
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+BotClient.once('ready', async () => {
   initEventHandlers(BotClient)
   initActivityHandler(BotClient)
   if (process.env.NODE_ENV === 'production') {
-    initTickDetector(BotClient)
+    tickDetectorCleanup = await initTickDetector(BotClient)
   }
-
   logger.info('[Bot] Ready')
 })
 
@@ -67,6 +69,13 @@ const shutdown = async () => {
   logger.info('[Bot] Closing client connection...')
   await BotClient.destroy()
   logger.info('[Bot] Connection closed')
+
+  // Close tick detector
+  if (tickDetectorCleanup) {
+    logger.info('[Tick Detector] Initiating shutdown')
+    tickDetectorCleanup()
+    logger.info('[Tick Detector] Connection closed')
+  }
 
   // Close EDDN worker
   if (eddnProcess) {
