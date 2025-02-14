@@ -1,3 +1,9 @@
+## [3.3.0](https://github.com/jovanblazek/ed-copilot/compare/v3.2.0...v3.3.0) (2025-02-14)
+
+### :sparkles: Features
+
+* Influence threat detector ([#39](https://github.com/jovanblazek/ed-copilot/issues/39)) ([368bce0](https://github.com/jovanblazek/ed-copilot/commit/368bce064e928c670d9f89b38f4cfbf5476bca30))
+
 ## [3.2.0](https://github.com/jovanblazek/ed-copilot/compare/v3.1.0...v3.2.0) (2025-02-14)
 
 ### :sparkles: Features
