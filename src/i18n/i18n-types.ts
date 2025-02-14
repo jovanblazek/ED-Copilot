@@ -422,6 +422,29 @@ type RootTranslation = {
 				ended: RequiredParams<'inaraUrl' | 'influence' | 'systemName'>
 			}
 		}
+		influenceThreat: {
+			/**
+			 * ⚠​️​ ​{​s​y​s​t​e​m​N​a​m​e​}​ ​m​a​y​ ​b​e​ ​u​n​d​e​r​ ​t​h​r​e​a​t​ ​⚠​️
+			 * @param {unknown} systemName
+			 */
+			title: RequiredParams<'systemName'>
+			/**
+			 * *​*​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​}​*​*​ ​i​s​ ​o​n​l​y​ ​*​*​{​i​n​f​l​u​e​n​c​e​D​i​f​f​}​%​*​*​ ​b​e​h​i​n​d​ ​y​o​u​r​ ​f​a​c​t​i​o​n​!​
+		​T​h​e​y​ ​m​i​g​h​t​ ​t​r​y​ ​t​o​ ​i​n​i​t​i​a​t​e​ ​a​ ​c​o​n​f​l​i​c​t​ ​s​o​o​n​.​
+		​
+		​-​ ​{​f​a​c​t​i​o​n​N​a​m​e​}​ ​(​*​*​{​f​a​c​t​i​o​n​I​n​f​l​u​e​n​c​e​}​%​*​*​)​
+		​-​ ​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​}​ ​(​*​*​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​I​n​f​l​u​e​n​c​e​}​%​*​*​)​
+		​
+		​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)
+			 * @param {unknown} factionInfluence
+			 * @param {unknown} factionName
+			 * @param {unknown} inaraUrl
+			 * @param {unknown} influenceDiff
+			 * @param {unknown} threateningFaction
+			 * @param {unknown} threateningFactionInfluence
+			 */
+			description: RequiredParams<'factionInfluence' | 'factionName' | 'inaraUrl' | 'influenceDiff' | 'threateningFaction' | 'threateningFaction' | 'threateningFactionInfluence'>
+		}
 	}
 }
 
@@ -786,6 +809,22 @@ export type TranslationFunctions = {
 				 */
 				ended: (arg: { inaraUrl: unknown, influence: unknown, systemName: unknown }) => LocalizedString
 			}
+		}
+		influenceThreat: {
+			/**
+			 * ⚠️ {systemName} may be under threat ⚠️
+			 */
+			title: (arg: { systemName: unknown }) => LocalizedString
+			/**
+			 * **{threateningFaction}** is only **{influenceDiff}%** behind your faction!
+		They might try to initiate a conflict soon.
+	
+		- {factionName} (**{factionInfluence}%**)
+		- {threateningFaction} (**{threateningFactionInfluence}%**)
+	
+		[INARA]({inaraUrl})
+			 */
+			description: (arg: { factionInfluence: unknown, factionName: unknown, inaraUrl: unknown, influenceDiff: unknown, threateningFaction: unknown, threateningFactionInfluence: unknown }) => LocalizedString
 		}
 	}
 }

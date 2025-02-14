@@ -9,6 +9,7 @@ export interface StateDetectorConfig {
   timestamp: string
   stateChanges: StateChanges
   conflicts: EDDNConflict[]
+  factions: EDDNFaction[]
 }
 
 export interface StateDetector {

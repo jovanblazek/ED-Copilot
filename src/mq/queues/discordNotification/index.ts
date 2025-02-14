@@ -5,6 +5,7 @@ import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
 import { processConflictEvent } from './processors/conflict'
 import { processExpansionEvent } from './processors/expansion'
+import { processInfluenceThreatEvent } from './processors/influenceThreat'
 import { processRetreatEvent } from './processors/retreat'
 import type { DiscordNotificationJobData, EventTypeMap } from './types'
 
@@ -73,6 +74,12 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
         await processRetreatEvent({
           client,
           jobData: job.data as DiscordNotificationJobData<RetreatEventType>,
+          guildFactions,
+        })
+      } else if (event.type === 'influenceThreat') {
+        await processInfluenceThreatEvent({
+          client,
+          jobData: job.data as DiscordNotificationJobData<'influenceThreat'>,
           guildFactions,
         })
       }

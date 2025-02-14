@@ -94,6 +94,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
             timestamp,
             stateChanges,
             conflicts,
+            factions,
           })
         )
       )
