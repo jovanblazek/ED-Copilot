@@ -15,20 +15,27 @@ dayjs.extend(utcPlugin)
 dayjs.extend(timezonePlugin)
 dayjs.extend(relativeTimePlugin)
 
-type EliteBgsTickResponse = {
-  time: string
+export const saveTickTimeToRedis = async (tickTime: Dayjs) => {
+  // Set expiration to 25h after tick time
+  const expiration = tickTime.utc().add(25, 'hours').diff(dayjs().utc(), 'seconds')
+
+  await Redis.set(RedisKeys.ticktime, tickTime.toISOString(), 'EX', expiration)
+}
+
+type InfomancerTickResponse = {
+  lastGalaxyTick: string
 }
 
 export const fetchTickTime = async (): Promise<Dayjs | null> => {
   try {
-    logger.info('Fetching tick time from EliteBGS...')
-    const url = `https://elitebgs.app/api/ebgs/v5/ticks`
-    const fetchedData: EliteBgsTickResponse[] = await got(url).json()
+    logger.info('Fetching tick time from Infomancer...')
+    const url = `http://tick.infomancer.uk/galtick.json`
+    const fetchedData: InfomancerTickResponse = await got(url).json()
 
-    const tickTime = fetchedData.length === 0 ? null : dayjs.utc(fetchedData[0].time)
+    const tickTime = fetchedData?.lastGalaxyTick ? dayjs.utc(fetchedData.lastGalaxyTick) : null
     if (tickTime) {
       logger.info('Caching tick time')
-      await Redis.set(RedisKeys.ticktime, tickTime.toISOString())
+      await saveTickTimeToRedis(tickTime)
     }
     return tickTime
   } catch (error) {
@@ -38,7 +45,7 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
   }
 }
 
-export const getTickTime = async () => {
+export const getTickTimeUTC = async () => {
   const cachedTickTime = await Redis.get(RedisKeys.ticktime)
   if (cachedTickTime) {
     return dayjs(cachedTickTime).utc()
@@ -53,15 +60,9 @@ export const getTickTimeInTimezone = async ({
   locale: Locales
   timezone: string
 }): Promise<Dayjs> => {
-  const cachedTickTime = await Redis.get(RedisKeys.ticktime)
-  if (cachedTickTime) {
-    logger.info('Using cached tick time')
-    return dayjs(cachedTickTime).tz(timezone)
-  }
-
-  const fetchedTickTime = await fetchTickTime()
-  if (fetchedTickTime) {
-    return fetchedTickTime.tz(timezone)
+  const tickTime = await getTickTimeUTC()
+  if (tickTime) {
+    return tickTime.tz(timezone)
   }
 
   throw new TickFetchError({ locale })
