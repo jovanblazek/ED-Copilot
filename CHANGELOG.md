@@ -1,3 +1,9 @@
+## [3.2.0](https://github.com/jovanblazek/ed-copilot/compare/v3.1.0...v3.2.0) (2025-02-14)
+
+### :sparkles: Features
+
+* Migrate to Zoy's tick detector ([#38](https://github.com/jovanblazek/ed-copilot/issues/38)) ([fdb2ecd](https://github.com/jovanblazek/ed-copilot/commit/fdb2ecd950d26a167c5a3f6d4f516d5e704581a2))
+
 ## [3.1.0](https://github.com/jovanblazek/ed-copilot/compare/v3.0.4...v3.1.0) (2025-02-13)
 
 ### :sparkles: Features
