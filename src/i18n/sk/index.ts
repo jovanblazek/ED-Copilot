@@ -157,6 +157,11 @@ const sk = {
           'Ústup v **{systemName}** bol ukončený. Zostali ste v systéme.\nVplyv: **{influence}**\n[INARA]({inaraUrl})',
       },
     },
+    influenceThreat: {
+      title: '⚠️ {systemName} može byť ohrozený ⚠️',
+      description:
+        '**{threateningFaction}** je len **{influenceDiff}%** za vašou frakciou!\nČoskoro môže dôjsť ku konfliktu.\n\n- {factionName} (**{factionInfluence}%**)\n- {threateningFaction} (**{threateningFactionInfluence}%**)\n\n[INARA]({inaraUrl})',
+    },
   },
 } satisfies Translation
 

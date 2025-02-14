@@ -21,6 +21,14 @@ type ExpansionEventData = Record<string, never>
 
 type RetreatEventData = Record<string, never>
 
+type InfluenceThreatEventData = {
+  threateningFaction: {
+    name: string
+    influence: number
+  }
+  influenceDiff: number
+}
+
 export type EventTypeMap = {
   conflictPending: ConflictEventData
   conflictStarted: ConflictEventData
@@ -31,6 +39,7 @@ export type EventTypeMap = {
   retreatPending: RetreatEventData
   retreatStarted: RetreatEventData
   retreatEnded: RetreatEventData
+  influenceThreat: InfluenceThreatEventData
 }
 
 export type DiscordNotificationJobData<T extends keyof EventTypeMap> = {
