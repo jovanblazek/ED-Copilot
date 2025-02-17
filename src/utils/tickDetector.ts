@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import type { Client } from 'discord.js'
@@ -17,42 +18,52 @@ const RECONNECT_DELAY = 60000 // 1 minute
 const MAX_RECONNECT_DELAY = 480000 // 8 minutes
 
 const reportTick = async (client: Client, tickTime: Dayjs) => {
-  const guilds = await Prisma.guild.findMany({
-    where: {
-      tickReportChannelId: {
-        not: null,
+  try {
+    const guilds = await Prisma.guild.findMany({
+      where: {
+        tickReportChannelId: {
+          not: null,
+        },
       },
-    },
-  })
-  if (!guilds) {
-    return
-  }
-  // This might be an issue later on when many channels are subscribed to the tick
-  await Promise.allSettled(
-    guilds.map(async ({ tickReportChannelId, timezone, language }) => {
-      if (tickReportChannelId) {
-        const locale = language as keyof typeof L
-        const channel = client.channels.cache.get(tickReportChannelId)
-        if (
-          !channel ||
-          !(
-            channel.type === ChannelType.GuildAnnouncement || channel.type === ChannelType.GuildText
-          )
-        ) {
-          return
-        }
-        await channel.send({
-          embeds: [
-            createEmbed({
-              title: L[locale].tick.title(),
-              description: `${bold(tickTime.tz(timezone).format('DD.MM.YYYY HH:mm'))}\n
-              ${hyperlink(L[locale].tick.history(), 'https://elitebgs.app/tick')}`,
-            }),
-          ],
-        })
-      }
     })
-  )
+    logger.info(
+      '[Tick Detector] Reporting tick to guilds with ids:',
+      guilds.map(({ id }) => id)
+    )
+    if (!guilds) {
+      return
+    }
+    // This might be an issue later on when many channels are subscribed to the tick
+    await Promise.allSettled(
+      guilds.map(async ({ tickReportChannelId, timezone, language }) => {
+        if (tickReportChannelId) {
+          const locale = language as keyof typeof L
+          const channel = client.channels.cache.get(tickReportChannelId)
+          if (
+            !channel ||
+            !(
+              channel.type === ChannelType.GuildAnnouncement ||
+              channel.type === ChannelType.GuildText
+            )
+          ) {
+            return
+          }
+          await channel.send({
+            embeds: [
+              createEmbed({
+                title: L[locale].tick.title(),
+                description: `${bold(tickTime.tz(timezone).format('DD.MM.YYYY HH:mm'))}\n
+              ${hyperlink(L[locale].tick.history(), 'https://elitebgs.app/tick')}`,
+              }),
+            ],
+          })
+        }
+      })
+    )
+  } catch (error) {
+    logger.error(error, '[Tick Detector] Error reporting tick')
+    Sentry.captureException(error)
+  }
 }
 
 const cleanupProcessedSystems = async () => {
@@ -123,10 +134,11 @@ export default async (client: Client) => {
 
             logger.info('[Tick Detector] Tick detected', tickTime)
             await saveTickTimeToRedis(tickTime)
-            void reportTick(client, tickTime)
+            await reportTick(client, tickTime)
             await cleanupProcessedSystems()
           } catch (error) {
             logger.error(error, '[Tick Detector] Error processing tick message')
+            Sentry.captureException(error)
           }
         }
       }

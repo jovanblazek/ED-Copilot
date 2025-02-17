@@ -17,16 +17,16 @@ export const initMQ = ({ client }: { client: Client }) => {
       }
     })
     worker.on('error', (error) => {
-      logger.error(`[BullMQ] Worker: ${worker.name} - ERROR:`, error)
+      logger.error(error, `[BullMQ] Worker: ${worker.name} - ERROR`)
     })
     worker.on('active', (job) => {
-      logger.info(job.data, `[BullMQ] Job: ${job.name}:${job.id} - ACTIVE`)
+      logger.debug(job.data, `[BullMQ] Job: ${job.name}:${job.id} - ACTIVE`)
     })
     worker.on('completed', (job) => {
-      logger.info(job.returnvalue, `[BullMQ] Job: ${job.name}:${job.id} - COMPLETED`)
+      logger.debug(job.returnvalue, `[BullMQ] Job: ${job.name}:${job.id} - COMPLETED`)
     })
     worker.on('closed', () => {
-      logger.info(`[BullMQ] Worker: ${worker.name} - CLOSED`)
+      logger.debug(`[BullMQ] Worker: ${worker.name} - CLOSED`)
     })
   })
 
