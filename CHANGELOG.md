@@ -1,3 +1,13 @@
+## [3.3.1](https://github.com/jovanblazek/ed-copilot/compare/v3.3.0...v3.3.1) (2025-02-17)
+
+### :bug: Bug Fixes
+
+* Improve error handling and logging in tick detector and message queue ([#41](https://github.com/jovanblazek/ed-copilot/issues/41)) ([8196552](https://github.com/jovanblazek/ed-copilot/commit/8196552f27c9355a977ba31d2b06c316e9c643b9))
+
+### :octopus: Miscellaneous Chores
+
+* Update dependencies ([#40](https://github.com/jovanblazek/ed-copilot/issues/40)) ([037710a](https://github.com/jovanblazek/ed-copilot/commit/037710a381bcdac161ad42d003a4e1b1cde418c7))
+
 ## [3.3.0](https://github.com/jovanblazek/ed-copilot/compare/v3.2.0...v3.3.0) (2025-02-14)
 
 ### :sparkles: Features
