@@ -20,12 +20,11 @@ const BotClient = new Client({
 
 let tickDetectorCleanup: (() => void) | null = null
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-BotClient.once('ready', async () => {
+BotClient.once('ready', () => {
   initEventHandlers(BotClient)
   initActivityHandler(BotClient)
   if (process.env.NODE_ENV === 'production') {
-    tickDetectorCleanup = await initTickDetector(BotClient)
+    tickDetectorCleanup = initTickDetector(BotClient)
   }
   logger.info('[Bot] Ready')
 })
