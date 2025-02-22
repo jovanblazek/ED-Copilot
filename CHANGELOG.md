@@ -1,3 +1,9 @@
+## [3.4.0](https://github.com/jovanblazek/ed-copilot/compare/v3.3.1...v3.4.0) (2025-02-22)
+
+### :sparkles: Features
+
+* Migrate to EDCD tick detector ([#42](https://github.com/jovanblazek/ed-copilot/issues/42)) ([2f070cd](https://github.com/jovanblazek/ed-copilot/commit/2f070cdbceb7c41bbf29911a2b9aa2d293605237))
+
 ## [3.3.1](https://github.com/jovanblazek/ed-copilot/compare/v3.3.0...v3.3.1) (2025-02-17)
 
 ### :bug: Bug Fixes
