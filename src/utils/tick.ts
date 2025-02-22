@@ -16,25 +16,18 @@ dayjs.extend(timezonePlugin)
 dayjs.extend(relativeTimePlugin)
 
 export const saveTickTimeToRedis = async (tickTime: Dayjs) => {
-  // Set expiration to 25h after tick time
-  const expiration = tickTime.utc().add(25, 'hours').diff(dayjs().utc(), 'seconds')
-
-  await Redis.set(RedisKeys.ticktime, tickTime.toISOString(), 'EX', expiration)
-}
-
-type InfomancerTickResponse = {
-  lastGalaxyTick: string
+  logger.info('Caching tick time', tickTime)
+  await Redis.set(RedisKeys.ticktime, tickTime.toISOString())
 }
 
 export const fetchTickTime = async (): Promise<Dayjs | null> => {
   try {
-    logger.info('Fetching tick time from Infomancer...')
-    const url = `http://tick.infomancer.uk/galtick.json`
-    const fetchedData: InfomancerTickResponse = await got(url).json()
+    logger.info('Fetching tick time from EDCD...')
+    const url = 'https://tick.edcd.io/api/tick'
+    const response = await got(url).json<string>()
 
-    const tickTime = fetchedData?.lastGalaxyTick ? dayjs.utc(fetchedData.lastGalaxyTick) : null
-    if (tickTime) {
-      logger.info('Caching tick time')
+    const tickTime = response ? dayjs.utc(response) : null
+    if (tickTime && tickTime.isValid()) {
       await saveTickTimeToRedis(tickTime)
     }
     return tickTime
@@ -45,10 +38,18 @@ export const fetchTickTime = async (): Promise<Dayjs | null> => {
   }
 }
 
-export const getTickTimeUTC = async () => {
+export const getCachedTickTimeUTC = async () => {
   const cachedTickTime = await Redis.get(RedisKeys.ticktime)
   if (cachedTickTime) {
     return dayjs(cachedTickTime).utc()
+  }
+  return null
+}
+
+export const getTickTimeUTC = async () => {
+  const cachedTickTime = await getCachedTickTimeUTC()
+  if (cachedTickTime) {
+    return cachedTickTime
   }
   return fetchTickTime()
 }

@@ -3,17 +3,15 @@ import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import type { Client } from 'discord.js'
 import { bold, ChannelType, hyperlink } from 'discord.js'
-import { Subscriber } from 'zeromq'
-import zlib from 'zlib'
+import { io } from 'socket.io-client'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
 import logger from './logger'
 import { Prisma } from './prismaClient'
 import { Redis } from './redis'
-import { saveTickTimeToRedis } from './tick'
+import { getCachedTickTimeUTC, saveTickTimeToRedis } from './tick'
 
-const TICK_DETECTOR_URL = 'tcp://infomancer.uk:5551'
-const TOPIC = 'GalaxyTick'
+const TICK_DETECTOR_URL = 'https://tick.edcd.io'
 const RECONNECT_DELAY = 60000 // 1 minute
 const MAX_RECONNECT_DELAY = 480000 // 8 minutes
 
@@ -73,28 +71,19 @@ const cleanupProcessedSystems = async () => {
   }
 }
 
-const connect = (socket: Subscriber) => {
-  try {
-    socket.connect(TICK_DETECTOR_URL)
-    socket.subscribe(TOPIC)
-    logger.info('[Tick Detector] Connected')
-    return true
-  } catch (error) {
-    logger.error(error, '[Tick Detector] Failed to connect')
-    return false
-  }
-}
-
-export default async (client: Client) => {
-  let currentDelay = RECONNECT_DELAY
-  let socket: Subscriber | null = null
+export default (client: Client) => {
+  const socket = io(TICK_DETECTOR_URL, {
+    reconnectionDelay: RECONNECT_DELAY,
+    reconnectionDelayMax: MAX_RECONNECT_DELAY,
+    transports: ['websocket'],
+  })
   let isShuttingDown = false
 
   const cleanup = () => {
     isShuttingDown = true
     if (socket) {
       try {
-        socket.close()
+        socket.disconnect()
         logger.info('[Tick Detector] Closed connection')
       } catch (error) {
         logger.error(error, '[Tick Detector] Error closing connection')
@@ -102,56 +91,40 @@ export default async (client: Client) => {
     }
   }
 
-  const initializeSocket = async () => {
-    if (isShuttingDown) {
-      return
+  socket.on('connect', () => {
+    logger.info('[Tick Detector] Connected')
+  })
+
+  socket.on('disconnect', (reason) => {
+    if (!isShuttingDown) {
+      logger.warn(`[Tick Detector] Disconnected: ${reason}`)
     }
+  })
 
-    socket = new Subscriber()
-    const isConnected = connect(socket)
-
-    if (!isConnected) {
-      socket.close()
-      currentDelay = Math.min(currentDelay * 2, MAX_RECONNECT_DELAY)
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      setTimeout(initializeSocket, currentDelay)
-      return
+  socket.on('connect_error', (error) => {
+    if (!isShuttingDown) {
+      logger.error(error, '[Tick Detector] Connection error')
     }
+  })
 
-    currentDelay = RECONNECT_DELAY // Reset delay on successful connection
-
+  socket.on('message', async (data: string | number | Date) => {
     try {
-      for await (const [topic, msg] of socket) {
-        if (isShuttingDown) {
-          break
-        }
-
-        if (topic.toString() === TOPIC) {
-          try {
-            const decompressed = zlib.inflateSync(msg)
-            const data = JSON.parse(decompressed.toString()) as { timestamp: string }
-            const tickTime = dayjs.utc(data.timestamp)
-
-            logger.info('[Tick Detector] Tick detected', tickTime)
-            await saveTickTimeToRedis(tickTime)
-            await reportTick(client, tickTime)
-            await cleanupProcessedSystems()
-          } catch (error) {
-            logger.error(error, '[Tick Detector] Error processing tick message')
-            Sentry.captureException(error)
-          }
-        }
+      const tickTime = dayjs.utc(data)
+      const cachedTickTime = await getCachedTickTimeUTC()
+      if (cachedTickTime && tickTime.isSame(cachedTickTime)) {
+        logger.info('[Tick Detector] Tick already exists in cache')
+        return
       }
+
+      logger.info('[Tick Detector] Tick detected', tickTime)
+      await saveTickTimeToRedis(tickTime)
+      await reportTick(client, tickTime)
+      await cleanupProcessedSystems()
     } catch (error) {
-      if (!isShuttingDown) {
-        logger.error(error, '[Tick Detector] Socket error - attempting reconnection')
-        cleanup()
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        setTimeout(initializeSocket, currentDelay)
-      }
+      logger.error(error, '[Tick Detector] Error processing tick message')
+      Sentry.captureException(error)
     }
-  }
+  })
 
-  await initializeSocket()
   return cleanup
 }
