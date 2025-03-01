@@ -29,7 +29,7 @@ const getPossibleExpansionOrigins = async ({
   }
 
   const systemsWithGt70Inf = response.docs[0].faction_presence.filter(
-    ({ influence }) => influence > 0.7
+    ({ influence }) => influence > 0.7 && influence !== 1 // Ignore systems with 100% influence
   )
   return systemsWithGt70Inf.map(({ system_name, influence }) => ({
     systemName: system_name,
