@@ -1,3 +1,9 @@
+## [3.4.2](https://github.com/jovanblazek/ed-copilot/compare/v3.4.1...v3.4.2) (2025-03-01)
+
+### :bug: Bug Fixes
+
+* Expansion detector loop ([#44](https://github.com/jovanblazek/ed-copilot/issues/44)) ([71284d1](https://github.com/jovanblazek/ed-copilot/commit/71284d1042750f9a4a0afecba2101443963bab47))
+
 ## [3.4.1](https://github.com/jovanblazek/ed-copilot/compare/v3.4.0...v3.4.1) (2025-03-01)
 
 ### :bug: Bug Fixes
