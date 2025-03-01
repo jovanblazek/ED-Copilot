@@ -36,6 +36,8 @@ export class ExpansionDetector extends BaseStateDetector {
         })
         await Redis.expire(expansionRedisKey, EXPANSION_REDIS_EXPIRATION)
       }
+      // Do not report expansion ending if it's pending/active now
+      return
     }
 
     if (isExpansionEnding) {
