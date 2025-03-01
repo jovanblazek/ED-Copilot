@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node'
 import { Queue, Worker } from 'bullmq'
 import type { Client } from 'discord.js'
 import { Prisma } from '../../../utils'
@@ -37,51 +38,81 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
   new Worker<DiscordNotificationJobData<keyof EventTypeMap>>(
     QueueNames.discordNotification,
     async (job) => {
-      const { event, factionName } = job.data
+      const { event, factionName, systemName, timestamp } = job.data
 
-      const guildFactions = await Prisma.guildFaction.findMany({
-        where: {
-          notificationChannelId: {
-            not: null,
+      try {
+        Sentry.addBreadcrumb({
+          category: QueueNames.discordNotification,
+          message: `Processing notification for ${factionName} in ${systemName}`,
+          data: {
+            eventType: event.type,
+            timestamp,
           },
-          faction: {
-            name: factionName,
+        })
+
+        const guildFactions = await Prisma.guildFaction.findMany({
+          where: {
+            notificationChannelId: {
+              not: null,
+            },
+            faction: {
+              name: factionName,
+            },
           },
-        },
-        include: {
-          guild: true,
-          faction: true,
-        },
-      })
+          include: {
+            guild: true,
+            faction: true,
+          },
+        })
 
-      if (guildFactions.length === 0) {
-        return
-      }
+        if (guildFactions.length === 0) {
+          return
+        }
 
-      if (ConflictEventTypes.includes(event.type as ConflictEventType)) {
-        await processConflictEvent({
-          client,
-          jobData: job.data as DiscordNotificationJobData<ConflictEventType>,
-          guildFactions,
+        if (ConflictEventTypes.includes(event.type as ConflictEventType)) {
+          await processConflictEvent({
+            client,
+            jobData: job.data as DiscordNotificationJobData<ConflictEventType>,
+            guildFactions,
+          })
+        } else if (ExpansionEventTypes.includes(event.type as ExpansionEventType)) {
+          await processExpansionEvent({
+            client,
+            jobData: job.data as DiscordNotificationJobData<ExpansionEventType>,
+            guildFactions,
+          })
+        } else if (RetreatEventTypes.includes(event.type as RetreatEventType)) {
+          await processRetreatEvent({
+            client,
+            jobData: job.data as DiscordNotificationJobData<RetreatEventType>,
+            guildFactions,
+          })
+        } else if (event.type === 'influenceThreat') {
+          await processInfluenceThreatEvent({
+            client,
+            jobData: job.data as DiscordNotificationJobData<'influenceThreat'>,
+            guildFactions,
+          })
+        }
+      } catch (error) {
+        Sentry.withScope((scope) => {
+          scope.setTag('queue', QueueNames.discordNotification)
+          scope.setTag('system', systemName)
+          scope.setTag('faction', factionName)
+          scope.setTag('event_type', event.type)
+          scope.setContext('JobData', {
+            systemName,
+            factionName,
+            timestamp,
+            eventType: event.type,
+            jobId: job.id,
+            attemptsMade: job.attemptsMade,
+          })
+
+          Sentry.captureException(error)
         })
-      } else if (ExpansionEventTypes.includes(event.type as ExpansionEventType)) {
-        await processExpansionEvent({
-          client,
-          jobData: job.data as DiscordNotificationJobData<ExpansionEventType>,
-          guildFactions,
-        })
-      } else if (RetreatEventTypes.includes(event.type as RetreatEventType)) {
-        await processRetreatEvent({
-          client,
-          jobData: job.data as DiscordNotificationJobData<RetreatEventType>,
-          guildFactions,
-        })
-      } else if (event.type === 'influenceThreat') {
-        await processInfluenceThreatEvent({
-          client,
-          jobData: job.data as DiscordNotificationJobData<'influenceThreat'>,
-          guildFactions,
-        })
+
+        throw error
       }
     },
     {

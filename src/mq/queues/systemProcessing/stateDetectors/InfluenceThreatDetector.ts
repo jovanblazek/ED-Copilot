@@ -13,6 +13,11 @@ export class InfluenceThreatDetector extends BaseStateDetector {
     // Get all factions sorted by influence
     const sortedFactions = [...factions].sort((a, b) => b.Influence - a.Influence)
 
+    // Skip if there are less than 2 factions
+    if (sortedFactions.length < 2) {
+      return
+    }
+
     // Check if tracked faction is leading
     if (sortedFactions[0].Name !== factionFromEvent.Name) {
       return
