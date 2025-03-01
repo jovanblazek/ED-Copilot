@@ -1,3 +1,9 @@
+## [3.4.1](https://github.com/jovanblazek/ed-copilot/compare/v3.4.0...v3.4.1) (2025-03-01)
+
+### :bug: Bug Fixes
+
+* System processor crashes when system has less than 2 factions ([#43](https://github.com/jovanblazek/ed-copilot/issues/43)) ([cd03b29](https://github.com/jovanblazek/ed-copilot/commit/cd03b29e868bd08293d9cc6348ecd11be5309761))
+
 ## [3.4.0](https://github.com/jovanblazek/ed-copilot/compare/v3.3.1...v3.4.0) (2025-02-22)
 
 ### :sparkles: Features
