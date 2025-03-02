@@ -1,3 +1,9 @@
+## [3.4.3](https://github.com/jovanblazek/ed-copilot/compare/v3.4.2...v3.4.3) (2025-03-02)
+
+### :bug: Bug Fixes
+
+* Add health check to tick detector ([#45](https://github.com/jovanblazek/ed-copilot/issues/45)) ([1628e49](https://github.com/jovanblazek/ed-copilot/commit/1628e4924ce1e86c54c919c82c1093360664ba10))
+
 ## [3.4.2](https://github.com/jovanblazek/ed-copilot/compare/v3.4.1...v3.4.2) (2025-03-01)
 
 ### :bug: Bug Fixes
