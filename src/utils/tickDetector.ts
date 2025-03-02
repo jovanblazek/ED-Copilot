@@ -9,12 +9,13 @@ import L from '../i18n/i18n-node'
 import logger from './logger'
 import { Prisma } from './prismaClient'
 import { Redis } from './redis'
-import { getCachedTickTimeUTC, saveTickTimeToRedis } from './tick'
+import { fetchTickTime, getCachedTickTimeUTC, saveTickTimeToRedis } from './tick'
 
 const TICK_DETECTOR_URL = 'https://tick.edcd.io'
 const RECONNECT_DELAY = 60000 // 1 minute
 const MAX_RECONNECT_DELAY = 480000 // 8 minutes
 const HEALTH_CHECK_INTERVAL = 3600000 // 1 hour
+const EXPECTED_TICK_INTERVAL = 24 // hours
 
 const reportTick = async (client: Client, tickTime: Dayjs) => {
   try {
@@ -81,6 +82,7 @@ export default (client: Client) => {
   })
 
   let isShuttingDown = false
+  let lastConnectionTime = dayjs()
 
   const processTickData = async (data: string | number | Date) => {
     try {
@@ -117,6 +119,7 @@ export default (client: Client) => {
   socket.on('connect', () => {
     logger.info('[Tick Detector] Connected')
     logger.info(`[Tick Detector] Using transport: ${socket.io.engine.transport.name}`)
+    lastConnectionTime = dayjs()
   })
 
   socket.on('reconnect', (attemptNumber) => {
@@ -149,7 +152,6 @@ export default (client: Client) => {
     logger.info(`[Tick Detector] Transport upgraded to: ${socket.io.engine.transport.name}`)
   })
 
-  // Health check to detect stale connections
   const healthCheck = async () => {
     if (isShuttingDown) {
       return
@@ -157,18 +159,57 @@ export default (client: Client) => {
 
     try {
       const cachedTickTime = await getCachedTickTimeUTC()
+      const now = dayjs()
 
-      // If we haven't received a tick in the last 2 hours, force a reconnection
-      if (cachedTickTime && dayjs().diff(cachedTickTime, 'hour') > 2) {
-        logger.warn('[Tick Detector] No tick received for over 2 hours, forcing reconnection')
-        socket.disconnect().connect()
+      // Should not happen
+      if (!cachedTickTime) {
+        logger.warn('[Tick Detector] No tick time in cache, checking connection')
+        // If we've been connected for more than 2 hours with no tick, reconnect
+        if (now.diff(lastConnectionTime, 'hour') > 2) {
+          logger.warn(
+            '[Tick Detector] Connected for 2+ hours with no tick data, forcing reconnection'
+          )
+          socket.disconnect().connect()
+        }
+        return
+      }
+
+      const hoursSinceLastTick = now.diff(cachedTickTime, 'hour')
+      logger.info(`[Tick Detector] Hours since last tick: ${hoursSinceLastTick}`)
+
+      // Only reconnect if we've exceeded the expected tick interval
+      if (hoursSinceLastTick >= EXPECTED_TICK_INTERVAL) {
+        logger.warn(
+          `[Tick Detector] No tick received for ${hoursSinceLastTick} hours (expected ~${EXPECTED_TICK_INTERVAL}h), forcing reconnection`
+        )
+
+        if (socket.connected) {
+          socket.disconnect().connect()
+        } else {
+          socket.connect()
+        }
+
+        // Also fetch the latest tick via HTTP API as a fallback
+        try {
+          const tickTimeFromApi = await fetchTickTime()
+          if (tickTimeFromApi?.toISOString()) {
+            logger.info('[Tick Detector] Fetched latest tick via HTTP API')
+            await processTickData(tickTimeFromApi.toISOString())
+          }
+        } catch (httpError) {
+          logger.error(httpError, '[Tick Detector] Error fetching tick via HTTP API')
+        }
       } else {
-        logger.info('[Tick Detector] Health check OK')
+        logger.info('[Tick Detector] Health check OK - tick timing within expected range')
       }
     } catch (error) {
       logger.error(error, '[Tick Detector] Error in health check')
+      Sentry.captureException(error)
     }
   }
+
+  // Run health check at startup to ensure we have the latest tick
+  void healthCheck()
 
   const healthCheckInterval = setInterval(() => {
     void healthCheck()
