@@ -21,12 +21,16 @@ export const saveTickTimeToRedis = async (tickTime: Dayjs) => {
 }
 
 export const fetchTickTime = async (): Promise<Dayjs | null> => {
-  try {
-    logger.info('Fetching tick time from EDCD...')
-    const url = 'https://tick.edcd.io/api/tick'
-    const response = await got(url).json<string>()
+  logger.info('Fetching tick time from EDCD...')
+  const url = 'https://tick.edcd.io/api/tick'
+  const response = await got(url).json<string>()
 
-    const tickTime = response ? dayjs.utc(response) : null
+  return response ? dayjs.utc(response) : null
+}
+
+export const fetchTickTimeAndCacheIt = async (): Promise<Dayjs | null> => {
+  try {
+    const tickTime = await fetchTickTime()
     if (tickTime && tickTime.isValid()) {
       await saveTickTimeToRedis(tickTime)
     }
@@ -51,7 +55,7 @@ export const getTickTimeUTC = async () => {
   if (cachedTickTime) {
     return cachedTickTime
   }
-  return fetchTickTime()
+  return fetchTickTimeAndCacheIt()
 }
 
 export const getTickTimeInTimezone = async ({
