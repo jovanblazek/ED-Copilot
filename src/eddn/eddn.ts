@@ -6,7 +6,7 @@ import type { EDDNEventToProcess } from '../types/eddn'
 import logger from '../utils/logger'
 
 const SYSTEM_PROCESS_JOB_NAME = 'system-processing'
-const SYSTEM_PROCESS_JOB_DELAY_MS = 10000 // Delay system processing to prevent race condition with tick detector
+const SYSTEM_PROCESS_JOB_DELAY_MS = 30000 // Delay system processing to prevent race condition with tick detector
 const FILE_NAME = 'eddnProcess.js'
 const MAX_RESTARTS = 3
 

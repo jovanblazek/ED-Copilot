@@ -61,8 +61,8 @@ export const getCachedTickTimeUTC = async ({ system }: { system?: string } = {})
   return null
 }
 
-export const getTickTimeUTC = async ({ system }: { system?: string } = {}) => {
-  const cachedTickTime = await getCachedTickTimeUTC({ system })
+export const getGalaxyTickTimeUTC = async () => {
+  const cachedTickTime = await getCachedTickTimeUTC()
   if (cachedTickTime) {
     return cachedTickTime
   }
@@ -76,7 +76,7 @@ export const getTickTimeInTimezone = async ({
   locale: Locales
   timezone: string
 }): Promise<Dayjs> => {
-  const tickTime = await getTickTimeUTC()
+  const tickTime = await getGalaxyTickTimeUTC()
   if (tickTime) {
     return tickTime.tz(timezone)
   }
