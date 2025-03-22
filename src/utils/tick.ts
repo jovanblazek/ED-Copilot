@@ -15,24 +15,33 @@ dayjs.extend(utcPlugin)
 dayjs.extend(timezonePlugin)
 dayjs.extend(relativeTimePlugin)
 
-export const saveTickTimeToRedis = async (tickTime: Dayjs) => {
-  logger.info('Caching tick time', tickTime)
-  await Redis.set(RedisKeys.ticktime, tickTime.toISOString())
+export const saveTickTimeToRedis = async ({
+  tickTime,
+  system,
+}: {
+  tickTime: Dayjs
+  system?: string
+}) => {
+  if (system) {
+    await Redis.set(RedisKeys.systemTickTime({ systemName: system }), tickTime.toISOString())
+  } else {
+    await Redis.set(RedisKeys.galaxyTickTime, tickTime.toISOString())
+  }
 }
 
 export const fetchTickTime = async (): Promise<Dayjs | null> => {
-  logger.info('Fetching tick time from EDCD...')
-  const url = 'https://tick.edcd.io/api/tick'
-  const response = await got(url).json<string>()
+  logger.info('Fetching tick time from Infomancer...')
+  const url = `http://tick.infomancer.uk/galtick.json`
+  const response = await got(url).json<{ lastGalaxyTick: string }>()
 
-  return response ? dayjs.utc(response) : null
+  return response?.lastGalaxyTick ? dayjs.utc(response.lastGalaxyTick) : null
 }
 
 export const fetchTickTimeAndCacheIt = async (): Promise<Dayjs | null> => {
   try {
     const tickTime = await fetchTickTime()
     if (tickTime && tickTime.isValid()) {
-      await saveTickTimeToRedis(tickTime)
+      await saveTickTimeToRedis({ tickTime })
     }
     return tickTime
   } catch (error) {
@@ -42,16 +51,18 @@ export const fetchTickTimeAndCacheIt = async (): Promise<Dayjs | null> => {
   }
 }
 
-export const getCachedTickTimeUTC = async () => {
-  const cachedTickTime = await Redis.get(RedisKeys.ticktime)
+export const getCachedTickTimeUTC = async ({ system }: { system?: string } = {}) => {
+  const cachedTickTime = await Redis.get(
+    system ? RedisKeys.systemTickTime({ systemName: system }) : RedisKeys.galaxyTickTime
+  )
   if (cachedTickTime) {
     return dayjs(cachedTickTime).utc()
   }
   return null
 }
 
-export const getTickTimeUTC = async () => {
-  const cachedTickTime = await getCachedTickTimeUTC()
+export const getTickTimeUTC = async ({ system }: { system?: string } = {}) => {
+  const cachedTickTime = await getCachedTickTimeUTC({ system })
   if (cachedTickTime) {
     return cachedTickTime
   }

@@ -78,10 +78,11 @@ export const Languages = {
 } as const
 
 export const RedisKeys = {
-  ticktime: 'ticktime',
+  galaxyTickTime: 'tickTime',
+  systemTickTime: ({ systemName }: { systemName: string }) => `tickTime:${systemName}`,
   trackedFactions: 'trackedFactions',
   processedSystem: ({ tickTimestamp, systemName }: { tickTimestamp: string; systemName: string }) =>
-    `processedSystem:${tickTimestamp}:${systemName}`,
+    `processedSystem:${systemName}:${tickTimestamp}`,
   expansion: ({ factionId }: { factionId: number }) => `expansion:${factionId}`,
 } as const
 
