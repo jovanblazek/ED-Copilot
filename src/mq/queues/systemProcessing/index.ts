@@ -40,7 +40,7 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         data: { timestamp },
       })
 
-      const tickTime = await getTickTimeUTC()
+      const tickTime = await getTickTimeUTC({ system: systemName })
       if (!tickTime) {
         logger.warn(`[BullMQ] systemProcessingWorker: ${systemName} - No tick time found`)
         return
