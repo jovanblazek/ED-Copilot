@@ -4,10 +4,10 @@ import Koa from 'koa'
 import startEDDNListenerProcess from './eddn/eddn'
 import { initEventHandlers } from './events'
 import { initMQ } from './mq'
+import initTickDetector from './tickDetector/tickDetector'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
 import { loadTrackedFactionsFromDBToRedis, Redis } from './utils/redis'
-import initTickDetector from './utils/tickDetector'
 import './i18n/dayjsLocales'
 import './utils/environment'
 import './utils/sentry'
@@ -18,13 +18,11 @@ const BotClient = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 })
 
-let tickDetectorCleanup: (() => void) | null = null
-
 BotClient.once('ready', () => {
   initEventHandlers(BotClient)
   initActivityHandler(BotClient)
   if (process.env.NODE_ENV === 'production') {
-    tickDetectorCleanup = initTickDetector(BotClient)
+    void initTickDetector(BotClient)
   }
   logger.info('[Bot] Ready')
 })
@@ -68,13 +66,6 @@ const shutdown = async () => {
   logger.info('[Bot] Closing client connection...')
   await BotClient.destroy()
   logger.info('[Bot] Connection closed')
-
-  // Close tick detector
-  if (tickDetectorCleanup) {
-    logger.info('[Tick Detector] Initiating shutdown')
-    tickDetectorCleanup()
-    logger.info('[Tick Detector] Connection closed')
-  }
 
   // Close EDDN worker
   if (eddnProcess) {

@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/node'
 import { Queue, Worker } from 'bullmq'
 import { RedisKeys } from '../../../constants'
 import type { EDDNEventToProcess } from '../../../types/eddn'
-import { getTickTimeUTC, Prisma } from '../../../utils'
+import { getCachedTickTimeUTC, Prisma } from '../../../utils'
 import logger from '../../../utils/logger'
 import { Redis } from '../../../utils/redis'
 import { QueueNames } from '../../constants'
@@ -34,13 +34,12 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
     const { StarSystem: systemName, Factions: factions, Conflicts: conflicts, timestamp } = job.data
 
     try {
-      Sentry.addBreadcrumb({
-        category: QueueNames.systemProcessing,
-        message: `Started processing system ${systemName}`,
-        data: { timestamp },
-      })
+      const trackedFactions = await getTrackedFactionsInSystem(factions)
+      if (!trackedFactions.length) {
+        return
+      }
 
-      const tickTime = await getTickTimeUTC()
+      const tickTime = await getCachedTickTimeUTC({ system: systemName })
       if (!tickTime) {
         logger.warn(`[BullMQ] systemProcessingWorker: ${systemName} - No tick time found`)
         return
@@ -55,8 +54,6 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
         logger.debug(`[BullMQ] systemProcessingWorker: ${systemName} - SKIPPED`)
         return
       }
-
-      const trackedFactions = await getTrackedFactionsInSystem(factions)
 
       for (const trackedFaction of trackedFactions) {
         logger.debug(
