@@ -4,8 +4,8 @@ exports[`Inara scraper should return broker data: Tech broker data snapshot 1`] 
 {
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
-  "station": "Rescue Ship Foerster",
-  "system": "Sol",
+  "station": "Dobrovolskiy Enterprise",
+  "system": "WISE 1506+7027",
   "type": "Human",
 }
 `;
