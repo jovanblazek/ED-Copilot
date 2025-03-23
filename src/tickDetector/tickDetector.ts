@@ -8,7 +8,12 @@ import { inflateSync } from 'zlib'
 import { RedisKeys } from '../constants'
 import { createEmbed } from '../embeds'
 import L from '../i18n/i18n-node'
-import { getCachedTickTimeUTC, Prisma, saveTickTimeToRedis } from '../utils'
+import {
+  fetchTickTimeAndCacheIt,
+  getCachedTickTimeUTC,
+  Prisma,
+  saveTickTimeToRedis,
+} from '../utils'
 import logger from '../utils/logger'
 import { Redis } from '../utils/redis'
 import type { TickMessage } from './types'
@@ -128,6 +133,8 @@ const processGalaxyTick = async (payload: TickMessage, client: Client) => {
 }
 
 export default async (client: Client) => {
+  await fetchTickTimeAndCacheIt()
+
   const socket = new Subscriber()
   socket.connect(TICK_DETECTOR_URL)
 
