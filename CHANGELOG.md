@@ -1,3 +1,9 @@
+## [3.5.0](https://github.com/jovanblazek/ed-copilot/compare/v3.4.3...v3.5.0) (2025-03-23)
+
+### :sparkles: Features
+
+* System tick time ([#46](https://github.com/jovanblazek/ed-copilot/issues/46)) ([d4b8b1f](https://github.com/jovanblazek/ed-copilot/commit/d4b8b1f8829791ab84745e02923d0a4a2e2edab0))
+
 ## [3.4.3](https://github.com/jovanblazek/ed-copilot/compare/v3.4.2...v3.4.3) (2025-03-02)
 
 ### :bug: Bug Fixes
