@@ -54,6 +54,7 @@ const sk = {
     },
     systems: {
       title: '{factionName} Systémy',
+      inConflict: '🚨 Konflikt',
     },
     stations: {
       title: '{factionName} Stanice',
@@ -69,9 +70,9 @@ const sk = {
     title: 'Interstellar Factors',
   },
   tick: {
-    title: 'Posledný TICK',
+    title: 'Posledný Tick',
     wasToday: 'Dnes',
-    history: 'História tickov',
+    source: 'Zdroj',
   },
   systemInfo: {
     title: 'Frakcie v {systemName}',

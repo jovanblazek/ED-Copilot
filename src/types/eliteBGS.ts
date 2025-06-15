@@ -39,7 +39,7 @@ export interface FactionSystemsDoc {
   name: string
   name_lower: string
   updated_at: Date
-  history: History[]
+  // history: History[] // History is too heavy for some factions, therefore we do not query it
 }
 
 export enum Allegiance {

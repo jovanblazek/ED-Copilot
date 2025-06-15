@@ -17,41 +17,79 @@
   </a>
 </div>
 
+<div align="center">
+  <a href="https://discord.com/oauth2/authorize?client_id=1137746612878331975" target="_blank">
+    <img src="./images/add-to-discord.png" alt="Add to Discord" width="360px" />
+  </a>
+</div>
+
 ## 🎯 What is Copilot?
 
-Copilot is a discord bot that can help you look up the information you need. Anything from nearest material traders, tick detection, to faction influence details or ongoing conflicts. List of all commands can be found below. Bot currently supports two languages: English and Slovak.
+Copilot is a Discord bot for Elite Dangerous that helps you find information quickly. Need to know where the nearest material traders are? Want to check your faction's influence in different systems? Looking for tick times or conflict details? Just ask Copilot.
+
+The bot also keeps an eye on your faction and sends notifications when important stuff happens - like when conflicts are about to start, when you might expand to new systems, or when another faction is getting too close to your influence levels.
 
 1. Add Copilot to your server
 2. Set it up using the `/copilot` command to choose your preferred language, faction and channel for reporting ticks.
 3. Enjoy! 🎉
 
 <div align="center">
-  <img src="./images/conflicts-message.png" alt="message-embed" height="360px" /><br/>
+  <img src="./images/conflicts-message.png" alt="Faction conflicts report" height="360px" /><br/>
   <caption>
     Faction conflicts report
   </caption>
 </div>
-
-> **Note** \
-> Copilot is currently in closed beta so is not possible to invite him to your server yet. (But will be soon!)
+<br />
+<div align="center">
+  <img src="./images/pending-conflict.png" alt="Pending conflict alert" height="360px" /><br/>
+  <caption>
+    Pending conflict alert
+  </caption>
+</div>
 
 ## 📡 Commands
 
-| Command             | Description                                                                   |
-| ------------------- | ----------------------------------------------------------------------------- |
-| `copilot`           | Setup/update preferences (admins only).                                       |
-| `faction systems`   | List of systems where your faction is present with current influence & trend. |
-| `faction conflicts` | List of ongoing conflicts with details.                                       |
-| `system`            | Get info about a system and its factions.                                     |
-| `profile`           | Show off your Elite Dangerous profile.                                        |
-| `broker`            | Nearest tech brokers.                                                         |
-| `trader`            | Nearest material traders.                                                     |
-| `factors`           | Nearest interstellar factors.                                                 |
-| `distance`          | Calculate distance between two systems.                                       |
-| `tick`              | Get the latest tick time.                                                     |
-| `setup profile`     | Setup your Elite Dangerous profile.                                           |
+| Command             | Description                                                           |
+| ------------------- | --------------------------------------------------------------------- |
+| `copilot`           | Setup/update preferences (admins only).                               |
+| `faction systems`   | List of systems where your faction is present with current influence. |
+| `faction conflicts` | List of ongoing conflicts with details.                               |
+| `system`            | Get info about a system and its factions.                             |
+| `profile`           | Show off your Elite Dangerous profile.                                |
+| `nearest broker`    | Find nearest tech brokers to your location.                           |
+| `nearest trader`    | Find nearest material traders to your location.                       |
+| `nearest factors`   | Find nearest interstellar factors to your location.                   |
+| `distance`          | Calculate distance between two systems.                               |
+| `tick`              | Get the latest tick time.                                             |
+| `setup profile`     | Setup your Elite Dangerous profile.                                   |
 
 ---
+
+## 👀 Faction Monitoring
+
+Copilot can monitor your faction and notify you when certain events happen. To get started with faction monitoring, run the following command:
+
+```
+/copilot faction <faction name> <faction shorthand> <notification channel>
+```
+
+Make sure you set the notification channel, otherwise the bot will not be able to send you notifications.
+
+### Available events
+
+Bot will notify you about:
+
+- **🚨 Conflicts**: When your faction enters a pending conflict, when a conflict starts, or when it ends
+  - Wars, elections, and civil wars are all supported
+  - Shows opponent details, stakes, and current status
+- **🚀 Expansions**: When your faction is about to expand, when expansion starts, or when it completes
+  - For pending expansions, shows possible origin systems (75%+ influence)
+- **⚠️ Retreats**: When your faction is about to retreat from a system, when retreat starts, or when it completes
+  - Shows current influence level in the system
+- **📊 Influence Threats**: When another faction gets close to overtaking your faction's influence
+  - Alerts when the influence gap becomes dangerously small
+
+All notifications are sent with detailed information and direct links to INARA for quick access to more details.
 
 ## Development
 

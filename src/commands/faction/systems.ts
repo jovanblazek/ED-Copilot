@@ -1,42 +1,69 @@
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
-import { blockQuote, hyperlink } from 'discord.js'
+import { bold, hyperlink } from 'discord.js'
 import got from 'got'
-import { chunk, groupBy, map, round, sortBy } from 'lodash'
+import { round, sortBy } from 'lodash'
 import { DataParseError } from '../../classes'
-import { DIVIDER, Emojis, InaraUrl } from '../../constants'
+import { DIVIDER, InaraUrl } from '../../constants'
 import { createEmbed, usePagination } from '../../embeds'
+import { chunkDescription } from '../../embeds/utils'
 import L from '../../i18n/i18n-node'
+import type { Locales } from '../../i18n/i18n-types'
 import type { FactionSystemsResponse } from '../../types/eliteBGS'
 import { getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
+const INFLUENCE_DECIMAL_PLACES = 1
+
+interface ParsedSystemData {
+  systemName: string
+  lastUpdate: Dayjs
+  currentInfluence: number
+  isInConflict: boolean
+}
+
 const parseSystemsData = ({
-  resposne,
+  response,
   commandContext: { locale, timezone },
 }: {
-  resposne: FactionSystemsResponse
+  response: FactionSystemsResponse
   commandContext: Parameters<FactionCommandHandler>[0]['context']
-}) => {
-  if (!resposne.docs.length) {
+}): ParsedSystemData[] => {
+  if (!response.docs.length) {
     throw new DataParseError({ locale })
   }
-  const { history } = resposne.docs[0]
-  const historyGroupedBySystem = groupBy(history, 'system_id')
-  const parsedSystemData = map(historyGroupedBySystem, (systemHistory) => {
-    // sort in ascending order, older first
-    const sortedHistory = sortBy(systemHistory, 'updated_at')
-    const currentValues = sortedHistory[1]
-    const previousValues = sortedHistory[0]
-    return {
-      systemName: currentValues.system,
-      lastUpdate: dayjs(currentValues.updated_at).tz(timezone),
-      currentInfluence: round(currentValues.influence * 100, 1),
-      influenceTrend: round((currentValues.influence - previousValues.influence) * 100, 1),
-    }
-  })
+
+  const { faction_presence: factionPresence } = response.docs[0]
+
+  const parsedSystemData: ParsedSystemData[] = factionPresence.map((systemFactionPresence) => ({
+    systemName: systemFactionPresence.system_name,
+    lastUpdate: dayjs(systemFactionPresence.updated_at).tz(timezone),
+    currentInfluence: round(systemFactionPresence.influence * 100, INFLUENCE_DECIMAL_PLACES),
+    isInConflict: systemFactionPresence.conflicts.length > 0,
+  }))
+
   return sortBy(parsedSystemData, 'currentInfluence').reverse()
+}
+
+const formatSystemEntry = (
+  { systemName, currentInfluence, lastUpdate, isInConflict }: ParsedSystemData,
+  index: number,
+  tickTime: Dayjs,
+  locale: Locales
+): string => {
+  const systemInaraUrl = `https://inara.cz/starsystem/?search=${encodeURIComponent(systemName)}`
+  const isUpdateRecent = isAfterTime({ target: lastUpdate, isAfter: tickTime })
+  const updateStatus = isUpdateRecent ? '✅' : '❌'
+  const timeDifference = getPastTimeDifferenceFromNow({ pastTime: lastUpdate })
+
+  const lines = [
+    `${index + 1}. ${bold(`${currentInfluence}% - ${hyperlink(systemName, systemInaraUrl)}`)}`,
+    isInConflict ? L[locale].faction.systems.inConflict() : '',
+    `> ${updateStatus} ${timeDifference}`,
+  ]
+
+  return lines.filter(Boolean).join('\n')
 }
 
 const createFactionSystemsEmbeds = (
@@ -44,35 +71,24 @@ const createFactionSystemsEmbeds = (
     factionSystems,
     tickTime,
   }: {
-    factionSystems: ReturnType<typeof parseSystemsData>
+    factionSystems: ParsedSystemData[]
     tickTime: Dayjs
   },
   { faction, guildFaction, locale }: Parameters<FactionCommandHandler>[0]['context']
 ) => {
-  const factionSystemsChunks = chunk(factionSystems, 25)
+  const systemEntries = factionSystems.map((system, index) =>
+    formatSystemEntry(system, index, tickTime, locale)
+  )
 
-  return factionSystemsChunks.map((factionSystemsChunk) =>
+  const descriptionChunks = chunkDescription(systemEntries)
+
+  return descriptionChunks.map((chunk) =>
     createEmbed({
       title: L[locale].faction.systems.title({
         factionName: guildFaction.shortName,
       }),
-      description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}`,
-    }).addFields(
-      factionSystemsChunk.map(({ systemName, currentInfluence, influenceTrend, lastUpdate }) => ({
-        name: `${currentInfluence}% - ${systemName}`,
-        value: `${blockQuote(
-          `${
-            influenceTrend > 0
-              ? `${Emojis.green_upwards_arrow} +`
-              : `${Emojis.red_downwards_arrow} `
-          }${influenceTrend}%\n${
-            isAfterTime({ target: lastUpdate, isAfter: tickTime }) ? '✅' : '❌'
-          } ${getPastTimeDifferenceFromNow({
-            pastTime: lastUpdate,
-          })}`
-        )}`,
-      }))
-    )
+      description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}\n${chunk}`,
+    })
   )
 }
 
@@ -80,11 +96,11 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
   interaction,
   context: { faction, guildFaction, locale, timezone },
 }) => {
-  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&count=2`
+  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}`
   const fetchedData = await got(url).json<FactionSystemsResponse>()
 
   const factionSystems = parseSystemsData({
-    resposne: fetchedData,
+    response: fetchedData,
     commandContext: {
       locale,
       faction,

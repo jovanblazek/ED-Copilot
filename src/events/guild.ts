@@ -3,6 +3,7 @@ import type { Guild } from 'discord.js'
 import { Languages } from '../constants'
 import logger from '../utils/logger'
 import { Prisma } from '../utils/prismaClient'
+import { loadTrackedFactionsFromDBToRedis } from '../utils/redis'
 
 export const onGuildJoin = async ({ id, name }: Guild) => {
   logger.info(`Joined guild '${name}', id: ${id}`)
@@ -29,6 +30,8 @@ export const onGuildLeave = async ({ id, name }: Guild) => {
   logger.info(`Left guild '${name}', id: ${id}`)
   try {
     await Prisma.guild.delete({ where: { id } })
+    // Reload to remove the guild's tracked faction from redis
+    await loadTrackedFactionsFromDBToRedis()
   } catch (error) {
     logger.error(`Error while deleting guild '${name}' in DB`, error)
     Sentry.setContext('Guild', {

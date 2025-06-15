@@ -21,6 +21,7 @@ const BotClient = new Client({
 BotClient.once('ready', () => {
   initEventHandlers(BotClient)
   initActivityHandler(BotClient)
+  // Disable to prevent spam when hot reloading
   if (process.env.NODE_ENV === 'production') {
     void initTickDetector(BotClient)
   }

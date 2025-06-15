@@ -164,6 +164,10 @@ type RootTranslation = {
 			 * @param {unknown} factionName
 			 */
 			title: RequiredParams<'factionName'>
+			/**
+			 * �​�​ ​C​o​n​f​l​i​c​t
+			 */
+			inConflict: string
 		}
 		stations: {
 			/**
@@ -193,7 +197,7 @@ type RootTranslation = {
 	}
 	tick: {
 		/**
-		 * L​a​s​t​ ​T​I​C​K
+		 * L​a​s​t​ ​T​i​c​k
 		 */
 		title: string
 		/**
@@ -201,9 +205,9 @@ type RootTranslation = {
 		 */
 		wasToday: string
 		/**
-		 * T​i​c​k​ ​h​i​s​t​o​r​y
+		 * S​o​u​r​c​e
 		 */
-		history: string
+		source: string
 	}
 	systemInfo: {
 		/**
@@ -587,6 +591,10 @@ export type TranslationFunctions = {
 			 * {factionName} Systems
 			 */
 			title: (arg: { factionName: unknown }) => LocalizedString
+			/**
+			 * 🚨 Conflict
+			 */
+			inConflict: () => LocalizedString
 		}
 		stations: {
 			/**
@@ -615,7 +623,7 @@ export type TranslationFunctions = {
 	}
 	tick: {
 		/**
-		 * Last TICK
+		 * Last Tick
 		 */
 		title: () => LocalizedString
 		/**
@@ -623,9 +631,9 @@ export type TranslationFunctions = {
 		 */
 		wasToday: () => LocalizedString
 		/**
-		 * Tick history
+		 * Source
 		 */
-		history: () => LocalizedString
+		source: () => LocalizedString
 	}
 	systemInfo: {
 		/**

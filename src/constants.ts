@@ -37,7 +37,7 @@ export const PaginationButtonNames = {
   RIGHT: 'right',
 } as const
 
-export const PAGINATION_COLLECTION_TIME = 20000
+export const PAGINATION_COLLECTION_TIME = 60000
 export const EMBED_COLOR = '#5865F2'
 export const DIVIDER = '━━━━━━━━━━━━━━━━━━━━━━━━━━'
 

@@ -68,7 +68,7 @@ const reportTick = async (client: Client, tickTime: Dayjs) => {
               createEmbed({
                 title: L[locale].tick.title(),
                 description: `${bold(tickTime.tz(timezone).format('DD.MM.YYYY HH:mm'))}\n
-              ${hyperlink(L[locale].tick.history(), 'https://elitebgs.app/tick')}`,
+              ${hyperlink(L[locale].tick.source(), 'http://tick.infomancer.uk/galtick.json')}`,
               }),
             ],
           })

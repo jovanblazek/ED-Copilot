@@ -28,7 +28,7 @@ const TickCommand: Command = {
           description: `${bold(tickTime.format('DD.MM.YYYY HH:mm'))}
             ${differenceFromNow}\n
             ${L[locale].tick.wasToday()}: ${wasToday ? '✅' : '❌'}\n
-            ${hyperlink(L[locale].tick.history(), 'https://elitebgs.app/tick')}`,
+            ${hyperlink(L[locale].tick.source(), 'http://tick.infomancer.uk/galtick.json')}`,
         }),
       ],
     })
