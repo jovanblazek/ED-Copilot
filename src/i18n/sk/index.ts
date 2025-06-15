@@ -69,9 +69,9 @@ const sk = {
     title: 'Interstellar Factors',
   },
   tick: {
-    title: 'Posledný TICK',
+    title: 'Posledný Tick',
     wasToday: 'Dnes',
-    history: 'História tickov',
+    source: 'Zdroj',
   },
   systemInfo: {
     title: 'Frakcie v {systemName}',

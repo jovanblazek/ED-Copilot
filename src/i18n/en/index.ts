@@ -68,9 +68,9 @@ const en = {
     title: 'Interstellar Factors',
   },
   tick: {
-    title: 'Last TICK',
+    title: 'Last Tick',
     wasToday: 'Today',
-    history: 'Tick history',
+    source: 'Source',
   },
   systemInfo: {
     title: 'Factions in {systemName}',
