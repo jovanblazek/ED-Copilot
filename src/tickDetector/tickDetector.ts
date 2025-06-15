@@ -16,7 +16,7 @@ import {
 } from '../utils'
 import logger from '../utils/logger'
 import { Redis } from '../utils/redis'
-import type { TickMessage } from './types'
+import type { HeartbeatMessage, TickMessage } from './types'
 
 const TICK_DETECTOR_HOST = 'tcp://infomancer.uk'
 const TICK_DETECTOR_PORT = 5551
@@ -25,6 +25,11 @@ const TICK_DETECTOR_URL = `${TICK_DETECTOR_HOST}:${TICK_DETECTOR_PORT}`
 const TOPIC_HEARTBEAT = 'HeartBeat'
 const TOPIC_GALAXY_TICK = 'GalaxyTick'
 const TOPIC_SYSTEM_TICK = 'SystemTick'
+
+enum TickSource {
+  Heartbeat = 'Heartbeat',
+  GalaxyTick = 'GalaxyTick',
+}
 
 // TODO: report tick using queue, update text with disclaimer about tick detection delays
 const reportTick = async (client: Client, tickTime: Dayjs) => {
@@ -110,24 +115,49 @@ const processSystemTick = async (payload: TickMessage) => {
   }
 }
 
-const processGalaxyTick = async (payload: TickMessage, client: Client) => {
+const processGalaxyTickFromTimestamp = async (
+  timestamp: string,
+  client: Client,
+  source: TickSource
+) => {
   try {
-    const tickTime = dayjs.utc(payload.timestamp)
+    const tickTime = dayjs.utc(timestamp)
     if (!tickTime.isValid()) {
+      logger.warn(`[Tick Detector] Invalid timestamp from ${source}: ${timestamp}`)
       return
     }
 
     const cachedGalaxyTickTime = await getCachedTickTimeUTC()
     if (cachedGalaxyTickTime && tickTime.isSame(cachedGalaxyTickTime)) {
-      logger.info('[Tick Detector] Tick already exists in cache')
+      // Don't log "already exists" for heartbeat since it's sent regularly
+      if (source !== TickSource.Heartbeat) {
+        logger.warn(`[Tick Detector] Tick already exists in cache (from ${source})`)
+      }
       return
     }
 
-    logger.info(`[Tick Detector] Galaxy tick detected in ${payload.system}`, tickTime.format())
+    logger.info(`[Tick Detector] Galaxy tick detected from ${source}`, tickTime.format())
     await saveTickTimeToRedis({ tickTime })
     await reportTick(client, tickTime)
   } catch (error) {
-    logger.error(error, '[Tick Detector] Error processing galaxy tick')
+    logger.error(error, `[Tick Detector] Error processing galaxy tick from ${source}`)
+    Sentry.captureException(error)
+  }
+}
+
+const processGalaxyTick = async (payload: TickMessage, client: Client) => {
+  await processGalaxyTickFromTimestamp(payload.timestamp, client, TickSource.GalaxyTick)
+}
+
+const processHeartbeat = async (payload: HeartbeatMessage, client: Client) => {
+  try {
+    logger.info('[Tick Detector] Heartbeat received')
+
+    if (payload.lastGalaxyTick) {
+      await processGalaxyTickFromTimestamp(payload.lastGalaxyTick, client, TickSource.Heartbeat)
+    }
+  } catch (error) {
+    logger.error(error, '[Tick Detector] Error processing heartbeat')
     Sentry.captureException(error)
   }
 }
@@ -152,8 +182,7 @@ export default async (client: Client) => {
 
       switch (topicString) {
         case TOPIC_HEARTBEAT:
-          logger.info('[Tick Detector] Heartbeat received')
-          // TODO: update galaxy tick time using payload.lastGalaxyTick
+          await processHeartbeat(payload as HeartbeatMessage, client)
           break
         case TOPIC_GALAXY_TICK:
           await processGalaxyTick(payload as TickMessage, client)
