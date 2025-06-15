@@ -80,7 +80,7 @@ export const usePagination = async ({
   // removes buttons when done collecting
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('end', async () => {
-    await reply.edit({
+    await interaction.editReply({
       embeds: [embeds[activePageIndex]],
       components: [],
     })
