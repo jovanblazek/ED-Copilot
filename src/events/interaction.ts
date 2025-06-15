@@ -21,8 +21,11 @@ export const onInteractionCreate = async (interaction: Interaction) => {
     id: interaction.id,
     type: interaction.type,
     guildId: interaction.guildId,
+    guildName: interaction.guild?.name,
     channelId: interaction.channelId,
+    channelType: interaction.channel?.type,
     userId: interaction.user.id,
+    userName: interaction.user.username,
     commandName: interaction.commandName,
   })
 
