@@ -1,3 +1,9 @@
+## [3.5.1](https://github.com/jovanblazek/ed-copilot/compare/v3.5.0...v3.5.1) (2025-06-15)
+
+### :bug: Bug Fixes
+
+* Add processing of galaxy tick to heartbeat ([#47](https://github.com/jovanblazek/ed-copilot/issues/47)) ([2ef57b1](https://github.com/jovanblazek/ed-copilot/commit/2ef57b10b00d20b1d8bca2ec24ec40e72bec27c2))
+
 ## [3.5.0](https://github.com/jovanblazek/ed-copilot/compare/v3.4.3...v3.5.0) (2025-03-23)
 
 ### :sparkles: Features
