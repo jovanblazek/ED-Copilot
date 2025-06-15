@@ -1,3 +1,9 @@
+## [3.6.0](https://github.com/jovanblazek/ed-copilot/compare/v3.5.1...v3.6.0) (2025-06-15)
+
+### :sparkles: Features
+
+* Faction updates & fixes ([#48](https://github.com/jovanblazek/ed-copilot/issues/48)) ([0dcdd05](https://github.com/jovanblazek/ed-copilot/commit/0dcdd05c84dc9635fbf809b063e4a7719d65834e))
+
 ## [3.5.1](https://github.com/jovanblazek/ed-copilot/compare/v3.5.0...v3.5.1) (2025-06-15)
 
 ### :bug: Bug Fixes
