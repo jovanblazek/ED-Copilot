@@ -41,7 +41,9 @@ export const SystemProcessingWorker = new Worker<EDDNEventToProcess>(
 
       const tickTime = await getCachedTickTimeUTC({ system: systemName })
       if (!tickTime) {
-        logger.warn(`[BullMQ] systemProcessingWorker: ${systemName} - No tick time found`)
+        // It is normal for systems to not have a tick time yet, e.g. newly colonized systems
+        // TODO: Perhaps we should fallback to using the galaxy tick time for these systems?
+        logger.info(`[BullMQ] systemProcessingWorker: ${systemName} - No tick time found`)
         return
       }
 
