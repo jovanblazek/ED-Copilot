@@ -1,4 +1,5 @@
 import RedisClient from 'ioredis'
+import { uniqBy } from 'lodash'
 import { RedisKeys } from '../constants'
 import type { TrackedFaction } from '../types/redis'
 import { Prisma } from './prismaClient'
@@ -23,6 +24,15 @@ export const getTrackedFactions = async () => {
 }
 
 export const loadTrackedFactionsFromDBToRedis = async () => {
-  const trackedFactions = await Prisma.faction.findMany()
-  await Redis.set(RedisKeys.trackedFactions, JSON.stringify(trackedFactions))
+  // Load only factions linked to guilds, not every faction in the DB
+  const trackedGuildFactions = await Prisma.guildFaction.findMany({
+    include: { faction: true },
+  })
+
+  const uniqueFactions = uniqBy(
+    trackedGuildFactions.map(({ faction }) => faction),
+    'id'
+  )
+
+  await Redis.set(RedisKeys.trackedFactions, JSON.stringify(uniqueFactions))
 }
