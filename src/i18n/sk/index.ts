@@ -54,6 +54,7 @@ const sk = {
     },
     systems: {
       title: '{factionName} Systémy',
+      inConflict: '🚨 Konflikt',
     },
     stations: {
       title: '{factionName} Stanice',

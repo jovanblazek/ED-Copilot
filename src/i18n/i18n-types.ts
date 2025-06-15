@@ -164,6 +164,10 @@ type RootTranslation = {
 			 * @param {unknown} factionName
 			 */
 			title: RequiredParams<'factionName'>
+			/**
+			 * �​�​ ​C​o​n​f​l​i​c​t
+			 */
+			inConflict: string
 		}
 		stations: {
 			/**
@@ -587,6 +591,10 @@ export type TranslationFunctions = {
 			 * {factionName} Systems
 			 */
 			title: (arg: { factionName: unknown }) => LocalizedString
+			/**
+			 * 🚨 Conflict
+			 */
+			inConflict: () => LocalizedString
 		}
 		stations: {
 			/**

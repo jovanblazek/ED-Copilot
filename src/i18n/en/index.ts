@@ -53,6 +53,7 @@ const en = {
     },
     systems: {
       title: '{factionName} Systems',
+      inConflict: '🚨 Conflict',
     },
     stations: {
       title: '{factionName} Stations',
