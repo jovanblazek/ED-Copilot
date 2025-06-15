@@ -8,16 +8,20 @@ const Activities: ActivityOptions[] = [
     type: ActivityType.Watching,
   },
   {
-    name: 'to your commands',
+    name: 'over your faction',
+    type: ActivityType.Watching,
+  },
+  {
+    name: 'Galnet news',
     type: ActivityType.Listening,
   },
   { name: 'with the FSD 🚀', type: ActivityType.Playing },
-  { name: 'Enjoying Lavian Brandy 🍸', type: ActivityType.Playing },
-  { name: 'Mining Platinum ⛏', type: ActivityType.Playing },
-  { name: 'That is a big haul 👀', type: ActivityType.Playing },
-  { name: 'Top 1% of all bots!', type: ActivityType.Playing },
-  { name: 'Simping for Aisling 😍', type: ActivityType.Playing },
-  { name: 'Free Conda @ Hutton 😉', type: ActivityType.Playing },
+  { name: 'Enjoying Lavian Brandy 🍸', type: ActivityType.Custom },
+  { name: 'Mining Platinum ⛏', type: ActivityType.Custom },
+  { name: 'That is a big haul 👀', type: ActivityType.Custom },
+  { name: 'Top 1% of all bots!', type: ActivityType.Custom },
+  { name: 'Simping for Aisling 😍', type: ActivityType.Custom },
+  { name: 'Free Conda @ Hutton 😉', type: ActivityType.Custom },
 ]
 
 export const setRandomActivity = (client: Client) => {
