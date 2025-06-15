@@ -1,3 +1,9 @@
+## [3.6.1](https://github.com/jovanblazek/ed-copilot/compare/v3.6.0...v3.6.1) (2025-06-15)
+
+### :bug: Bug Fixes
+
+* Pagination throwing Missing Access errors ([#50](https://github.com/jovanblazek/ed-copilot/issues/50)) ([fb268df](https://github.com/jovanblazek/ed-copilot/commit/fb268df916ea7e74170c2d19e8293a08cd28a1bb))
+
 ## [3.6.0](https://github.com/jovanblazek/ed-copilot/compare/v3.5.1...v3.6.0) (2025-06-15)
 
 ### :sparkles: Features
