@@ -165,7 +165,7 @@ const en = {
     influenceThreat: {
       title: '⚠️ {systemName} may be under threat ⚠️',
       description:
-        '**{threateningFaction}** is only **{influenceDiff}%** behind your faction!\nThey might try to initiate a conflict soon.\n\n- {factionName} (**{factionInfluence}%**)\n- {threateningFaction} (**{threateningFactionInfluence}%**)\n\n[INARA]({inaraUrl})',
+        '**{threateningFaction}** is only **{influenceDiff}** behind your faction!\nThey might try to initiate a conflict soon.\n\n- {factionName} (**{factionInfluence}**)\n- {threateningFaction} (**{threateningFactionInfluence}**)\n\n[INARA]({inaraUrl})',
     },
   },
 } satisfies BaseTranslation

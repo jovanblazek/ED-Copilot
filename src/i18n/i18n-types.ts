@@ -447,11 +447,11 @@ type RootTranslation = {
 			 */
 			title: RequiredParams<'systemName'>
 			/**
-			 * *​*​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​}​*​*​ ​i​s​ ​o​n​l​y​ ​*​*​{​i​n​f​l​u​e​n​c​e​D​i​f​f​}​%​*​*​ ​b​e​h​i​n​d​ ​y​o​u​r​ ​f​a​c​t​i​o​n​!​
+			 * *​*​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​}​*​*​ ​i​s​ ​o​n​l​y​ ​*​*​{​i​n​f​l​u​e​n​c​e​D​i​f​f​}​*​*​ ​b​e​h​i​n​d​ ​y​o​u​r​ ​f​a​c​t​i​o​n​!​
 		​T​h​e​y​ ​m​i​g​h​t​ ​t​r​y​ ​t​o​ ​i​n​i​t​i​a​t​e​ ​a​ ​c​o​n​f​l​i​c​t​ ​s​o​o​n​.​
 		​
-		​-​ ​{​f​a​c​t​i​o​n​N​a​m​e​}​ ​(​*​*​{​f​a​c​t​i​o​n​I​n​f​l​u​e​n​c​e​}​%​*​*​)​
-		​-​ ​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​}​ ​(​*​*​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​I​n​f​l​u​e​n​c​e​}​%​*​*​)​
+		​-​ ​{​f​a​c​t​i​o​n​N​a​m​e​}​ ​(​*​*​{​f​a​c​t​i​o​n​I​n​f​l​u​e​n​c​e​}​*​*​)​
+		​-​ ​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​}​ ​(​*​*​{​t​h​r​e​a​t​e​n​i​n​g​F​a​c​t​i​o​n​I​n​f​l​u​e​n​c​e​}​*​*​)​
 		​
 		​[​I​N​A​R​A​]​(​{​i​n​a​r​a​U​r​l​}​)
 			 * @param {unknown} factionInfluence
@@ -852,11 +852,11 @@ export type TranslationFunctions = {
 			 */
 			title: (arg: { systemName: unknown }) => LocalizedString
 			/**
-			 * **{threateningFaction}** is only **{influenceDiff}%** behind your faction!
+			 * **{threateningFaction}** is only **{influenceDiff}** behind your faction!
 		They might try to initiate a conflict soon.
 	
-		- {factionName} (**{factionInfluence}%**)
-		- {threateningFaction} (**{threateningFactionInfluence}%**)
+		- {factionName} (**{factionInfluence}**)
+		- {threateningFaction} (**{threateningFactionInfluence}**)
 	
 		[INARA]({inaraUrl})
 			 */

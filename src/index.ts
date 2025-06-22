@@ -7,6 +7,7 @@ import { initMQ } from './mq'
 import initTickDetector from './tickDetector/tickDetector'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
+import { Posthog } from './utils/posthog'
 import { loadTrackedFactionsFromDBToRedis, Redis } from './utils/redis'
 import './i18n/dayjsLocales'
 import './utils/environment'
@@ -91,6 +92,11 @@ const shutdown = async () => {
     KoaApp.listen().close(() => resolve())
   })
   logger.info('[Koa] Server closed')
+
+  // Close PostHog
+  logger.info('[PostHog] Shutting down analytics...')
+  await Posthog.shutdown()
+  logger.info('[PostHog] Analytics shut down')
 
   // Give time for connections to close
   await new Promise((resolve) => {
