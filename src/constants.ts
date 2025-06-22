@@ -26,6 +26,7 @@ export const CopilotSubcommands = {
   tick: 'tick',
   language: 'language',
   timezone: 'timezone',
+  clear: 'clear',
 } as const
 
 export const SetupSubcommands = {

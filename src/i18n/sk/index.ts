@@ -44,6 +44,11 @@ const sk = {
       removed: 'Kanál pre hlásenie tickov odstránený.',
       notRemoved: 'Kanál {channel} zostane použitý na hlásenie herných tickov.',
     },
+    clear: {
+      nothing: 'Žiadne nastavenia na vymazanie.',
+      faction: 'Nastavenia frakcie vymazané.',
+      tickReportChannel: 'Nastavenie kanála pre hlásenie tickov vymazané.',
+    },
   },
   faction: {
     notSetup: 'Frakcia nie je nastavená.',
