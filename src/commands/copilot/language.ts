@@ -3,7 +3,7 @@ import { baseLocale, isLocale } from '../../i18n/i18n-util'
 import { Prisma } from '../../utils'
 import type { CommandHandler } from '../types'
 
-export const setupLanguagenHandler: CommandHandler = async ({
+export const copilotLanguageHandler: CommandHandler = async ({
   interaction,
   context: { locale },
 }) => {

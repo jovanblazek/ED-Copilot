@@ -43,6 +43,11 @@ const en = {
       removed: 'Tick reporting channel removed.',
       notRemoved: 'Channel {channel} will remain used for reporting game ticks.',
     },
+    clear: {
+      nothing: 'No settings to clear.',
+      faction: 'Faction settings cleared.',
+      tickReportChannel: 'Tick reporting channel cleared.',
+    },
   },
   faction: {
     notSetup: 'Faction is not setup.',

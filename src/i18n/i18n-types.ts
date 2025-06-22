@@ -137,6 +137,20 @@ type RootTranslation = {
 			 */
 			notRemoved: RequiredParams<'channel'>
 		}
+		clear: {
+			/**
+			 * N​o​ ​s​e​t​t​i​n​g​s​ ​t​o​ ​c​l​e​a​r​.
+			 */
+			nothing: string
+			/**
+			 * F​a​c​t​i​o​n​ ​s​e​t​t​i​n​g​s​ ​c​l​e​a​r​e​d​.
+			 */
+			faction: string
+			/**
+			 * T​i​c​k​ ​r​e​p​o​r​t​i​n​g​ ​c​h​a​n​n​e​l​ ​c​l​e​a​r​e​d​.
+			 */
+			tickReportChannel: string
+		}
 	}
 	faction: {
 		/**
@@ -565,6 +579,20 @@ export type TranslationFunctions = {
 			 * Channel {channel} will remain used for reporting game ticks.
 			 */
 			notRemoved: (arg: { channel: unknown }) => LocalizedString
+		}
+		clear: {
+			/**
+			 * No settings to clear.
+			 */
+			nothing: () => LocalizedString
+			/**
+			 * Faction settings cleared.
+			 */
+			faction: () => LocalizedString
+			/**
+			 * Tick reporting channel cleared.
+			 */
+			tickReportChannel: () => LocalizedString
 		}
 	}
 	faction: {

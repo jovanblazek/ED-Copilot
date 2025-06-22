@@ -17,7 +17,10 @@ type EliteBgsResponse = {
   }[]
 }
 
-export const setupFactionHandler: CommandHandler = async ({ interaction, context: { locale } }) => {
+export const copilotFactionHandler: CommandHandler = async ({
+  interaction,
+  context: { locale },
+}) => {
   const { guildId } = interaction
   if (!guildId) {
     return // We should never get here as this check is done in the parent command

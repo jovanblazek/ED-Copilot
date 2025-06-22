@@ -3,16 +3,18 @@ import { InteractionError } from '../../classes'
 import { CommandNames, CopilotSubcommands, Languages } from '../../constants'
 import logger from '../../utils/logger'
 import type { Command } from '../types'
-import { setupFactionHandler } from './faction'
-import { setupLanguagenHandler } from './language'
-import { setupTickReportChannelHandler } from './tickReportChannel'
-import { setupTimezoneHandler } from './timezone'
+import { copilotClearHandler } from './clear'
+import { copilotFactionHandler } from './faction'
+import { copilotLanguageHandler } from './language'
+import { copilotTickReportChannelHandler } from './tickReportChannel'
+import { copilotTimezoneHandler } from './timezone'
 
 const SubcommandHandlers = {
-  [CopilotSubcommands.faction]: setupFactionHandler,
-  [CopilotSubcommands.language]: setupLanguagenHandler,
-  [CopilotSubcommands.timezone]: setupTimezoneHandler,
-  [CopilotSubcommands.tick]: setupTickReportChannelHandler,
+  [CopilotSubcommands.faction]: copilotFactionHandler,
+  [CopilotSubcommands.language]: copilotLanguageHandler,
+  [CopilotSubcommands.timezone]: copilotTimezoneHandler,
+  [CopilotSubcommands.tick]: copilotTickReportChannelHandler,
+  [CopilotSubcommands.clear]: copilotClearHandler,
 }
 
 const Copilot: Command = {
@@ -66,6 +68,17 @@ const Copilot: Command = {
         .setDescription('Set bot timezone')
         .addStringOption((option) =>
           option.setName('timezone').setDescription('Timezone name').setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName(CopilotSubcommands.clear)
+        .setDescription('Clear particular settings')
+        .addBooleanOption((option) =>
+          option.setName('faction').setDescription('Clear faction settings')
+        )
+        .addBooleanOption((option) =>
+          option.setName('tick').setDescription('Clear tick reporting settings')
         )
     ),
   handler: async ({ interaction, context }) => {
