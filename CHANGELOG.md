@@ -1,3 +1,9 @@
+## [3.8.0](https://github.com/jovanblazek/ed-copilot/compare/v3.7.0...v3.8.0) (2025-06-22)
+
+### :sparkles: Features
+
+* Add Posthog analytics ([#53](https://github.com/jovanblazek/ed-copilot/issues/53)) ([6f17800](https://github.com/jovanblazek/ed-copilot/commit/6f17800c95d0cded95234b624a843982b0953946))
+
 ## [3.7.0](https://github.com/jovanblazek/ed-copilot/compare/v3.6.1...v3.7.0) (2025-06-22)
 
 ### :sparkles: Features
