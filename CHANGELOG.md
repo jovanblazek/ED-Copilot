@@ -1,3 +1,9 @@
+## [3.7.0](https://github.com/jovanblazek/ed-copilot/compare/v3.6.1...v3.7.0) (2025-06-22)
+
+### :sparkles: Features
+
+* Copilot clear command ([#52](https://github.com/jovanblazek/ed-copilot/issues/52)) ([18713b5](https://github.com/jovanblazek/ed-copilot/commit/18713b5ace08b5473a150f19714f4533935c083f))
+
 ## [3.6.1](https://github.com/jovanblazek/ed-copilot/compare/v3.6.0...v3.6.1) (2025-06-15)
 
 ### :bug: Bug Fixes
