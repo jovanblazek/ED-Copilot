@@ -4,7 +4,7 @@ import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
 import type { CommandHandler } from '../types'
 
-export const setupTickReportChannelHandler: CommandHandler = async ({
+export const copilotTickReportChannelHandler: CommandHandler = async ({
   interaction,
   context: { locale },
 }) => {

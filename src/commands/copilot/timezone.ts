@@ -9,7 +9,7 @@ import type { CommandHandler } from '../types'
 dayjs.extend(timezonePlugin)
 dayjs.extend(advancedFormatPlugin)
 
-export const setupTimezoneHandler: CommandHandler = async ({
+export const copilotTimezoneHandler: CommandHandler = async ({
   interaction,
   context: { locale },
 }) => {

@@ -4,16 +4,16 @@ import { CommandNames, CopilotSubcommands, Languages } from '../../constants'
 import logger from '../../utils/logger'
 import type { Command } from '../types'
 import { copilotClearHandler } from './clear'
-import { setupFactionHandler } from './faction'
-import { setupLanguagenHandler } from './language'
-import { setupTickReportChannelHandler } from './tickReportChannel'
-import { setupTimezoneHandler } from './timezone'
+import { copilotFactionHandler } from './faction'
+import { copilotLanguageHandler } from './language'
+import { copilotTickReportChannelHandler } from './tickReportChannel'
+import { copilotTimezoneHandler } from './timezone'
 
 const SubcommandHandlers = {
-  [CopilotSubcommands.faction]: setupFactionHandler,
-  [CopilotSubcommands.language]: setupLanguagenHandler,
-  [CopilotSubcommands.timezone]: setupTimezoneHandler,
-  [CopilotSubcommands.tick]: setupTickReportChannelHandler,
+  [CopilotSubcommands.faction]: copilotFactionHandler,
+  [CopilotSubcommands.language]: copilotLanguageHandler,
+  [CopilotSubcommands.timezone]: copilotTimezoneHandler,
+  [CopilotSubcommands.tick]: copilotTickReportChannelHandler,
   [CopilotSubcommands.clear]: copilotClearHandler,
 }
 
