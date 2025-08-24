@@ -6,12 +6,10 @@ import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import type { Command } from '../types'
 import { factionConflictsHandler } from './conflicts'
-import { factionStationsHandler } from './stations'
 import { factionSystemsHandler } from './systems'
 
 const SubcommandHandlers = {
   [FactionSubcommands.conflicts]: factionConflictsHandler,
-  [FactionSubcommands.stations]: factionStationsHandler,
   [FactionSubcommands.systems]: factionSystemsHandler,
 } as const
 
@@ -29,12 +27,6 @@ const Faction: Command = {
         .setName(FactionSubcommands.conflicts)
         .setDescription('Get information about conflicts of your faction')
     ),
-  // Not fully developed, move to systemInfo command
-  // .addSubcommand((subcommand) =>
-  //   subcommand
-  //     .setName(FactionSubcommands.stations)
-  //     .setDescription('Get information about stations of your faction')
-  // ),
   handler: async ({ interaction, context }) => {
     await interaction.deferReply()
     if (!interaction.guildId) {

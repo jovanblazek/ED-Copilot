@@ -22,6 +22,10 @@ export const nearestTechBrokerHandler: CommandHandler = async ({
 
   const parsedData = await scrapeInara(url, CELLS_PER_ROW)
 
+  console.log(parsedData)
+  // TODO: Render station icons in messages
+  // TODO: Fetch station type in processors and render it in messages
+
   if (parsedData.length === 0) {
     throw new SystemNotFoundError({ locale, systemName })
   }
