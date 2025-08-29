@@ -1,3 +1,9 @@
+## [3.10.0](https://github.com/jovanblazek/ed-copilot/compare/v3.9.0...v3.10.0) (2025-08-29)
+
+### :sparkles: Features
+
+* Add station emojis to faction conflicts command ([#57](https://github.com/jovanblazek/ed-copilot/issues/57)) ([4814a28](https://github.com/jovanblazek/ed-copilot/commit/4814a28ba7b4844bf26b0f5e182b2bdeb8e73de4))
+
 ## [3.9.0](https://github.com/jovanblazek/ed-copilot/compare/v3.8.0...v3.9.0) (2025-08-29)
 
 ### :sparkles: Features
