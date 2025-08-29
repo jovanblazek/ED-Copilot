@@ -4,11 +4,12 @@ import { hyperlink, inlineCode, quote } from 'discord.js'
 import got from 'got'
 import { chunk } from 'lodash'
 import { DataParseError } from '../../classes'
-import { DIVIDER, Emojis, InaraUrl } from '../../constants'
+import type { StationType } from '../../constants'
+import { DIVIDER, Emojis, InaraUrl, StationTypeEmojis } from '../../constants'
 import { createEmbed, usePagination } from '../../embeds'
 import L from '../../i18n/i18n-node'
 import type { FactionConflicsResponse } from '../../types/eliteBGS'
-import { getTickTimeInTimezone } from '../../utils'
+import { getStationType, getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
@@ -19,6 +20,7 @@ type FactionInConflict = {
   stake: string
   daysWon: number
   isTargetFaction: boolean
+  stationType: StationType | null
 }
 
 type Conflict = {
@@ -77,12 +79,14 @@ const parseConflictsData = ({
             stake: conflict.faction1.stake,
             daysWon: conflict.faction1.days_won,
             isTargetFaction: conflict.faction1.faction_id === targetFactionId,
+            stationType: null, // Will be populated later
           },
           faction2: {
             name: conflict.faction2.name,
             stake: conflict.faction2.stake,
             daysWon: conflict.faction2.days_won,
             isTargetFaction: conflict.faction2.faction_id === targetFactionId,
+            stationType: null, // Will be populated later
           },
         },
       ]
@@ -129,8 +133,8 @@ const printConflict = ({
       inline: true,
     },
     {
-      name: `🏆 ${enemyFaction.stake || ' ---'}`,
-      value: `💥 ${targetFaction.stake || ' ---'}`,
+      name: `🏆 ${enemyFaction.stationType ? `${StationTypeEmojis[enemyFaction.stationType]}` : ''} ${enemyFaction.stake || ' ---'}`,
+      value: `💥 ${targetFaction.stationType ? `${StationTypeEmojis[targetFaction.stationType]}` : ''} ${targetFaction.stake || ' ---'}`,
       inline: true,
     },
     ...(!isLastConflict || isConflictPending
@@ -204,6 +208,62 @@ const createFactionConflictsEmbeds = (
   )
 }
 
+const populateStationTypes = async ({
+  factionConflicts,
+}: {
+  factionConflicts: Conflict[]
+}): Promise<Conflict[]> => {
+  // Extract all unique systems to optimize cache population
+  const uniqueSystems = Array.from(new Set(factionConflicts.map((conflict) => conflict.system)))
+
+  await Promise.all(
+    uniqueSystems.map(async (systemName) => {
+      // Find any station in this system to trigger cache population
+      const conflictInSystem = factionConflicts.find((c) => c.system === systemName)
+      if (conflictInSystem && conflictInSystem.faction1.stake) {
+        await getStationType({
+          systemName,
+          stationName: conflictInSystem.faction1.stake,
+        })
+      }
+    })
+  )
+
+  // Now fetch all station types in parallel (should mostly hit cache)
+  const conflictsWithStationTypes = await Promise.all(
+    factionConflicts.map(async (conflict) => {
+      const [faction1StationType, faction2StationType] = await Promise.all([
+        conflict.faction1.stake
+          ? getStationType({
+              systemName: conflict.system,
+              stationName: conflict.faction1.stake,
+            })
+          : Promise.resolve(null),
+        conflict.faction2.stake
+          ? getStationType({
+              systemName: conflict.system,
+              stationName: conflict.faction2.stake,
+            })
+          : Promise.resolve(null),
+      ])
+
+      return {
+        ...conflict,
+        faction1: {
+          ...conflict.faction1,
+          stationType: faction1StationType,
+        },
+        faction2: {
+          ...conflict.faction2,
+          stationType: faction2StationType,
+        },
+      }
+    })
+  )
+
+  return conflictsWithStationTypes
+}
+
 export const factionConflictsHandler: FactionCommandHandler = async ({ interaction, context }) => {
   const { faction, timezone, locale } = context
   const conflictsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true`
@@ -212,10 +272,15 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
     resposne: fetchedData,
     commandContext: context,
   })
+
+  const factionConflictsWithStationTypes = await populateStationTypes({
+    factionConflicts,
+  })
+
   const tickTime = await getTickTimeInTimezone({ locale, timezone })
   const embeds = createFactionConflictsEmbeds(
     {
-      factionConflicts,
+      factionConflicts: factionConflictsWithStationTypes,
       tickTime,
     },
     context
