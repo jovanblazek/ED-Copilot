@@ -5,6 +5,7 @@ exports[`Inara scraper should return broker data: Tech broker data snapshot 1`] 
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
   "station": "Dobrovolskiy Enterprise",
+  "stationType": "ocellus",
   "system": "WISE 1506+7027",
   "type": "Human",
 }
@@ -15,6 +16,7 @@ exports[`Inara scraper should return factors data: Interstellar factors data sna
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
   "station": Any<String>,
+  "stationType": "coriolis",
   "system": Any<String>,
   "type": null,
 }
@@ -25,6 +27,7 @@ exports[`Inara scraper should return trader data: Material trader data snapshot 
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
   "station": "Patterson Enterprise",
+  "stationType": "coriolis",
   "system": "Sirius",
   "type": "Manufactured",
 }

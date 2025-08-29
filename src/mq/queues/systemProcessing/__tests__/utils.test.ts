@@ -1,4 +1,5 @@
 import { StateType } from '@prisma/client'
+import { StationType } from '../../../../constants'
 import { EDDNConflictStatus, EDDNState, EDDNWarType } from '../../../../types/eddn'
 import * as redis from '../../../../utils/redis'
 import {
@@ -178,22 +179,28 @@ describe('systemProcessing utils', () => {
         WarType: EDDNWarType.War,
       }
 
+      const stationTypes = [StationType.Coriolis, StationType.Outpost]
+
       const expected = {
         faction1: {
           name: 'Faction1',
           stake: 'High Stakes',
           wonDays: 2,
+          stationType: StationType.Coriolis,
         },
         faction2: {
           name: 'Faction2',
           stake: 'Low Stakes',
           wonDays: 1,
+          stationType: StationType.Outpost,
         },
         status: EDDNConflictStatus.Active,
         conflictType: EDDNWarType.War,
       }
 
-      expect(transformConflictToDiscordNotificationData(eddnConflict)).toEqual(expected)
+      expect(transformConflictToDiscordNotificationData(eddnConflict, stationTypes)).toEqual(
+        expected
+      )
     })
   })
 
