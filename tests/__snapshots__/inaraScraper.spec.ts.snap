@@ -16,7 +16,7 @@ exports[`Inara scraper should return factors data: Interstellar factors data sna
   "distanceLs": StringContaining "Ls",
   "distanceLy": StringContaining "Ly",
   "station": Any<String>,
-  "stationType": "coriolis",
+  "stationType": "orbis",
   "system": Any<String>,
   "type": null,
 }
