@@ -30,7 +30,7 @@ type RootTranslation = {
 		systemNotFound: RequiredParams<'systemName'>
 		/**
 		 * C​o​u​l​d​ ​n​o​t​ ​f​e​t​c​h​ ​t​i​c​k​ ​d​a​t​a​.​ ​
-	​C​h​e​c​k​ ​[​t​h​i​s​ ​s​i​t​e​]​(​h​t​t​p​s​:​/​/​e​l​i​t​e​b​g​s​.​a​p​p​/​t​i​c​k​)​.
+	​C​h​e​c​k​ ​[​t​h​i​s​ ​s​i​t​e​]​(​h​t​t​p​:​/​/​t​i​c​k​.​i​n​f​o​m​a​n​c​e​r​.​u​k​/​g​a​l​t​i​c​k​.​j​s​o​n​)​.
 		 */
 		tickFetchError: string
 		/**
@@ -482,7 +482,7 @@ export type TranslationFunctions = {
 		systemNotFound: (arg: { systemName: unknown }) => LocalizedString
 		/**
 		 * Could not fetch tick data. 
-	Check [this site](https://elitebgs.app/tick).
+	Check [this site](http://tick.infomancer.uk/galtick.json).
 		 */
 		tickFetchError: () => LocalizedString
 		/**
