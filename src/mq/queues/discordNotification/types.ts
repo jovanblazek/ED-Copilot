@@ -1,9 +1,11 @@
+import type { StationType } from '../../../constants'
 import type { EDDNConflictStatus, EDDNWarType } from '../../../types/eddn'
 
 type ConflictFaction = {
   name: string
   stake: string
   wonDays: number
+  stationType: StationType | null
 }
 
 export type Conflict = {

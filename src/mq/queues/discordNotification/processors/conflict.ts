@@ -1,6 +1,6 @@
 import type { Faction, Guild, GuildFaction } from '@prisma/client'
 import type { Client } from 'discord.js'
-import { InaraUrl } from '../../../../constants'
+import { InaraUrl, StationTypeEmojis } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
 import L from '../../../../i18n/i18n-node'
 import type { Locales, Translations } from '../../../../i18n/i18n-types'
@@ -79,12 +79,12 @@ const generateEmbed = ({
       },
       {
         name: L[locale].discordNotification.conflict.fields.opponentStake.title(),
-        value: opponent.stake,
+        value: `${opponent.stationType ? `${StationTypeEmojis[opponent.stationType]} ` : ''}${opponent.stake}`,
         inline: false,
       },
       {
         name: L[locale].discordNotification.conflict.fields.yourStake.title(),
-        value: trackedFaction.stake,
+        value: `${trackedFaction.stationType ? `${StationTypeEmojis[trackedFaction.stationType]} ` : ''}${trackedFaction.stake}`,
         inline: false,
       },
       {

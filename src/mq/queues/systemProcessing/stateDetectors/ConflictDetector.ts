@@ -1,3 +1,4 @@
+import { getStationType } from '../../../../utils'
 import {
   getConflictByFactionName,
   isConflictInEDDNStateArray,
@@ -38,6 +39,16 @@ export class ConflictDetector extends BaseStateDetector {
       },
     ]
 
+    // Fetch station types sequentially to use cache on second request
+    const faction1StationType = await getStationType({
+      systemName,
+      stationName: conflict.Faction1.Stake,
+    })
+    const faction2StationType = await getStationType({
+      systemName,
+      stationName: conflict.Faction2.Stake,
+    })
+
     for (const config of notificationConfigs) {
       if (isConflictInEDDNStateArray(config.states)) {
         // eslint-disable-next-line no-await-in-loop
@@ -48,7 +59,10 @@ export class ConflictDetector extends BaseStateDetector {
           timestamp,
           type: config.type,
           data: {
-            conflict: transformConflictToDiscordNotificationData(conflict),
+            conflict: transformConflictToDiscordNotificationData(conflict, [
+              faction1StationType,
+              faction2StationType,
+            ]),
           },
         })
       }

@@ -95,6 +95,8 @@ export const RedisKeys = {
   processedSystem: ({ tickTimestamp, systemName }: { tickTimestamp: string; systemName: string }) =>
     `processedSystem:${systemName}:${tickTimestamp}`,
   expansion: ({ factionId }: { factionId: number }) => `expansion:${factionId}`,
+  stationType: ({ systemName, stationName }: { systemName: string; stationName: string }) =>
+    `stationType:${systemName}:${stationName}`,
 } as const
 
 export const RankNames = {
