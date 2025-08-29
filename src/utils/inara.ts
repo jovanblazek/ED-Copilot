@@ -2,7 +2,7 @@ import { hyperlink } from 'discord.js'
 import got from 'got'
 import { JSDOM } from 'jsdom'
 import { chunk, get } from 'lodash'
-import { DIVIDER, RankNames, Ranks, StationType } from '../constants'
+import { DIVIDER, RankNames, Ranks, StationType, StationTypeEmojis } from '../constants'
 import { createEmbed } from '../embeds'
 import type { InaraEvent, InaraProfile, InaraResponse } from '../types/inara'
 
@@ -58,6 +58,7 @@ export const getInaraStationType = (node: ChildNode | null): StationType | null 
     [-169, StationType.Ocellus],
     [-182, StationType.SurfacePort],
     [-195, StationType.SurfacePort],
+    [-247, StationType.AsteroidStation],
     [-442, StationType.Megaship],
     [-780, StationType.PlanetarySettlement],
   ])
@@ -71,6 +72,7 @@ export const getInaraStationType = (node: ChildNode | null): StationType | null 
 export type ScrapedInaraData = {
   type: string | null
   station: string
+  stationType: StationType | null
   system: string
   distanceLs: string
   distanceLy: string
@@ -107,11 +109,11 @@ export const generateInaraEmbed = (url: string, data: ScrapedInaraData[], title:
     description: `${hyperlink('INARA', url)}\n${DIVIDER}`,
   })
 
-  data.forEach(({ type, station, system, distanceLs, distanceLy }) => {
+  data.forEach(({ type, station, system, stationType, distanceLs, distanceLy }) => {
     embed.addFields([
       {
         name: `${type ? `${type} - ` : ''}${system}`,
-        value: `${station} - ${distanceLs}\n\`${distanceLy}\`\n`,
+        value: `${stationType ? `${StationTypeEmojis[stationType]} ` : ''}${station} - ${distanceLs}\n\`${distanceLy}\`\n`,
       },
     ])
   })
