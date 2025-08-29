@@ -7,7 +7,7 @@ const sk = {
     general: 'Niečo sa pokazilo. Skúste to znova neskôr.',
     systemNotFound: 'Nepodarilo sa nájsť systém s názvom `{systemName}`.',
     tickFetchError:
-      'Nepodarilo sa načítať dáta o ticku. \nSkontrolujte [túto stránku](https://elitebgs.app/tick).',
+      'Nepodarilo sa načítať dáta o ticku. \nSkontrolujte [túto stránku](http://tick.infomancer.uk/galtick.json).',
     dataParseError: 'Nepodarilo sa spracovať dáta.',
     buttonsDisabled: 'Tieto tlačidlá nie sú pre teba!',
   },
