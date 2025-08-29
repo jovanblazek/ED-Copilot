@@ -70,6 +70,7 @@ describe('Inara scraper', () => {
       {
         station: expect.any(String),
         system: expect.any(String),
+        stationType: expect.any(String),
         distanceLs: expect.stringContaining('Ls'),
         distanceLy: expect.stringContaining('Ly'),
       },
