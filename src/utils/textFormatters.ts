@@ -22,7 +22,7 @@ export const getStationTypeWithIcon = (stationType: string) => {
       priority = 3
       break
     default:
-      type = `${Emojis.other} Other`
+      type = `${Emojis.planetarySettlement} Other`
       priority = 4
       break
   }

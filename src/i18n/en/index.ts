@@ -6,7 +6,8 @@ const en = {
     unknown: 'Unknown error occurred 😞',
     general: 'Something went wrong. Try again later.',
     systemNotFound: 'Could not find system named `{systemName}`.',
-    tickFetchError: 'Could not fetch tick data. \nCheck [this site](https://elitebgs.app/tick).',
+    tickFetchError:
+      'Could not fetch tick data. \nCheck [this site](http://tick.infomancer.uk/galtick.json).',
     dataParseError: 'Could not parse data.',
     buttonsDisabled: "These buttons aren't for you!",
   },

@@ -2,7 +2,7 @@ import { hyperlink } from 'discord.js'
 import got from 'got'
 import { JSDOM } from 'jsdom'
 import { chunk, get } from 'lodash'
-import { DIVIDER, RankNames, Ranks, StationType } from '../constants'
+import { DIVIDER, RankNames, Ranks, StationType, StationTypeEmojis } from '../constants'
 import { createEmbed } from '../embeds'
 import type { InaraEvent, InaraProfile, InaraResponse } from '../types/inara'
 
@@ -34,12 +34,45 @@ export const inaraRequest = async <T>(events: InaraEvent[]) => {
   return response
 }
 
+export const getInaraStationType = (node: ChildNode | null): StationType | null => {
+  if (!node) {
+    return null
+  }
+  const iconBgPosition = get(node, ['style', 'background-position'], '') as string
+  const iconBgPositionX = parseInt(iconBgPosition, 10)
+
+  const iconsMap = new Map<number, StationType>([
+    [0, StationType.PlanetarySettlement],
+    [-13, StationType.Coriolis],
+    [-26, StationType.Outpost],
+    [-39, StationType.Outpost],
+    [-52, StationType.Outpost],
+    [-65, StationType.Outpost],
+    [-78, StationType.Outpost],
+    [-91, StationType.Outpost],
+    [-104, StationType.Outpost],
+    [-117, StationType.Outpost],
+    [-130, StationType.Outpost],
+    [-143, StationType.Outpost],
+    [-156, StationType.Orbis],
+    [-169, StationType.Ocellus],
+    [-182, StationType.SurfacePort],
+    [-195, StationType.SurfacePort],
+    [-247, StationType.AsteroidStation],
+    [-442, StationType.Megaship],
+    [-780, StationType.PlanetarySettlement],
+  ])
+
+  return iconsMap.get(iconBgPositionX) ?? null
+}
+
 /**
  * Contains data scraped from Inara.cz. Used for commands broker, trader, factors.
  */
 export type ScrapedInaraData = {
   type: string | null
   station: string
+  stationType: StationType | null
   system: string
   distanceLs: string
   distanceLy: string
@@ -58,6 +91,9 @@ export const scrapeInara = async (url: string, cellsPerRow: number) => {
 
   const data: ScrapedInaraData[] = rows.map((row) => ({
     type: cellsPerRow === 8 ? row[0].textContent : null,
+    stationType: getInaraStationType(
+      row[cellsPerRow === 8 ? 1 : 0].firstElementChild?.firstElementChild ?? null
+    ),
     station: row[cellsPerRow === 8 ? 1 : 0].textContent ?? '',
     system: (row[cellsPerRow === 8 ? 2 : 1].textContent ?? '').slice(0, -2), // remove copy icon
     distanceLs: row[cellsPerRow - 2].textContent ?? '',
@@ -73,11 +109,11 @@ export const generateInaraEmbed = (url: string, data: ScrapedInaraData[], title:
     description: `${hyperlink('INARA', url)}\n${DIVIDER}`,
   })
 
-  data.forEach(({ type, station, system, distanceLs, distanceLy }) => {
+  data.forEach(({ type, station, system, stationType, distanceLs, distanceLy }) => {
     embed.addFields([
       {
         name: `${type ? `${type} - ` : ''}${system}`,
-        value: `${station} - ${distanceLs}\n\`${distanceLy}\`\n`,
+        value: `${stationType ? `${StationTypeEmojis[stationType]} ` : ''}${station} - ${distanceLs}\n\`${distanceLy}\`\n`,
       },
     ])
   })
@@ -92,32 +128,3 @@ export const parseInaraRanks = (ranks: InaraProfile['commanderRanksPilot']) =>
       value: `${get(rank, rankValue, '---')} (${Math.floor(rankProgress * 100)}%)`,
     }
   })
-
-export const getInaraStationType = (node: ChildNode | null) => {
-  if (!node) {
-    return StationType.Other
-  }
-  const iconBgPosition = get(node, ['style', 'background-position'], '') as string
-  const iconBgPositionX = parseInt(iconBgPosition, 10)
-
-  const iconsMap = new Map<number, StationType>([
-    [0, StationType.Other],
-    [-13, StationType.Coriolis],
-    [-26, StationType.Outpost],
-    [-39, StationType.Outpost],
-    [-52, StationType.Outpost],
-    [-65, StationType.Outpost],
-    [-78, StationType.Outpost],
-    [-91, StationType.Outpost],
-    [-104, StationType.Outpost],
-    [-117, StationType.Outpost],
-    [-130, StationType.Outpost],
-    [-143, StationType.Outpost],
-    [-156, StationType.Coriolis],
-    [-169, StationType.Coriolis],
-    [-182, StationType.SurfacePort],
-    [-195, StationType.SurfacePort],
-  ])
-
-  return iconsMap.get(iconBgPositionX) ?? StationType.Other
-}

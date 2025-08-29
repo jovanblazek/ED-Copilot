@@ -1,5 +1,6 @@
 import type { FactionState, Prisma as PrismaClientType } from '@prisma/client'
 import { StateType } from '@prisma/client'
+import type { StationType } from '../../../constants'
 import { RedisKeys } from '../../../constants'
 import type { EDDNConflict, EDDNFaction, EDDNFactionState } from '../../../types/eddn'
 import type { TrackedFaction } from '../../../types/redis'
@@ -167,16 +168,21 @@ export const getConflictByFactionName = (conflicts: EDDNConflict[], factionName:
     (conflict) => conflict.Faction1.Name === factionName || conflict.Faction2.Name === factionName
   )
 
-export const transformConflictToDiscordNotificationData = (conflict: EDDNConflict): Conflict => ({
+export const transformConflictToDiscordNotificationData = (
+  conflict: EDDNConflict,
+  stationTypes: (StationType | null)[]
+): Conflict => ({
   faction1: {
     name: conflict.Faction1.Name,
     stake: conflict.Faction1.Stake,
     wonDays: conflict.Faction1.WonDays,
+    stationType: stationTypes[0],
   },
   faction2: {
     name: conflict.Faction2.Name,
     stake: conflict.Faction2.Stake,
     wonDays: conflict.Faction2.WonDays,
+    stationType: stationTypes[1],
   },
   status: conflict.Status,
   conflictType: conflict.WarType,
