@@ -1,3 +1,9 @@
+## [3.9.0](https://github.com/jovanblazek/ed-copilot/compare/v3.8.0...v3.9.0) (2025-08-29)
+
+### :sparkles: Features
+
+* Add station type emojis to messages ([#56](https://github.com/jovanblazek/ed-copilot/issues/56)) ([0c97de1](https://github.com/jovanblazek/ed-copilot/commit/0c97de1e02e697960c7b098e0781b1d88a21f93b))
+
 ## [3.8.0](https://github.com/jovanblazek/ed-copilot/compare/v3.7.0...v3.8.0) (2025-06-22)
 
 ### :sparkles: Features
