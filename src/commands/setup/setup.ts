@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js'
+import { MessageFlags, SlashCommandBuilder } from 'discord.js'
 import { CommandNames, SetupSubcommands } from '../../constants'
 import type { Command } from '../types'
 import { setupProfileHandler } from './profile'
@@ -39,7 +39,7 @@ const Setup: Command = {
         )
     ),
   handler: async ({ interaction, context }) => {
-    await interaction.deferReply()
+    await interaction.deferReply({ flags: [MessageFlags.Ephemeral] })
     const subcommand = interaction.options.getSubcommand() as keyof typeof SubcommandHandlers
     if (SubcommandHandlers[subcommand]) {
       await SubcommandHandlers[subcommand]({ interaction, context })

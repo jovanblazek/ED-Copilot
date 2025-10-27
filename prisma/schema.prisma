@@ -19,7 +19,7 @@ model Guild {
   updatedAt           DateTime? @default(now()) @updatedAt
 
   guildFaction     GuildFaction?
-  FleetCarrierJump FleetCarrierJump[]
+  fleetCarrierJumps FleetCarrierJump[]
 }
 
 model User {
