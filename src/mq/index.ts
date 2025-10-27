@@ -1,10 +1,15 @@
 import type { Client } from 'discord.js'
 import logger from '../utils/logger'
 import { CreateDiscordNotificationWorker } from './queues/discordNotification'
+import { CreateFleetCarrierJumpCleanupWorker } from './queues/fleetCarrierJumpCleanup'
 import { SystemProcessingWorker } from './queues/systemProcessing'
 
 export const initMQ = ({ client }: { client: Client }) => {
-  const bullMQWorkers = [CreateDiscordNotificationWorker({ client }), SystemProcessingWorker]
+  const bullMQWorkers = [
+    CreateDiscordNotificationWorker({ client }),
+    SystemProcessingWorker,
+    CreateFleetCarrierJumpCleanupWorker({ client }),
+  ]
   bullMQWorkers.forEach((worker) => {
     worker.on('failed', (job) => {
       if (job) {

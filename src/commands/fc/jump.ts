@@ -1,12 +1,17 @@
+import { bold, hyperlink } from 'discord.js'
 import { InteractionError } from '../../classes'
+import { InaraUrl } from '../../constants'
+import { createEmbed } from '../../embeds'
 import L from '../../i18n/i18n-node'
+import { FleetCarrierJumpCleanupQueue } from '../../mq/queues/fleetCarrierJumpCleanup'
+import { FLEET_CARRIER_JUMP_CLEANUP_JOB_NAME } from '../../mq/queues/fleetCarrierJumpCleanup/constants'
 import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import type { CommandHandler } from '../types'
 
 export const fcJumpHandler: CommandHandler = async ({ interaction, context }) => {
-  const sourceSystem = interaction.options.getString('source', true)
-  const destinationSystem = interaction.options.getString('destination', true)
+  const sourceSystem = interaction.options.getString('source', true).trim()
+  const destinationSystem = interaction.options.getString('destination', true).trim()
   const minutesUntilJump = interaction.options.getInteger('time', true)
 
   if (!interaction.guildId || !interaction.channelId) {
@@ -19,6 +24,9 @@ export const fcJumpHandler: CommandHandler = async ({ interaction, context }) =>
     where: {
       userId: interaction.user.id,
     },
+    include: {
+      user: true,
+    },
   })
 
   if (!fleetCarrier) {
@@ -30,19 +38,24 @@ export const fcJumpHandler: CommandHandler = async ({ interaction, context }) =>
 
   // Calculate scheduled time
   const scheduledAt = new Date(Date.now() + minutesUntilJump * 60 * 1000)
+  const timestamp = Math.floor(scheduledAt.getTime() / 1000)
 
-  // Create the jump record and send a message
+  const sourceSystemUrl = InaraUrl.system(sourceSystem)
+  const destinationSystemUrl = InaraUrl.system(destinationSystem)
+
+  const embed = createEmbed({
+    title: fleetCarrier.name,
+    description: `${hyperlink(bold(sourceSystem), sourceSystemUrl)} ➡️ ${hyperlink(bold(destinationSystem), destinationSystemUrl)}\n\n<t:${timestamp}:F>\n(<t:${timestamp}:R>)`,
+  }).setAuthor({
+    name: fleetCarrier.user.cmdrName,
+  })
+
   const reply = await interaction.editReply({
-    content: L[context.locale].fc.jump.scheduled({
-      fleetCarrierName: fleetCarrier.name,
-      sourceSystem,
-      destinationSystem,
-      time: Math.floor(scheduledAt.getTime() / 1000).toString(),
-    }),
+    embeds: [embed],
   })
 
   // Save the jump to the database
-  await Prisma.fleetCarrierJump.create({
+  const jump = await Prisma.fleetCarrierJump.create({
     data: {
       fleetCarrierId: fleetCarrier.id,
       scheduledAt,
@@ -52,7 +65,14 @@ export const fcJumpHandler: CommandHandler = async ({ interaction, context }) =>
     },
   })
 
-  logger.info(
-    `Fleet carrier jump scheduled: ${fleetCarrier.name} from ${sourceSystem} to ${destinationSystem} at ${scheduledAt.toISOString()}`
+  // Schedule a delayed job to clean up the jump after it has occurred
+  await FleetCarrierJumpCleanupQueue.add(
+    `${FLEET_CARRIER_JUMP_CLEANUP_JOB_NAME}:${jump.id}`,
+    {
+      fleetCarrierJumpId: jump.id,
+    },
+    {
+      delay: minutesUntilJump * 60 * 1000, // Delay in milliseconds
+    }
   )
 }

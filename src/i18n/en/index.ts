@@ -103,8 +103,6 @@ const en = {
     jump: {
       noFleetCarrier:
         'You do not have a fleet carrier registered.\nPlease register your fleet carrier using `/setup profile` command.',
-      scheduled:
-        '✈️ **Fleet Carrier Jump Scheduled** ✈️\n\n**{fleetCarrierName}**\n**From:** {sourceSystem}\n**To:** {destinationSystem}\n**Scheduled at:** <t:{time}:F> (<t:{time}:R>)',
     },
   },
   discordNotification: {

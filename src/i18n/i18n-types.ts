@@ -275,19 +275,6 @@ type RootTranslation = {
 		​P​l​e​a​s​e​ ​r​e​g​i​s​t​e​r​ ​y​o​u​r​ ​f​l​e​e​t​ ​c​a​r​r​i​e​r​ ​u​s​i​n​g​ ​`​/​s​e​t​u​p​ ​p​r​o​f​i​l​e​`​ ​c​o​m​m​a​n​d​.
 			 */
 			noFleetCarrier: string
-			/**
-			 * ✈​️​ ​*​*​F​l​e​e​t​ ​C​a​r​r​i​e​r​ ​J​u​m​p​ ​S​c​h​e​d​u​l​e​d​*​*​ ​✈​️​
-		​
-		​*​*​{​f​l​e​e​t​C​a​r​r​i​e​r​N​a​m​e​}​*​*​
-		​*​*​F​r​o​m​:​*​*​ ​{​s​o​u​r​c​e​S​y​s​t​e​m​}​
-		​*​*​T​o​:​*​*​ ​{​d​e​s​t​i​n​a​t​i​o​n​S​y​s​t​e​m​}​
-		​*​*​S​c​h​e​d​u​l​e​d​ ​a​t​:​*​*​ ​<​t​:​{​t​i​m​e​}​:​F​>​ ​(​<​t​:​{​t​i​m​e​}​:​R​>​)
-			 * @param {unknown} destinationSystem
-			 * @param {unknown} fleetCarrierName
-			 * @param {unknown} sourceSystem
-			 * @param {unknown} time
-			 */
-			scheduled: RequiredParams<'destinationSystem' | 'fleetCarrierName' | 'sourceSystem' | 'time' | 'time'>
 		}
 	}
 	discordNotification: {
@@ -749,15 +736,6 @@ export type TranslationFunctions = {
 		Please register your fleet carrier using `/setup profile` command.
 			 */
 			noFleetCarrier: () => LocalizedString
-			/**
-			 * ✈️ **Fleet Carrier Jump Scheduled** ✈️
-	
-		**{fleetCarrierName}**
-		**From:** {sourceSystem}
-		**To:** {destinationSystem}
-		**Scheduled at:** <t:{time}:F> (<t:{time}:R>)
-			 */
-			scheduled: (arg: { destinationSystem: unknown, fleetCarrierName: unknown, sourceSystem: unknown, time: unknown }) => LocalizedString
 		}
 	}
 	discordNotification: {

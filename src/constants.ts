@@ -87,6 +87,8 @@ export const InaraUrl = {
     `https://inara.cz/minorfaction/?search=${encodeURIComponent(factionName)}`,
   minorFactionAssets: (factionName: string) =>
     `https://inara.cz/elite/minorfaction-assets/?search=${encodeURIComponent(factionName)}`,
+  system: (systemName: string) =>
+    `https://inara.cz/starsystem/?search=${encodeURIComponent(systemName)}`,
 } as const
 
 export const Languages = {

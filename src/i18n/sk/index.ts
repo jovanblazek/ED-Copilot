@@ -103,8 +103,6 @@ const sk = {
     jump: {
       noFleetCarrier:
         'Nemáte zaregistrovaný žiadny fleet carrier.\nProsím zaregistrujte svoj fleet carrier pomocou príkazu `/setup profile`.',
-      scheduled:
-        '✈️ **Naplánovaný Skok Fleet Carriera** ✈️\n\n**{fleetCarrierName}**\n**Z:** {sourceSystem}\n**Do:** {destinationSystem}\n**Naplánované na:** <t:{time}:F> (<t:{time}:R>)',
     },
   },
   discordNotification: {
