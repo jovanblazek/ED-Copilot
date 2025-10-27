@@ -93,6 +93,19 @@ const en = {
     profile: {
       saved: 'Profile settings saved.',
     },
+    remove: {
+      noOption: 'Please select something to remove.',
+      fleetCarrierNotFound: 'You do not have a fleet carrier registered.',
+      fleetCarrierRemoved: 'Fleet carrier removed.',
+    },
+  },
+  fc: {
+    jump: {
+      noFleetCarrier:
+        'You do not have a fleet carrier registered.\nPlease register your fleet carrier using `/setup profile` command.',
+      scheduled:
+        '✈️ **Fleet Carrier Jump Scheduled** ✈️\n\n**{fleetCarrierName}**\n**From:** {sourceSystem}\n**To:** {destinationSystem}\n**Scheduled at:** <t:{time}:F> (<t:{time}:R>)',
+    },
   },
   discordNotification: {
     conflict: {

@@ -18,15 +18,18 @@ model Guild {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime? @default(now()) @updatedAt
 
-  guildFaction GuildFaction?
+  guildFaction     GuildFaction?
+  FleetCarrierJump FleetCarrierJump[]
 }
 
 model User {
-  id         String       @id // Discord user ID
+  id         String    @id // Discord user ID
   cmdrName   String
   edsmApiKey String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime? @default(now()) @updatedAt
+
+  fleetCarrier FleetCarrier?
 }
 
 model GuildFaction {
@@ -78,4 +81,36 @@ model FactionState {
   faction Faction @relation(fields: [factionId], references: [id], onDelete: Cascade)
 
   @@index([factionId, systemName])
+}
+
+model FleetCarrier {
+  id        Int       @id @default(autoincrement())
+  name      String
+  userId    String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fleetCarrierJumps FleetCarrierJump[]
+
+  @@index([name])
+}
+
+model FleetCarrierJump {
+  id             Int      @id @default(autoincrement())
+  fleetCarrierId Int
+  scheduledAt    DateTime
+
+  guildId   String // Discord guild ID
+  channelId String // Discord channel ID
+  messageId String // Discord message ID
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now()) @updatedAt
+
+  fleetCarrier FleetCarrier @relation(fields: [fleetCarrierId], references: [id], onDelete: Cascade)
+  guild        Guild        @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@index([fleetCarrierId])
 }

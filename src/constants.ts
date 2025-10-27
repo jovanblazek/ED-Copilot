@@ -7,6 +7,7 @@ export const CommandNames = {
   commanderProfile: 'profile',
   setup: 'setup',
   copilot: 'copilot',
+  fc: 'fc',
 } as const
 
 export const NearestSubcommands = {
@@ -31,6 +32,11 @@ export const CopilotSubcommands = {
 
 export const SetupSubcommands = {
   profile: 'profile',
+  remove: 'remove',
+} as const
+
+export const FCSubcommands = {
+  jump: 'jump',
 } as const
 
 export const PaginationButtonNames = {

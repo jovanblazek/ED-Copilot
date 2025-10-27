@@ -93,6 +93,19 @@ const sk = {
     profile: {
       saved: 'Nastavenia profilu uložené.',
     },
+    remove: {
+      noOption: 'Prosím vyberte niečo na odstránenie.',
+      fleetCarrierNotFound: 'Nemáte zaregistrovaný žiadny fleet carrier.',
+      fleetCarrierRemoved: 'Fleet carrier odstránený.',
+    },
+  },
+  fc: {
+    jump: {
+      noFleetCarrier:
+        'Nemáte zaregistrovaný žiadny fleet carrier.\nProsím zaregistrujte svoj fleet carrier pomocou príkazu `/setup profile`.',
+      scheduled:
+        '✈️ **Naplánovaný Skok Fleet Carriera** ✈️\n\n**{fleetCarrierName}**\n**Z:** {sourceSystem}\n**Do:** {destinationSystem}\n**Naplánované na:** <t:{time}:F> (<t:{time}:R>)',
+    },
   },
   discordNotification: {
     conflict: {

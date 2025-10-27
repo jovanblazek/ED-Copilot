@@ -253,6 +253,42 @@ type RootTranslation = {
 			 */
 			saved: string
 		}
+		remove: {
+			/**
+			 * P​l​e​a​s​e​ ​s​e​l​e​c​t​ ​s​o​m​e​t​h​i​n​g​ ​t​o​ ​r​e​m​o​v​e​.
+			 */
+			noOption: string
+			/**
+			 * Y​o​u​ ​d​o​ ​n​o​t​ ​h​a​v​e​ ​a​ ​f​l​e​e​t​ ​c​a​r​r​i​e​r​ ​r​e​g​i​s​t​e​r​e​d​.
+			 */
+			fleetCarrierNotFound: string
+			/**
+			 * F​l​e​e​t​ ​c​a​r​r​i​e​r​ ​r​e​m​o​v​e​d​.
+			 */
+			fleetCarrierRemoved: string
+		}
+	}
+	fc: {
+		jump: {
+			/**
+			 * Y​o​u​ ​d​o​ ​n​o​t​ ​h​a​v​e​ ​a​ ​f​l​e​e​t​ ​c​a​r​r​i​e​r​ ​r​e​g​i​s​t​e​r​e​d​.​
+		​P​l​e​a​s​e​ ​r​e​g​i​s​t​e​r​ ​y​o​u​r​ ​f​l​e​e​t​ ​c​a​r​r​i​e​r​ ​u​s​i​n​g​ ​`​/​s​e​t​u​p​ ​p​r​o​f​i​l​e​`​ ​c​o​m​m​a​n​d​.
+			 */
+			noFleetCarrier: string
+			/**
+			 * ✈​️​ ​*​*​F​l​e​e​t​ ​C​a​r​r​i​e​r​ ​J​u​m​p​ ​S​c​h​e​d​u​l​e​d​*​*​ ​✈​️​
+		​
+		​*​*​{​f​l​e​e​t​C​a​r​r​i​e​r​N​a​m​e​}​*​*​
+		​*​*​F​r​o​m​:​*​*​ ​{​s​o​u​r​c​e​S​y​s​t​e​m​}​
+		​*​*​T​o​:​*​*​ ​{​d​e​s​t​i​n​a​t​i​o​n​S​y​s​t​e​m​}​
+		​*​*​S​c​h​e​d​u​l​e​d​ ​a​t​:​*​*​ ​<​t​:​{​t​i​m​e​}​:​F​>​ ​(​<​t​:​{​t​i​m​e​}​:​R​>​)
+			 * @param {unknown} destinationSystem
+			 * @param {unknown} fleetCarrierName
+			 * @param {unknown} sourceSystem
+			 * @param {unknown} time
+			 */
+			scheduled: RequiredParams<'destinationSystem' | 'fleetCarrierName' | 'sourceSystem' | 'time' | 'time'>
+		}
 	}
 	discordNotification: {
 		conflict: {
@@ -690,6 +726,38 @@ export type TranslationFunctions = {
 			 * Profile settings saved.
 			 */
 			saved: () => LocalizedString
+		}
+		remove: {
+			/**
+			 * Please select something to remove.
+			 */
+			noOption: () => LocalizedString
+			/**
+			 * You do not have a fleet carrier registered.
+			 */
+			fleetCarrierNotFound: () => LocalizedString
+			/**
+			 * Fleet carrier removed.
+			 */
+			fleetCarrierRemoved: () => LocalizedString
+		}
+	}
+	fc: {
+		jump: {
+			/**
+			 * You do not have a fleet carrier registered.
+		Please register your fleet carrier using `/setup profile` command.
+			 */
+			noFleetCarrier: () => LocalizedString
+			/**
+			 * ✈️ **Fleet Carrier Jump Scheduled** ✈️
+	
+		**{fleetCarrierName}**
+		**From:** {sourceSystem}
+		**To:** {destinationSystem}
+		**Scheduled at:** <t:{time}:F> (<t:{time}:R>)
+			 */
+			scheduled: (arg: { destinationSystem: unknown, fleetCarrierName: unknown, sourceSystem: unknown, time: unknown }) => LocalizedString
 		}
 	}
 	discordNotification: {
