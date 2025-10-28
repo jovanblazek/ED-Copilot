@@ -21,7 +21,7 @@ export const fcCancelJumpHandler: CommandHandler = async ({ interaction, context
 
   if (!fleetCarrier) {
     await interaction.editReply({
-      content: L[context.locale].fc.cancelJump.noFleetCarrier(),
+      content: L[context.locale].fc.noFleetCarrier(),
     })
     return
   }
