@@ -104,6 +104,12 @@ const sk = {
       noFleetCarrier:
         'Nemáte zaregistrovaný žiadny fleet carrier.\nProsím zaregistrujte svoj fleet carrier pomocou príkazu `/setup profile`.',
     },
+    cancelJump: {
+      noFleetCarrier:
+        'Nemáte zaregistrovaný žiadny fleet carrier.\nProsím zaregistrujte svoj fleet carrier pomocou príkazu `/setup profile`.',
+      noJumps: 'V tomto kanáli neboli nájdené žiadne naplánované skoky.',
+      success: 'Úspešne zrušených {count} skok(ov) v tomto kanáli.',
+    },
   },
   discordNotification: {
     conflict: {

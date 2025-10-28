@@ -37,6 +37,7 @@ export const SetupSubcommands = {
 
 export const FCSubcommands = {
   jump: 'jump',
+  cancelJump: 'cancel-jump',
 } as const
 
 export const PaginationButtonNames = {

@@ -104,6 +104,12 @@ const en = {
       noFleetCarrier:
         'You do not have a fleet carrier registered.\nPlease register your fleet carrier using `/setup profile` command.',
     },
+    cancelJump: {
+      noFleetCarrier:
+        'You do not have a fleet carrier registered.\nPlease register your fleet carrier using `/setup profile` command.',
+      noJumps: 'No scheduled jumps found in this channel.',
+      success: 'Successfully cancelled {count:number} jump(s) in this channel.',
+    },
   },
   discordNotification: {
     conflict: {
