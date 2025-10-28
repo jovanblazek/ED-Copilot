@@ -1,3 +1,9 @@
+## [3.11.0](https://github.com/jovanblazek/ed-copilot/compare/v3.10.0...v3.11.0) (2025-10-28)
+
+### :sparkles: Features
+
+* Fleet carrier jump command ([#58](https://github.com/jovanblazek/ed-copilot/issues/58)) ([c163423](https://github.com/jovanblazek/ed-copilot/commit/c1634234afee33c609c87265b78394d9618ca0e8))
+
 ## [3.10.0](https://github.com/jovanblazek/ed-copilot/compare/v3.9.0...v3.10.0) (2025-08-29)
 
 ### :sparkles: Features
