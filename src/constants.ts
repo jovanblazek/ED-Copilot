@@ -7,6 +7,7 @@ export const CommandNames = {
   commanderProfile: 'profile',
   setup: 'setup',
   copilot: 'copilot',
+  fc: 'fc',
 } as const
 
 export const NearestSubcommands = {
@@ -31,6 +32,12 @@ export const CopilotSubcommands = {
 
 export const SetupSubcommands = {
   profile: 'profile',
+  remove: 'remove',
+} as const
+
+export const FCSubcommands = {
+  jump: 'jump',
+  cancelJump: 'cancel-jump',
 } as const
 
 export const PaginationButtonNames = {
@@ -81,6 +88,8 @@ export const InaraUrl = {
     `https://inara.cz/minorfaction/?search=${encodeURIComponent(factionName)}`,
   minorFactionAssets: (factionName: string) =>
     `https://inara.cz/elite/minorfaction-assets/?search=${encodeURIComponent(factionName)}`,
+  system: (systemName: string) =>
+    `https://inara.cz/starsystem/?search=${encodeURIComponent(systemName)}`,
 } as const
 
 export const Languages = {

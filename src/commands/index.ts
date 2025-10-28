@@ -2,6 +2,7 @@ import { map, reduce } from 'lodash'
 import commanderProfile from './commanderProfile'
 import copilot from './copilot'
 import faction from './faction'
+import fc from './fc'
 import nearest from './nearest'
 import setup from './setup'
 import systemDistance from './systemDistance'
@@ -22,6 +23,7 @@ export const Commands = {
   copilot,
   setup,
   nearest,
+  fc,
 }
 
 export const CommandBuilders = map(Commands, (command) => command.builder.toJSON())

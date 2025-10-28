@@ -253,6 +253,38 @@ type RootTranslation = {
 			 */
 			saved: string
 		}
+		remove: {
+			/**
+			 * P​l​e​a​s​e​ ​s​e​l​e​c​t​ ​s​o​m​e​t​h​i​n​g​ ​t​o​ ​r​e​m​o​v​e​.
+			 */
+			noOption: string
+			/**
+			 * Y​o​u​ ​d​o​ ​n​o​t​ ​h​a​v​e​ ​a​ ​f​l​e​e​t​ ​c​a​r​r​i​e​r​ ​r​e​g​i​s​t​e​r​e​d​.
+			 */
+			fleetCarrierNotFound: string
+			/**
+			 * F​l​e​e​t​ ​c​a​r​r​i​e​r​ ​r​e​m​o​v​e​d​.
+			 */
+			fleetCarrierRemoved: string
+		}
+	}
+	fc: {
+		/**
+		 * Y​o​u​ ​d​o​ ​n​o​t​ ​h​a​v​e​ ​a​ ​f​l​e​e​t​ ​c​a​r​r​i​e​r​ ​r​e​g​i​s​t​e​r​e​d​.​
+	​P​l​e​a​s​e​ ​r​e​g​i​s​t​e​r​ ​y​o​u​r​ ​f​l​e​e​t​ ​c​a​r​r​i​e​r​ ​u​s​i​n​g​ ​`​/​s​e​t​u​p​ ​p​r​o​f​i​l​e​`​ ​c​o​m​m​a​n​d​.
+		 */
+		noFleetCarrier: string
+		cancelJump: {
+			/**
+			 * N​o​ ​s​c​h​e​d​u​l​e​d​ ​j​u​m​p​s​ ​f​o​u​n​d​ ​i​n​ ​t​h​i​s​ ​c​h​a​n​n​e​l​.
+			 */
+			noJumps: string
+			/**
+			 * S​u​c​c​e​s​s​f​u​l​l​y​ ​c​a​n​c​e​l​l​e​d​ ​{​c​o​u​n​t​}​ ​j​u​m​p​(​s​)​ ​i​n​ ​t​h​i​s​ ​c​h​a​n​n​e​l​.
+			 * @param {number} count
+			 */
+			success: RequiredParams<'count'>
+		}
 	}
 	discordNotification: {
 		conflict: {
@@ -690,6 +722,37 @@ export type TranslationFunctions = {
 			 * Profile settings saved.
 			 */
 			saved: () => LocalizedString
+		}
+		remove: {
+			/**
+			 * Please select something to remove.
+			 */
+			noOption: () => LocalizedString
+			/**
+			 * You do not have a fleet carrier registered.
+			 */
+			fleetCarrierNotFound: () => LocalizedString
+			/**
+			 * Fleet carrier removed.
+			 */
+			fleetCarrierRemoved: () => LocalizedString
+		}
+	}
+	fc: {
+		/**
+		 * You do not have a fleet carrier registered.
+	Please register your fleet carrier using `/setup profile` command.
+		 */
+		noFleetCarrier: () => LocalizedString
+		cancelJump: {
+			/**
+			 * No scheduled jumps found in this channel.
+			 */
+			noJumps: () => LocalizedString
+			/**
+			 * Successfully cancelled {count} jump(s) in this channel.
+			 */
+			success: (arg: { count: number }) => LocalizedString
 		}
 	}
 	discordNotification: {
