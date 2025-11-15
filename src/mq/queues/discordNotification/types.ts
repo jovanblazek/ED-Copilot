@@ -1,3 +1,4 @@
+import type { Faction, Guild, GuildFaction } from '@prisma/client'
 import type { StationType } from '../../../constants'
 import type { EDDNConflictStatus, EDDNWarType } from '../../../types/eddn'
 
@@ -54,3 +55,5 @@ export type DiscordNotificationJobData<T extends keyof EventTypeMap> = {
   }
   timestamp: string
 }
+
+export type GuildFactionWithFactionAndGuild = GuildFaction & { guild: Guild; faction: Faction }

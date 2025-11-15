@@ -1,11 +1,14 @@
-import type { Faction, Guild, GuildFaction } from '@prisma/client'
 import type { Client } from 'discord.js'
 import { InaraUrl, StationTypeEmojis } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
 import L from '../../../../i18n/i18n-node'
 import type { Locales, Translations } from '../../../../i18n/i18n-types'
 import { EDDNConflictStatus, EDDNWarType } from '../../../../types/eddn'
-import type { Conflict, DiscordNotificationJobData } from '../types'
+import type {
+  Conflict,
+  DiscordNotificationJobData,
+  GuildFactionWithFactionAndGuild,
+} from '../types'
 import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 const ConflictTypeTranslationMap: Record<
@@ -103,7 +106,7 @@ export const processConflictEvent = async ({
 }: {
   client: Client
   jobData: DiscordNotificationJobData<'conflictPending' | 'conflictStarted' | 'conflictEnded'>
-  guildFactions: (GuildFaction & { guild: Guild; faction: Faction })[]
+  guildFactions: GuildFactionWithFactionAndGuild[]
 }) => {
   const {
     systemName,

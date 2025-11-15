@@ -1,4 +1,4 @@
-import type { Faction, Guild, GuildFaction } from '@prisma/client'
+import type { Faction } from '@prisma/client'
 import type { Client } from 'discord.js'
 import got from 'got'
 import { orderBy, round, uniqBy } from 'lodash'
@@ -8,7 +8,7 @@ import L from '../../../../i18n/i18n-node'
 import type { Locales } from '../../../../i18n/i18n-types'
 import type { FactionSystemsResponse } from '../../../../types/eliteBGS'
 import logger from '../../../../utils/logger'
-import type { DiscordNotificationJobData } from '../types'
+import type { DiscordNotificationJobData, GuildFactionWithFactionAndGuild } from '../types'
 import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 type PossibleExpansionOrigin = {
@@ -123,7 +123,7 @@ export const processExpansionEvent = async ({
 }: {
   client: Client
   jobData: DiscordNotificationJobData<'expansionPending' | 'expansionStarted' | 'expansionEnded'>
-  guildFactions: (GuildFaction & { guild: Guild; faction: Faction })[]
+  guildFactions: GuildFactionWithFactionAndGuild[]
 }) => {
   const { systemName, event, factionInfluence } = jobData
 

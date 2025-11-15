@@ -9,6 +9,10 @@ import { processExpansionEvent } from './processors/expansion'
 import { processInfluenceThreatEvent } from './processors/influenceThreat'
 import { processRetreatEvent } from './processors/retreat'
 import type { DiscordNotificationJobData, EventTypeMap } from './types'
+import {
+  cleanupInvalidNotificationChannels,
+  validateGuildFactionsNotificationChannel,
+} from './utils'
 
 const ConflictEventTypes = ['conflictPending', 'conflictStarted', 'conflictEnded'] as const
 const ExpansionEventTypes = ['expansionPending', 'expansionStarted', 'expansionEnded'] as const
@@ -50,7 +54,7 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
           },
         })
 
-        const guildFactions = await Prisma.guildFaction.findMany({
+        const guildFactionsFromDB = await Prisma.guildFaction.findMany({
           where: {
             notificationChannelId: {
               not: null,
@@ -65,9 +69,14 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
           },
         })
 
-        if (guildFactions.length === 0) {
+        if (guildFactionsFromDB.length === 0) {
           return
         }
+
+        const { validGuildFactions: guildFactions, invalidGuildFactions } =
+          validateGuildFactionsNotificationChannel(client, guildFactionsFromDB)
+
+        void cleanupInvalidNotificationChannels(invalidGuildFactions)
 
         if (ConflictEventTypes.includes(event.type as ConflictEventType)) {
           await processConflictEvent({
