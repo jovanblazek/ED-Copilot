@@ -8,6 +8,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'dis
 import { PAGINATION_COLLECTION_TIME, PaginationButtonNames } from '../constants'
 import L from '../i18n/i18n-node'
 import type { Locales } from '../i18n/i18n-types'
+import logger from '../utils/logger'
 
 export const createPaginationButtons = (activePage: number, pagesLength: number) =>
   new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
@@ -56,33 +57,41 @@ export const usePagination = async ({
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('collect', async (buttonInteraction) => {
-    if (buttonInteraction.user.id === interaction.user.id) {
-      if (buttonInteraction.customId === PaginationButtonNames.LEFT && activePageIndex > 0) {
-        activePageIndex -= 1
-      } else if (
-        buttonInteraction.customId === PaginationButtonNames.RIGHT &&
-        activePageIndex < paginationLength - 1
-      ) {
-        activePageIndex += 1
+    try {
+      if (buttonInteraction.user.id === interaction.user.id) {
+        if (buttonInteraction.customId === PaginationButtonNames.LEFT && activePageIndex > 0) {
+          activePageIndex -= 1
+        } else if (
+          buttonInteraction.customId === PaginationButtonNames.RIGHT &&
+          activePageIndex < paginationLength - 1
+        ) {
+          activePageIndex += 1
+        }
+        await buttonInteraction.update({
+          embeds: [embeds[activePageIndex]],
+          components: [createPaginationButtons(activePageIndex, paginationLength)],
+        })
+      } else {
+        await buttonInteraction.reply({
+          content: L[locale].error.buttonsDisabled(),
+          ephemeral: true,
+        })
       }
-      await buttonInteraction.update({
-        embeds: [embeds[activePageIndex]],
-        components: [createPaginationButtons(activePageIndex, paginationLength)],
-      })
-    } else {
-      await buttonInteraction.reply({
-        content: L[locale].error.buttonsDisabled(),
-        ephemeral: true,
-      })
+    } catch (error) {
+      logger.error(error, 'Error while collecting pagination buttons')
     }
   })
 
   // removes buttons when done collecting
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('end', async () => {
-    await interaction.editReply({
-      embeds: [embeds[activePageIndex]],
-      components: [],
-    })
+    try {
+      await interaction.editReply({
+        embeds: [embeds[activePageIndex]],
+        components: [],
+      })
+    } catch (error) {
+      logger.warn(error, 'Error while removing pagination buttons')
+    }
   })
 }
