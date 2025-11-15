@@ -1,3 +1,9 @@
+## [3.11.1](https://github.com/jovanblazek/ed-copilot/compare/v3.11.0...v3.11.1) (2025-11-15)
+
+### :bug: Bug Fixes
+
+* Unhandled errors ([#59](https://github.com/jovanblazek/ed-copilot/issues/59)) ([9babe30](https://github.com/jovanblazek/ed-copilot/commit/9babe3016b6faa9c7d9a47c866a99b6a83024e3b))
+
 ## [3.11.0](https://github.com/jovanblazek/ed-copilot/compare/v3.10.0...v3.11.0) (2025-10-28)
 
 ### :sparkles: Features
