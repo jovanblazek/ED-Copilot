@@ -73,10 +73,14 @@ export const useConfirmation = async ({
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('end', async () => {
-    const { embeds } = await interaction.fetchReply()
-    await interaction.editReply({
-      embeds,
-      components: [],
-    })
+    try {
+      const { embeds } = await interaction.fetchReply()
+      await interaction.editReply({
+        embeds,
+        components: [],
+      })
+    } catch (error) {
+      logger.warn(error, 'Error while removing confirmation buttons')
+    }
   })
 }

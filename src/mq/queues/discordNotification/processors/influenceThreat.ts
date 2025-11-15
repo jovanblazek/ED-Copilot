@@ -1,11 +1,10 @@
-import type { Faction, Guild, GuildFaction } from '@prisma/client'
 import type { Client } from 'discord.js'
 import { round } from 'lodash'
 import { InaraUrl } from '../../../../constants'
 import { createEmbed } from '../../../../embeds'
 import L from '../../../../i18n/i18n-node'
 import type { Locales } from '../../../../i18n/i18n-types'
-import type { DiscordNotificationJobData } from '../types'
+import type { DiscordNotificationJobData, GuildFactionWithFactionAndGuild } from '../types'
 import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
 
 export const processInfluenceThreatEvent = async ({
@@ -15,7 +14,7 @@ export const processInfluenceThreatEvent = async ({
 }: {
   client: Client
   jobData: DiscordNotificationJobData<'influenceThreat'>
-  guildFactions: (GuildFaction & { guild: Guild; faction: Faction })[]
+  guildFactions: GuildFactionWithFactionAndGuild[]
 }) => {
   const {
     systemName,

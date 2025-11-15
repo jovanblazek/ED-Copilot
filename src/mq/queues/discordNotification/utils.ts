@@ -1,6 +1,11 @@
-import type { GuildFaction } from '@prisma/client'
+import { type GuildFaction } from '@prisma/client'
+import * as Sentry from '@sentry/node'
 import type { Client } from 'discord.js'
 import { ChannelType } from 'discord.js'
+import { Prisma } from '../../../utils'
+import logger from '../../../utils/logger'
+import { loadTrackedFactionsFromDBToRedis } from '../../../utils/redis'
+import type { GuildFactionWithFactionAndGuild } from './types'
 
 export const getNotificationChannelFromGuildFactionOrThrow = ({
   client,
@@ -23,4 +28,51 @@ export const getNotificationChannelFromGuildFactionOrThrow = ({
   }
 
   return channel
+}
+
+export const validateGuildFactionsNotificationChannel = (
+  client: Client,
+  guildFactions: GuildFactionWithFactionAndGuild[]
+): {
+  validGuildFactions: GuildFactionWithFactionAndGuild[]
+  invalidGuildFactions: GuildFactionWithFactionAndGuild[]
+} =>
+  guildFactions.reduce(
+    (acc, guildFaction) => {
+      try {
+        getNotificationChannelFromGuildFactionOrThrow({
+          client,
+          guildFaction,
+        })
+        acc.validGuildFactions.push(guildFaction)
+      } catch (error) {
+        acc.invalidGuildFactions.push(guildFaction)
+      }
+      return acc
+    },
+    {
+      validGuildFactions: [] as GuildFactionWithFactionAndGuild[],
+      invalidGuildFactions: [] as GuildFactionWithFactionAndGuild[],
+    }
+  )
+
+export const cleanupInvalidNotificationChannels = async (
+  guildFactionsWithInvalidNotificationChannel: GuildFactionWithFactionAndGuild[]
+): Promise<void> => {
+  try {
+    await Prisma.guildFaction.updateMany({
+      where: {
+        id: {
+          in: guildFactionsWithInvalidNotificationChannel.map((guildFaction) => guildFaction.id),
+        },
+      },
+      data: {
+        notificationChannelId: null,
+      },
+    })
+    await loadTrackedFactionsFromDBToRedis()
+  } catch (error) {
+    logger.error(error, 'Failed to cleanup invalid notification channels')
+    Sentry.captureException(error)
+  }
 }
