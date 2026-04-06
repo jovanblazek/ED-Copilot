@@ -3,20 +3,14 @@ import dayjs from 'dayjs'
 import { hyperlink, inlineCode, quote } from 'discord.js'
 import { DataParseError } from '../../classes'
 import type { StationType } from '../../constants'
-import {
-  DIVIDER,
-  Emojis,
-  InaraUrl,
-  StationType as InternalStationType,
-  StationTypeEmojis,
-} from '../../constants'
+import { DIVIDER, Emojis, InaraUrl, StationTypeEmojis } from '../../constants'
 import { createEmbed, usePagination } from '../../embeds'
 import { createEliteHubVaultClient } from '../../graphql/client'
 import {
   FactionConflictsDocument,
   type FactionConflictsQuery,
-  type StationTypeEnum,
 } from '../../graphql/generated/graphql'
+import { mapVaultStationType } from '../../graphql/utils'
 import L from '../../i18n/i18n-node'
 import { getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
@@ -40,21 +34,6 @@ type Conflict = {
   faction1: FactionInConflict
   faction2: FactionInConflict
 }
-const VaultToInternalStationType: Partial<Record<StationTypeEnum, StationType>> = {
-  AsteroidBase: InternalStationType.AsteroidStation,
-  Coriolis: InternalStationType.Coriolis,
-  MegaShip: InternalStationType.Megaship,
-  Ocellus: InternalStationType.Ocellus,
-  OnFootSettlement: InternalStationType.PlanetarySettlement,
-  Orbis: InternalStationType.Orbis,
-  Outpost: InternalStationType.Outpost,
-  PlanetaryOutpost: InternalStationType.PlanetarySettlement,
-  PlanetaryPort: InternalStationType.SurfacePort,
-}
-
-export const mapVaultStationType = (stationType: StationTypeEnum | null): StationType | null =>
-  stationType ? (VaultToInternalStationType[stationType] ?? null) : null
-
 const printConflict = ({
   tickTime,
   isLastConflict,

@@ -42,6 +42,7 @@ export abstract class BaseStateDetector implements StateDetector {
     return DiscordNotificationQueue.add(
       `${DISCORD_NOTIFICATION_JOB_NAME}:${systemName}:${trackedFaction.name}:${type}`,
       {
+        source: 'eddn',
         systemName,
         factionName: trackedFaction.name,
         factionInfluence: factionFromEvent.Influence,

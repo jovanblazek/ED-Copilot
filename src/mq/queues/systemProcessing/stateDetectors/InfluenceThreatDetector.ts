@@ -32,10 +32,10 @@ export class InfluenceThreatDetector extends BaseStateDetector {
       return
     }
 
-    // Check if second faction is within 7 influence points
+    // Check if second faction is within 10 influence points
     const influenceDiff = (sortedFactions[0].Influence - sortedFactions[1].Influence) * 100
 
-    if (influenceDiff <= 7) {
+    if (influenceDiff <= 10) {
       await this.addNotificationToQueue({
         systemName,
         trackedFaction,

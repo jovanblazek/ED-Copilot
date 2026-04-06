@@ -42,7 +42,7 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
   new Worker<DiscordNotificationJobData<keyof EventTypeMap>>(
     QueueNames.discordNotification,
     async (job) => {
-      const { event, factionName, systemName, timestamp } = job.data
+      const { event, factionName, systemName, timestamp, source } = job.data
 
       try {
         Sentry.addBreadcrumb({
@@ -51,11 +51,13 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
           data: {
             eventType: event.type,
             timestamp,
+            source,
           },
         })
 
         const guildFactionsFromDB = await Prisma.guildFaction.findMany({
           where: {
+            isSSEEnabled: source === 'sse',
             notificationChannelId: {
               not: null,
             },
@@ -114,6 +116,7 @@ export const CreateDiscordNotificationWorker = ({ client }: { client: Client }) 
             factionName,
             timestamp,
             eventType: event.type,
+            source,
             jobId: job.id,
             attemptsMade: job.attemptsMade,
           })

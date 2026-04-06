@@ -4,6 +4,7 @@ import { createEmbed, useConfirmation } from '../../embeds'
 import { createEliteHubVaultClient } from '../../graphql/client'
 import { CopilotFactionByNameDocument } from '../../graphql/generated/graphql'
 import L from '../../i18n/i18n-node'
+import { refreshVaultSseSubscriptions } from '../../realtime/vaultSseManager'
 import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
@@ -113,6 +114,7 @@ export const copilotFactionHandler: CommandHandler = async ({
           })
         })
         await loadTrackedFactionsFromDBToRedis()
+        await refreshVaultSseSubscriptions()
 
         await buttonInteraction.update({
           content: L[locale].copilot.faction.saved(),

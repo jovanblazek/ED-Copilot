@@ -4,6 +4,7 @@ import Koa from 'koa'
 import startEDDNListenerProcess from './eddn/eddn'
 import { initEventHandlers } from './events'
 import { initMQ } from './mq'
+import { initVaultSseManager, shutdownVaultSseManager } from './realtime/vaultSseManager'
 import initTickDetector from './tickDetector/tickDetector'
 import { initActivityHandler } from './utils/botActivity'
 import logger from './utils/logger'
@@ -48,6 +49,7 @@ Redis.on('ready', async () => {
   logger.info('[Redis] Connection established')
   await loadTrackedFactionsFromDBToRedis()
   BullMQWorkers = initMQ({ client: BotClient })
+  await initVaultSseManager()
   if (process.env.NODE_ENV === 'production' || process.env.DEBUG_EDDN_LISTENER === 'true') {
     eddnProcess = startEDDNListenerProcess()
   }
@@ -75,6 +77,8 @@ const shutdown = async () => {
     await eddnProcess.shutdown()
     logger.info('[EDDN] Worker terminated')
   }
+
+  shutdownVaultSseManager()
 
   // Close BullMQ workers
   logger.info('[BullMQ] Closing workers...')

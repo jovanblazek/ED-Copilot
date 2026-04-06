@@ -45,7 +45,8 @@ export type EventTypeMap = {
   influenceThreat: InfluenceThreatEventData
 }
 
-export type DiscordNotificationJobData<T extends keyof EventTypeMap> = {
+export type DiscordNotificationJobData<T extends keyof EventTypeMap = keyof EventTypeMap> = {
+  source: 'eddn' | 'sse'
   systemName: string
   factionName: string
   factionInfluence: number

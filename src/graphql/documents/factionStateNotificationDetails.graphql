@@ -1,0 +1,11 @@
+query FactionStateNotificationDetails($factionId: UUID!, $systemId: UUID!) {
+  controller: factionStateByFactionIdAndSystemId(factionId: $factionId, systemId: $systemId) {
+    influence
+    faction {
+      name
+    }
+    system {
+      name
+    }
+  }
+}
