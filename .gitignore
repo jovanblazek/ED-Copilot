@@ -1,4 +1,5 @@
 build
+src/graphql/generated/
 
 # Logs
 logs
