@@ -16,6 +16,7 @@
     "build": "pnpm run generate-types && pnpm run graphql:generate && rimraf build/ && tsc --project tsconfig.production.json && pnpm run postbuild",
     "postbuild": "copyfiles .env ./build",
     "start": "node build/index.js",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "backfill:elitehub-vault-faction-ids": "pnpm run graphql:generate && tsx src/scripts/backfillEliteHubVaultFactionIds.ts"
