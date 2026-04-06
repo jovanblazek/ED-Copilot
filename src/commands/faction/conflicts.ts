@@ -1,18 +1,24 @@
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import { hyperlink, inlineCode, quote } from 'discord.js'
-import got from 'got'
-import { chunk } from 'lodash'
 import { DataParseError } from '../../classes'
 import type { StationType } from '../../constants'
-import { DIVIDER, Emojis, InaraUrl, StationTypeEmojis } from '../../constants'
 import {
-  type EliteBgsFactionConflictsResponse,
-  EliteBgsFactionConflictsResponseSchema,
-} from '../../dtos/eliteBgs'
+  DIVIDER,
+  Emojis,
+  InaraUrl,
+  StationType as InternalStationType,
+  StationTypeEmojis,
+} from '../../constants'
 import { createEmbed, usePagination } from '../../embeds'
+import { createEliteHubVaultClient } from '../../graphql/client'
+import {
+  FactionConflictsDocument,
+  type FactionConflictsQuery,
+  type StationTypeEnum,
+} from '../../graphql/generated/graphql'
 import L from '../../i18n/i18n-node'
-import { getStationType, getTickTimeInTimezone } from '../../utils'
+import { getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
@@ -30,73 +36,24 @@ type Conflict = {
   system: string
   lastUpdate: Dayjs
   status: string
+  type: string
   faction1: FactionInConflict
   faction2: FactionInConflict
 }
-
-const parseConflictsData = ({
-  resposne,
-  commandContext: { faction, locale },
-}: {
-  resposne: EliteBgsFactionConflictsResponse
-  commandContext: Parameters<FactionCommandHandler>[0]['context']
-}): Conflict[] => {
-  if (!resposne.docs.length) {
-    throw new DataParseError({ locale })
-  }
-  const systemsPresent = resposne.docs[0].faction_presence
-  const targetFactionId = faction.ebgsId
-  return systemsPresent.reduce(
-    (
-      acc,
-      {
-        conflicts: factionConflicts,
-        system_details: systemDetails,
-        system_name: systemName,
-        updated_at: updatedAt,
-      }
-    ) => {
-      // if selected faction is not in conflict, skip
-      if (!factionConflicts.length) {
-        return acc
-      }
-
-      // find conflict with selected faction, there may be multiple conflicts in single system
-      const conflict = systemDetails.conflicts.find(
-        ({ faction1, faction2 }) =>
-          faction1.faction_id === targetFactionId || faction2.faction_id === targetFactionId
-      )
-
-      if (!conflict) {
-        return acc
-      }
-
-      return [
-        ...acc,
-        {
-          system: systemName,
-          lastUpdate: dayjs(updatedAt).utc(),
-          status: conflict.status,
-          faction1: {
-            name: conflict.faction1.name,
-            stake: conflict.faction1.stake,
-            daysWon: conflict.faction1.days_won,
-            isTargetFaction: conflict.faction1.faction_id === targetFactionId,
-            stationType: null, // Will be populated later
-          },
-          faction2: {
-            name: conflict.faction2.name,
-            stake: conflict.faction2.stake,
-            daysWon: conflict.faction2.days_won,
-            isTargetFaction: conflict.faction2.faction_id === targetFactionId,
-            stationType: null, // Will be populated later
-          },
-        },
-      ]
-    },
-    []
-  )
+const VaultToInternalStationType: Partial<Record<StationTypeEnum, StationType>> = {
+  AsteroidBase: InternalStationType.AsteroidStation,
+  Coriolis: InternalStationType.Coriolis,
+  MegaShip: InternalStationType.Megaship,
+  Ocellus: InternalStationType.Ocellus,
+  OnFootSettlement: InternalStationType.PlanetarySettlement,
+  Orbis: InternalStationType.Orbis,
+  Outpost: InternalStationType.Outpost,
+  PlanetaryOutpost: InternalStationType.PlanetarySettlement,
+  PlanetaryPort: InternalStationType.SurfacePort,
 }
+
+export const mapVaultStationType = (stationType: StationTypeEnum | null): StationType | null =>
+  stationType ? (VaultToInternalStationType[stationType] ?? null) : null
 
 const printConflict = ({
   tickTime,
@@ -153,7 +110,7 @@ const printConflict = ({
   ]
 }
 
-const createFactionConflictsEmbeds = (
+const createFactionConflictsEmbed = (
   {
     factionConflicts,
     tickTime,
@@ -166,133 +123,163 @@ const createFactionConflictsEmbeds = (
   const { faction, guildFaction, locale } = context
   const conflictsLength = factionConflicts.length
 
-  const embedHeader = {
+  const embed = createEmbed({
     title: L[locale].faction.conflicts.title({
       factionName: guildFaction.shortName,
     }),
     description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}${
       !conflictsLength ? `\n${L[locale].faction.conflicts.noConflicts()}` : ''
     }`,
-  }
+  })
 
   if (!conflictsLength) {
-    return [createEmbed(embedHeader)]
+    return embed
   }
 
-  const factionConflictsChunks = chunk(factionConflicts, CONFLICTS_PER_EMBED)
-  return factionConflictsChunks.map((factionConflictsChunk) =>
-    createEmbed(embedHeader).addFields(
-      factionConflictsChunk.flatMap((conflict, index) => {
-        const isLastConflict = index === conflictsLength - 1
-        if (conflict.faction1.isTargetFaction) {
-          return printConflict({
-            tickTime,
-            isLastConflict,
-            conflictData: {
-              conflict,
-              targetFaction: conflict.faction1,
-              enemyFaction: conflict.faction2,
-            },
-            commandContext: context,
-          })
-        }
+  embed.addFields(
+    factionConflicts.flatMap((conflict, index) => {
+      const isLastConflict = index === conflictsLength - 1
+      if (conflict.faction1.isTargetFaction) {
         return printConflict({
           tickTime,
           isLastConflict,
           conflictData: {
             conflict,
-            targetFaction: conflict.faction2,
-            enemyFaction: conflict.faction1,
+            targetFaction: conflict.faction1,
+            enemyFaction: conflict.faction2,
           },
           commandContext: context,
         })
+      }
+      return printConflict({
+        tickTime,
+        isLastConflict,
+        conflictData: {
+          conflict,
+          targetFaction: conflict.faction2,
+          enemyFaction: conflict.faction1,
+        },
+        commandContext: context,
       })
-    )
+    })
   )
+
+  return embed
 }
 
-const populateStationTypes = async ({
-  factionConflicts,
+const fetchFactionConflictPage = async ({
+  factionId,
+  after,
 }: {
-  factionConflicts: Conflict[]
-}): Promise<Conflict[]> => {
-  // Extract all unique systems to optimize cache population
-  const uniqueSystems = Array.from(new Set(factionConflicts.map((conflict) => conflict.system)))
+  factionId: string
+  after?: string | null
+}): Promise<FactionConflictsQuery['factionConflicts']> => {
+  const client = createEliteHubVaultClient()
+  const response = await client.request(FactionConflictsDocument, {
+    factionId,
+    first: CONFLICTS_PER_EMBED,
+    after: after ?? null,
+  })
 
-  await Promise.all(
-    uniqueSystems.map(async (systemName) => {
-      // Find any station in this system to trigger cache population
-      const conflictInSystem = factionConflicts.find((c) => c.system === systemName)
-      if (conflictInSystem && conflictInSystem.faction1.stake) {
-        await getStationType({
-          systemName,
-          stationName: conflictInSystem.faction1.stake,
-        })
+  return response.factionConflicts
+}
+
+const createConflictPage = ({
+  factionConflictsConnection,
+  tickTime,
+  context,
+}: {
+  factionConflictsConnection: NonNullable<FactionConflictsQuery['factionConflicts']>
+  tickTime: Dayjs
+  context: Parameters<FactionCommandHandler>[0]['context']
+}) => {
+  const mappedConflicts = factionConflictsConnection.edges
+    .map((edge): Conflict | null => {
+      const node = edge?.node
+
+      if (!node?.system?.name || !node.faction?.name || !node.opponentFaction?.name) {
+        return null
       }
-    })
-  )
-
-  // Now fetch all station types in parallel (should mostly hit cache)
-  const conflictsWithStationTypes = await Promise.all(
-    factionConflicts.map(async (conflict) => {
-      const [faction1StationType, faction2StationType] = await Promise.all([
-        conflict.faction1.stake
-          ? getStationType({
-              systemName: conflict.system,
-              stationName: conflict.faction1.stake,
-            })
-          : Promise.resolve(null),
-        conflict.faction2.stake
-          ? getStationType({
-              systemName: conflict.system,
-              stationName: conflict.faction2.stake,
-            })
-          : Promise.resolve(null),
-      ])
 
       return {
-        ...conflict,
+        system: node.system.name,
+        lastUpdate: dayjs(String(node.updatedAt)).utc(),
+        status: node.status.toLowerCase(),
+        type: node.type.toLowerCase(),
         faction1: {
-          ...conflict.faction1,
-          stationType: faction1StationType,
+          name: node.faction.name,
+          stake: node.factionStakeStation?.name ?? '',
+          daysWon: node.factionWonDays,
+          isTargetFaction: true,
+          stationType: mapVaultStationType(node.factionStakeStation?.stationType ?? null),
         },
         faction2: {
-          ...conflict.faction2,
-          stationType: faction2StationType,
+          name: node.opponentFaction.name,
+          stake: node.opponentStakeStation?.name ?? '',
+          daysWon: node.opponentWonDays,
+          isTargetFaction: false,
+          stationType: mapVaultStationType(node.opponentStakeStation?.stationType ?? null),
         },
       }
     })
-  )
+    .filter((conflict): conflict is Conflict => Boolean(conflict))
 
-  return conflictsWithStationTypes
+  return {
+    embed: createFactionConflictsEmbed(
+      {
+        factionConflicts: mappedConflicts,
+        tickTime,
+      },
+      context
+    ),
+    hasNextPage: factionConflictsConnection.pageInfo.hasNextPage,
+    nextCursor: factionConflictsConnection.pageInfo.endCursor,
+  }
 }
 
 export const factionConflictsHandler: FactionCommandHandler = async ({ interaction, context }) => {
   const { faction, timezone, locale } = context
-  const conflictsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true`
-  const fetchedData = await got(conflictsUrl).json<unknown>()
-  const parsedData = EliteBgsFactionConflictsResponseSchema.parse(fetchedData)
-  const factionConflicts = parseConflictsData({
-    resposne: parsedData,
-    commandContext: context,
-  })
 
-  const factionConflictsWithStationTypes = await populateStationTypes({
-    factionConflicts,
-  })
+  if (!faction.elitehubVaultId) {
+    throw new DataParseError({ locale })
+  }
 
-  const tickTime = await getTickTimeInTimezone({ locale, timezone })
-  const embeds = createFactionConflictsEmbeds(
-    {
-      factionConflicts: factionConflictsWithStationTypes,
-      tickTime,
-    },
-    context
-  )
+  const [tickTime, factionConflictsConnection] = await Promise.all([
+    getTickTimeInTimezone({ locale, timezone }),
+    fetchFactionConflictPage({
+      factionId: faction.elitehubVaultId,
+    }),
+  ])
+
+  if (!factionConflictsConnection) {
+    throw new DataParseError({ locale })
+  }
+
+  const initialPage = createConflictPage({
+    factionConflictsConnection,
+    tickTime,
+    context,
+  })
 
   await usePagination({
     interaction,
-    embeds,
     locale,
+    initialPage,
+    loadPage: async (cursor) => {
+      const nextPage = await fetchFactionConflictPage({
+        factionId: faction.elitehubVaultId!,
+        after: cursor,
+      })
+
+      if (!nextPage) {
+        throw new DataParseError({ locale })
+      }
+
+      return createConflictPage({
+        factionConflictsConnection: nextPage,
+        tickTime,
+        context,
+      })
+    },
   })
 }
