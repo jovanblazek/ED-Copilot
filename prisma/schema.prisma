@@ -33,13 +33,14 @@ model User {
 }
 
 model GuildFaction {
-  id                    Int       @id @default(autoincrement())
-  guildId               String    @unique
-  factionId             Int
-  shortName             String
-  notificationChannelId String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime? @default(now()) @updatedAt
+  id                      Int       @id @default(autoincrement())
+  guildId                 String    @unique
+  factionId               Int
+  shortName               String
+  notificationChannelId   String?
+  isSSEEnabled            Boolean   @default(false)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime? @default(now()) @updatedAt
 
   faction Faction @relation(fields: [factionId], references: [id])
   guild   Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)

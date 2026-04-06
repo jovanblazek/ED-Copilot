@@ -27,6 +27,7 @@ export const copilotFactionHandler: CommandHandler = async ({
   const notificationChannel = interaction.options.getChannel<
     ChannelType.GuildText | ChannelType.GuildAnnouncement
   >('notification_channel')
+  const isSSEEnabled = false // Set using DB manually for now
 
   logger.info(`Setting up faction for guild ${guildId}, ${factionNameInput}, ${factionShorthand}`)
 
@@ -93,11 +94,13 @@ export const copilotFactionHandler: CommandHandler = async ({
               factionId: upsertedFaction.id,
               shortName: factionShorthand,
               notificationChannelId: notificationChannel?.id,
+              isSSEEnabled,
             },
             update: {
               shortName: factionShorthand,
               factionId: upsertedFaction.id,
               notificationChannelId: notificationChannel?.id,
+              isSSEEnabled,
             },
           })
 
