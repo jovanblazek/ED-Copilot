@@ -5,11 +5,14 @@ import got from 'got'
 import { round, sortBy } from 'lodash'
 import { DataParseError } from '../../classes'
 import { DIVIDER, InaraUrl } from '../../constants'
+import {
+  type EliteBgsFactionSystemsResponse,
+  EliteBgsFactionSystemsResponseSchema,
+} from '../../dtos/eliteBgs'
 import { createEmbed, usePagination } from '../../embeds'
 import { chunkDescription } from '../../embeds/utils'
 import L from '../../i18n/i18n-node'
 import type { Locales } from '../../i18n/i18n-types'
-import type { FactionSystemsResponse } from '../../types/eliteBGS'
 import { getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
@@ -27,7 +30,7 @@ const parseSystemsData = ({
   response,
   commandContext: { locale, timezone },
 }: {
-  response: FactionSystemsResponse
+  response: EliteBgsFactionSystemsResponse
   commandContext: Parameters<FactionCommandHandler>[0]['context']
 }): ParsedSystemData[] => {
   if (!response.docs.length) {
@@ -97,10 +100,11 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
   context: { faction, guildFaction, locale, timezone },
 }) => {
   const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}`
-  const fetchedData = await got(url).json<FactionSystemsResponse>()
+  const fetchedData = await got(url).json<unknown>()
+  const parsedData = EliteBgsFactionSystemsResponseSchema.parse(fetchedData)
 
   const factionSystems = parseSystemsData({
-    response: fetchedData,
+    response: parsedData,
     commandContext: {
       locale,
       faction,

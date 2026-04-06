@@ -3,10 +3,13 @@ import type { Client } from 'discord.js'
 import got from 'got'
 import { orderBy, round, uniqBy } from 'lodash'
 import { InaraUrl } from '../../../../constants'
+import {
+  type EliteBgsFactionSystemsResponse,
+  EliteBgsFactionSystemsResponseSchema,
+} from '../../../../dtos/eliteBgs'
 import { createEmbed } from '../../../../embeds'
 import L from '../../../../i18n/i18n-node'
 import type { Locales } from '../../../../i18n/i18n-types'
-import type { FactionSystemsResponse } from '../../../../types/eliteBGS'
 import logger from '../../../../utils/logger'
 import type { DiscordNotificationJobData, GuildFactionWithFactionAndGuild } from '../types'
 import { getNotificationChannelFromGuildFactionOrThrow } from '../utils'
@@ -22,7 +25,9 @@ const getPossibleExpansionOrigins = async ({
   faction: Faction
 }): Promise<PossibleExpansionOrigin[]> => {
   const url = `https://elitebgs.app/api/ebgs/v5/factions?id=${faction.ebgsId}`
-  const response = await got(url).json<FactionSystemsResponse>()
+  const fetchedData = await got(url).json<unknown>()
+  const response: EliteBgsFactionSystemsResponse =
+    EliteBgsFactionSystemsResponseSchema.parse(fetchedData)
 
   if (response.docs.length === 0 || response.docs?.[0]?.faction_presence.length === 0) {
     return []

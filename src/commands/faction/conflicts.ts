@@ -6,9 +6,12 @@ import { chunk } from 'lodash'
 import { DataParseError } from '../../classes'
 import type { StationType } from '../../constants'
 import { DIVIDER, Emojis, InaraUrl, StationTypeEmojis } from '../../constants'
+import {
+  type EliteBgsFactionConflictsResponse,
+  EliteBgsFactionConflictsResponseSchema,
+} from '../../dtos/eliteBgs'
 import { createEmbed, usePagination } from '../../embeds'
 import L from '../../i18n/i18n-node'
-import type { FactionConflicsResponse } from '../../types/eliteBGS'
 import { getStationType, getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
@@ -35,7 +38,7 @@ const parseConflictsData = ({
   resposne,
   commandContext: { faction, locale },
 }: {
-  resposne: FactionConflicsResponse
+  resposne: EliteBgsFactionConflictsResponse
   commandContext: Parameters<FactionCommandHandler>[0]['context']
 }): Conflict[] => {
   if (!resposne.docs.length) {
@@ -267,9 +270,10 @@ const populateStationTypes = async ({
 export const factionConflictsHandler: FactionCommandHandler = async ({ interaction, context }) => {
   const { faction, timezone, locale } = context
   const conflictsUrl = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}&systemDetails=true`
-  const fetchedData = await got(conflictsUrl).json<FactionConflicsResponse>()
+  const fetchedData = await got(conflictsUrl).json<unknown>()
+  const parsedData = EliteBgsFactionConflictsResponseSchema.parse(fetchedData)
   const factionConflicts = parseConflictsData({
-    resposne: fetchedData,
+    resposne: parsedData,
     commandContext: context,
   })
 

@@ -68,6 +68,9 @@ importers:
       zeromq:
         specifier: ^6.3.0
         version: 6.3.0
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@graphql-codegen/cli':
         specifier: ^6.2.1
@@ -5902,6 +5905,9 @@ packages:
   zeromq@6.3.0:
     resolution: {integrity: sha512-PG61AT4Y37NGJHSrp5SG2m4cKtRirso/5mm4Yf7l+upgNZZAugrGdhENsM5IcLS+WVVzbWVjEsLKpgLj/31SWQ==}
     engines: {node: '>= 10', pnpm: '>= 9'}
+
+  zod@4.3.6:
+    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
 snapshots:
 
@@ -12582,3 +12588,5 @@ snapshots:
     dependencies:
       '@aminya/cmake-ts': 0.3.0-aminya.7
       node-addon-api: 8.3.0
+
+  zod@4.3.6: {}

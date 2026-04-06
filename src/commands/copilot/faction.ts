@@ -1,21 +1,17 @@
+import { randomInt, randomUUID } from 'crypto'
 import type { ChannelType } from 'discord.js'
-import got from 'got'
 import { createEmbed, useConfirmation } from '../../embeds'
+import { createEliteHubVaultClient } from '../../graphql/client'
+import { CopilotFactionByNameDocument } from '../../graphql/generated/graphql'
 import L from '../../i18n/i18n-node'
 import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
 import type { CommandHandler } from '../types'
 
-type EliteBgsResponse = {
-  docs: {
-    _id: string
-    name: string
-    eddb_id: number
-    allegiance: string
-    faction_presence: object[]
-  }[]
-}
+const createPlaceholderEbgsId = () => `placeholder-${randomUUID()}`
+
+const createPlaceholderEddbId = () => randomInt(-2147483648, -1)
 
 export const copilotFactionHandler: CommandHandler = async ({
   interaction,
@@ -31,25 +27,25 @@ export const copilotFactionHandler: CommandHandler = async ({
   const notificationChannel = interaction.options.getChannel<
     ChannelType.GuildText | ChannelType.GuildAnnouncement
   >('notification_channel')
-  const factionNameEncoded = encodeURIComponent(factionNameInput)
 
   logger.info(`Setting up faction for guild ${guildId}, ${factionNameInput}, ${factionShorthand}`)
 
-  const url = `https://elitebgs.app/api/ebgs/v5/factions?name=${factionNameEncoded}`
-  const { docs } = await got(url).json<EliteBgsResponse>()
+  const client = createEliteHubVaultClient()
+  const response = await client.request(CopilotFactionByNameDocument, {
+    name: factionNameInput,
+  })
 
-  if (!docs.length) {
+  if (!response.factionByName) {
     await interaction.editReply(L[locale].copilot.faction.notFound())
     return
   }
 
   const {
-    _id: ebgsId,
-    eddb_id: eddbId,
+    id: elitehubVaultId,
     allegiance,
-    faction_presence: factionPresence,
     name: factionName,
-  } = docs[0]
+    systemFactions,
+  } = response.factionByName
 
   try {
     void useConfirmation({
@@ -62,20 +58,31 @@ export const copilotFactionHandler: CommandHandler = async ({
             description: L[locale].copilot.faction.confirm.description({
               factionName,
               factionShorthand,
-              allegiance,
-              systemsCount: factionPresence.length,
+              allegiance: String(allegiance),
+              systemsCount: systemFactions.totalCount,
               notificationChannel: notificationChannel?.id ? `<#${notificationChannel.id}>` : '-',
             }),
           }),
         ],
       },
       onConfirm: async (buttonInteraction) => {
+        const placeholderEddbId = createPlaceholderEddbId()
+        const placeholderEbgsId = createPlaceholderEbgsId()
+
         await Prisma.$transaction(async (trx) => {
           // Upsert faction
           const upsertedFaction = await trx.faction.upsert({
-            where: { ebgsId },
-            create: { eddbId, ebgsId, name: factionName },
-            update: { eddbId, name: factionName },
+            where: { elitehubVaultId },
+            create: {
+              eddbId: placeholderEddbId,
+              ebgsId: placeholderEbgsId,
+              elitehubVaultId,
+              name: factionName,
+            },
+            update: {
+              elitehubVaultId,
+              name: factionName,
+            },
           })
 
           // Upsert guild faction

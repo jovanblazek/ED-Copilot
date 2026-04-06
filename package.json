@@ -50,6 +50,7 @@
     "posthog-node": "^5.1.1",
     "socket.io-client": "^4.8.1",
     "typesafe-i18n": "^5.26.2",
+    "zod": "^4.3.6",
     "zeromq": "^6.3.0"
   },
   "devDependencies": {
