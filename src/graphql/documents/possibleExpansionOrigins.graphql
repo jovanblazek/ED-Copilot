@@ -1,0 +1,14 @@
+query PossibleExpansionOrigins($factionId: UUID!) {
+  factionStates(
+    condition: { factionId: $factionId }
+    orderBy: INFLUENCE_DESC
+    first: 10
+  ) {
+    nodes {
+      influence
+      system {
+        name
+      }
+    }
+  }
+}

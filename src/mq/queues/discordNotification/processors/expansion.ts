@@ -1,13 +1,10 @@
 import type { Faction } from '@prisma/client'
 import type { Client } from 'discord.js'
-import got from 'got'
 import { orderBy, round, uniqBy } from 'lodash'
 import { InaraUrl } from '../../../../constants'
-import {
-  type EliteBgsFactionSystemsResponse,
-  EliteBgsFactionSystemsResponseSchema,
-} from '../../../../dtos/eliteBgs'
 import { createEmbed } from '../../../../embeds'
+import { createEliteHubVaultClient } from '../../../../graphql/client'
+import { PossibleExpansionOriginsDocument } from '../../../../graphql/generated/graphql'
 import L from '../../../../i18n/i18n-node'
 import type { Locales } from '../../../../i18n/i18n-types'
 import logger from '../../../../utils/logger'
@@ -24,21 +21,30 @@ const getPossibleExpansionOrigins = async ({
 }: {
   faction: Faction
 }): Promise<PossibleExpansionOrigin[]> => {
-  const url = `https://elitebgs.app/api/ebgs/v5/factions?id=${faction.ebgsId}`
-  const fetchedData = await got(url).json<unknown>()
-  const response: EliteBgsFactionSystemsResponse =
-    EliteBgsFactionSystemsResponseSchema.parse(fetchedData)
-
-  if (response.docs.length === 0 || response.docs?.[0]?.faction_presence.length === 0) {
+  if (!faction.elitehubVaultId) {
     return []
   }
 
-  const systemsWithGt70Inf = response.docs[0].faction_presence.filter(
-    ({ influence }) => influence > 0.7 && influence !== 1 // Ignore systems with 100% influence
+  const client = createEliteHubVaultClient()
+  const response = await client.request(PossibleExpansionOriginsDocument, {
+    factionId: faction.elitehubVaultId,
+  })
+
+  const factionStates = response.factionStates?.nodes ?? []
+  const systemsWithGt70Inf = factionStates.filter(
+    (
+      factionState
+    ): factionState is NonNullable<typeof factionState> & {
+      system: { name: string }
+    } =>
+      Boolean(
+        factionState?.system?.name && factionState.influence > 0.7 && factionState.influence !== 1 // Ignore systems with 100% influence
+      )
   )
-  return systemsWithGt70Inf.map(({ system_name, influence }) => ({
-    systemName: system_name,
-    influence,
+
+  return systemsWithGt70Inf.map((factionState) => ({
+    systemName: factionState.system.name,
+    influence: factionState.influence,
   }))
 }
 
