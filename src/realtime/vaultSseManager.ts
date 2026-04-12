@@ -1,17 +1,10 @@
-// TODO(jovanblazek): Review this file
-
 import * as Sentry from '@sentry/node'
 import { type ErrorEvent, EventSource } from 'eventsource'
 import { ELITEHUB_VAULT_API_KEY_HEADER, getEliteHubVaultRealtimeSseUrl } from '../graphql/client'
 import { VaultRealtimeQueue } from '../mq/queues/vaultRealtime'
 import logger from '../utils/logger'
 import { Prisma } from '../utils/prismaClient'
-import {
-  type SseEventPayloadMap,
-  SseEventSchemaMap,
-  type SseEventType,
-  type SseSubscription,
-} from './types'
+import { SseEventSchemaMap, type SseEventType, type SseSubscription } from './types'
 import { buildSseSubscriptions, getSseSubscriptionKey } from './utils'
 
 type ActiveConnection = {
@@ -30,8 +23,8 @@ async function handleVaultSseMessage<T extends SseEventType>({
   event: MessageEvent<string>
 }) {
   try {
-    const parsedJson = JSON.parse(event.data) as unknown
-    const payload = SseEventSchemaMap[eventType].parse(parsedJson) as SseEventPayloadMap[T]
+    const parsedJson = JSON.parse(event.data)
+    const payload = SseEventSchemaMap[eventType].parse(parsedJson)
 
     if (payload.event !== eventType) {
       logger.warn(

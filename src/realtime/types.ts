@@ -8,13 +8,30 @@ export const FACTION_IDS_PER_SSE_CONNECTION = 20
 
 const FactionStateLifecycleSchema = z.enum(['pending', 'active', 'ended'])
 
+// Timestamps are in the format "2026-04-12 15:07:12.844429+00"
+// TODO (jovanblazek): Update vault to use ISO 8601 timestamps
+const normalizeSseTimestamp = (timestamp: string) =>
+  timestamp
+    .trim()
+    .replace(' ', 'T')
+    .replace(/([+-]\d{2})$/, '$1:00')
+
+const SseTimestampSchema = z
+  .string()
+  .transform(normalizeSseTimestamp)
+  .pipe(
+    z.iso.datetime({
+      offset: true,
+    })
+  )
+
 const BaseFactionStateChangedEventSchema = z.object({
   event: z.literal('factionStateChanged'),
   factionId: z.uuid(),
   systemId: z.uuid(),
   state: z.string(),
   lifecycle: FactionStateLifecycleSchema,
-  timestamp: z.iso.datetime(),
+  timestamp: SseTimestampSchema,
 })
 
 export const FactionStateChangedEventSchema = z.discriminatedUnion('stateKind', [
@@ -35,7 +52,7 @@ export const FactionControlThreatChangedEventSchema = z.object({
   challengerFactionId: z.uuid(),
   gap: z.number(),
   threshold: z.number(),
-  timestamp: z.iso.datetime(),
+  timestamp: SseTimestampSchema,
 })
 
 export const SseEventSchemaMap = {

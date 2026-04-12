@@ -9,6 +9,7 @@ import { VAULT_REALTIME_JOB_NAME } from './constants'
 import { processFactionControlThreatChangedEvent } from './processors/factionControlThreatChanged'
 import { processFactionStateChangedEvent } from './processors/factionStateChanged'
 import type { VaultRealtimeJobData } from './types'
+import { shouldEmitSseNotification } from './utils'
 
 const enqueueDiscordNotification = async ({ job }: { job: DiscordNotificationJobData }) => {
   await DiscordNotificationQueue.add(
@@ -48,7 +49,12 @@ export const VaultRealtimeWorker = new Worker<VaultRealtimeJobData>(
         return
       }
 
-      const { payload } = job.data as VaultRealtimeJobData<'factionStateChanged'>
+      const factionStateJob = job.data as VaultRealtimeJobData<'factionStateChanged'>
+      const { payload } = factionStateJob
+      const isNotificationAllowed = await shouldEmitSseNotification(factionStateJob)
+      if (!isNotificationAllowed) {
+        return
+      }
       const notification = await processFactionStateChangedEvent({ client, payload })
       if (notification) {
         await enqueueDiscordNotification({ job: notification })
