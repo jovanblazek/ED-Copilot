@@ -1,3 +1,13 @@
+## [4.0.0](https://github.com/jovanblazek/ed-copilot/compare/v3.11.1...v4.0.0) (2026-04-15)
+
+### ⚠ BREAKING CHANGES
+
+* Replace EliteBGS faction lookups with EliteHub Vault (#62)
+
+### :sparkles: Features
+
+* Replace EliteBGS faction lookups with EliteHub Vault ([#62](https://github.com/jovanblazek/ed-copilot/issues/62)) ([bfb2e4b](https://github.com/jovanblazek/ed-copilot/commit/bfb2e4bd1e81e58279b79761307b760c4292a53b))
+
 ## [3.11.1](https://github.com/jovanblazek/ed-copilot/compare/v3.11.0...v3.11.1) (2025-11-15)
 
 ### :bug: Bug Fixes
