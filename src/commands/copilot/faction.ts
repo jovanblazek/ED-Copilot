@@ -72,20 +72,42 @@ export const copilotFactionHandler: CommandHandler = async ({
         const placeholderEbgsId = createPlaceholderEbgsId()
 
         await Prisma.$transaction(async (trx) => {
-          // Upsert faction
-          const upsertedFaction = await trx.faction.upsert({
-            where: { elitehubVaultId },
-            create: {
-              eddbId: placeholderEddbId,
-              ebgsId: placeholderEbgsId,
-              elitehubVaultId,
-              name: factionName,
-            },
-            update: {
-              elitehubVaultId,
-              name: factionName,
+          // TODO: Remove this name-based migration fallback once all factions have elitehubVaultId.
+          const existingFaction = await trx.faction.findFirst({
+            where: {
+              OR: [
+                { elitehubVaultId },
+                {
+                  name: factionName,
+                  elitehubVaultId: null,
+                },
+              ],
             },
           })
+
+          const upsertedFaction = existingFaction
+            ? await trx.faction.update({
+                where: {
+                  id: existingFaction.id,
+                },
+                data: {
+                  elitehubVaultId,
+                  name: factionName,
+                },
+              })
+            : await trx.faction.upsert({
+                where: { elitehubVaultId },
+                create: {
+                  eddbId: placeholderEddbId,
+                  ebgsId: placeholderEbgsId,
+                  elitehubVaultId,
+                  name: factionName,
+                },
+                update: {
+                  elitehubVaultId,
+                  name: factionName,
+                },
+              })
 
           // Upsert guild faction
           await trx.guildFaction.upsert({
@@ -101,7 +123,6 @@ export const copilotFactionHandler: CommandHandler = async ({
               shortName: factionShorthand,
               factionId: upsertedFaction.id,
               notificationChannelId: notificationChannel?.id,
-              isSSEEnabled,
             },
           })
 
