@@ -1,3 +1,14 @@
+## [4.0.1](https://github.com/jovanblazek/ed-copilot/compare/v4.0.0...v4.0.1) (2026-04-15)
+
+### :bug: Bug Fixes
+
+* Fix build ([#64](https://github.com/jovanblazek/ed-copilot/issues/64)) ([9f28b74](https://github.com/jovanblazek/ed-copilot/commit/9f28b7498977a2232e40b13c779fa0bb14100b45))
+
+### :octopus: Miscellaneous Chores
+
+* Pin nixpacks node version ([#63](https://github.com/jovanblazek/ed-copilot/issues/63)) ([024c045](https://github.com/jovanblazek/ed-copilot/commit/024c045b606ea311fc60eaba4bee0bea605eb7dd))
+* Update nixpacks version ([260e6ee](https://github.com/jovanblazek/ed-copilot/commit/260e6ee4a2afce4bc87642cc31062f1b7f7260a2))
+
 ## [4.0.0](https://github.com/jovanblazek/ed-copilot/compare/v3.11.1...v4.0.0) (2026-04-15)
 
 ### ⚠ BREAKING CHANGES
