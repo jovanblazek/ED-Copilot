@@ -33,14 +33,14 @@ model User {
 }
 
 model GuildFaction {
-  id                      Int       @id @default(autoincrement())
-  guildId                 String    @unique
-  factionId               Int
-  shortName               String
-  notificationChannelId   String?
-  isSSEEnabled            Boolean   @default(false)
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime? @default(now()) @updatedAt
+  id                    Int       @id @default(autoincrement())
+  guildId               String    @unique
+  factionId             Int
+  shortName             String
+  notificationChannelId String?
+  isSSEEnabled          Boolean   @default(false)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime? @default(now()) @updatedAt
 
   faction Faction @relation(fields: [factionId], references: [id])
   guild   Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
@@ -50,17 +50,15 @@ model GuildFaction {
 
 model Faction {
   id              Int       @id @default(autoincrement())
-  name            String
-  ebgsId          String    @unique
-  eddbId          Int       @unique
-  elitehubVaultId String?   @unique
+  name            String    @unique
+  elitehubVaultId String    @unique
   createdAt       DateTime  @default(now())
   updatedAt       DateTime? @default(now()) @updatedAt
 
   factionStates FactionState[]
   guildFactions GuildFaction[]
 
-  @@index([eddbId, ebgsId, elitehubVaultId, name])
+  @@index([elitehubVaultId, name])
 }
 
 enum StateType {
