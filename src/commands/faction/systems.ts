@@ -158,10 +158,6 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
   interaction,
   context: { faction, guildFaction, locale, timezone },
 }) => {
-  if (!faction.elitehubVaultId) {
-    throw new DataParseError({ locale })
-  }
-
   const [tickTime, factionSystemsConnection] = await Promise.all([
     getTickTimeInTimezone({ locale, timezone }),
     fetchFactionSystemsPage({
@@ -188,7 +184,7 @@ export const factionSystemsHandler: FactionCommandHandler = async ({
     initialPage,
     loadPage: async (cursor) => {
       const nextPage = await fetchFactionSystemsPage({
-        factionId: faction.elitehubVaultId!,
+        factionId: faction.elitehubVaultId,
         after: cursor,
       })
 
