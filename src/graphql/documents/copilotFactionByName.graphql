@@ -1,0 +1,10 @@
+query CopilotFactionByName($name: String!) {
+  factionByName(name: $name) {
+    id
+    name
+    allegiance
+    systemFactions {
+      totalCount
+    }
+  }
+}

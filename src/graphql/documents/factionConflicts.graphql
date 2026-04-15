@@ -1,0 +1,35 @@
+query FactionConflicts($factionId: UUID!, $first: Int!, $after: Cursor) {
+  factionConflicts(condition: {factionId: $factionId}, first: $first, after: $after) {
+    edges {
+      cursor
+      node {
+        system {
+          name
+        }
+        faction {
+          name
+        }
+        factionStakeStation {
+          name
+          stationType
+        }
+        opponentFaction {
+          name
+        }
+        opponentStakeStation {
+          name
+          stationType
+        }
+        factionWonDays
+        opponentWonDays
+        status
+        type
+        updatedAt
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

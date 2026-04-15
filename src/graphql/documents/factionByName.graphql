@@ -1,0 +1,5 @@
+query FactionByName($name: String!) {
+  factionByName(name: $name) {
+    id
+  }
+}

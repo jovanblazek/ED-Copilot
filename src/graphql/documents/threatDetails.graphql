@@ -1,0 +1,20 @@
+query ThreatDetails($factionId: UUID!, $challengerFactionId: UUID!, $systemId: UUID!) {
+  controller: factionStateByFactionIdAndSystemId(factionId: $factionId, systemId: $systemId) {
+    influence
+    faction {
+      name
+    }
+    system {
+      name
+    }
+  }
+  challenger: factionStateByFactionIdAndSystemId(
+    factionId: $challengerFactionId
+    systemId: $systemId
+  ) {
+    influence
+    faction {
+      name
+    }
+  }
+}

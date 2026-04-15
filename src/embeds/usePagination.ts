@@ -1,4 +1,5 @@
 import type {
+  ButtonInteraction,
   CacheType,
   ChatInputCommandInteraction,
   EmbedBuilder,
@@ -10,43 +11,275 @@ import L from '../i18n/i18n-node'
 import type { Locales } from '../i18n/i18n-types'
 import logger from '../utils/logger'
 
-export const createPaginationButtons = (activePage: number, pagesLength: number) =>
+export const createPaginationButtons = ({
+  canGoLeft,
+  canGoRight,
+}: {
+  canGoLeft: boolean
+  canGoRight: boolean
+}) =>
   new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
     new ButtonBuilder()
       .setCustomId(PaginationButtonNames.LEFT)
       .setLabel('◀')
       .setStyle(ButtonStyle.Primary)
-      .setDisabled(activePage === 0),
+      .setDisabled(!canGoLeft),
     new ButtonBuilder()
       .setCustomId(PaginationButtonNames.RIGHT)
       .setLabel('▶')
       .setStyle(ButtonStyle.Primary)
-      .setDisabled(activePage === pagesLength - 1)
+      .setDisabled(!canGoRight)
   )
 
-interface UsePaginationProps {
+export interface RemotePaginationPage {
+  embed: EmbedBuilder
+  hasNextPage: boolean
+  nextCursor: string | null
+}
+
+export const loadNextRemotePaginationPage = async ({
+  remotePages,
+  activePageIndex,
+  loadPage,
+}: {
+  remotePages: RemotePaginationPage[]
+  activePageIndex: number
+  loadPage: (cursor: string) => Promise<RemotePaginationPage>
+}) => {
+  const currentPage = remotePages[activePageIndex]
+
+  if (!currentPage.hasNextPage || !currentPage.nextCursor) {
+    return {
+      remotePages,
+      activePageIndex,
+      loaded: false,
+    }
+  }
+
+  const nextPage = await loadPage(currentPage.nextCursor)
+  remotePages.push(nextPage)
+
+  return {
+    remotePages,
+    activePageIndex: activePageIndex + 1,
+    loaded: true,
+  }
+}
+
+interface StaticUsePaginationProps {
+  embeds: EmbedBuilder[]
+}
+
+interface RemoteUsePaginationProps {
+  initialPage: RemotePaginationPage
+  loadPage: (cursor: string) => Promise<RemotePaginationPage>
+}
+
+interface BaseUsePaginationProps {
   interaction: ChatInputCommandInteraction<CacheType>
   locale: Locales
   time?: number
-  embeds: EmbedBuilder[]
+}
+
+type PaginationModeProps = StaticUsePaginationProps | RemoteUsePaginationProps
+
+type UsePaginationProps = BaseUsePaginationProps & PaginationModeProps
+
+interface PaginationSession {
+  getCurrentEmbed: () => EmbedBuilder
+  isOnlyOnePage: () => boolean
+  canGoLeft: () => boolean
+  canGoRight: () => boolean
+  moveLeft: () => boolean
+  moveRight: (buttonInteraction: ButtonInteraction) => Promise<boolean>
+}
+
+const isRemotePaginationProps = (props: PaginationModeProps): props is RemoteUsePaginationProps =>
+  'initialPage' in props
+
+const createStaticPaginationSession = ({ embeds }: StaticUsePaginationProps): PaginationSession => {
+  let activePageIndex = 0
+
+  return {
+    getCurrentEmbed: () => embeds[activePageIndex],
+    isOnlyOnePage: () => embeds.length === 1,
+    canGoLeft: () => activePageIndex > 0,
+    canGoRight: () => activePageIndex < embeds.length - 1,
+    moveLeft: () => {
+      if (activePageIndex === 0) {
+        return false
+      }
+
+      activePageIndex -= 1
+      return true
+    },
+    moveRight: () => {
+      if (activePageIndex >= embeds.length - 1) {
+        return Promise.resolve(false)
+      }
+
+      activePageIndex += 1
+      return Promise.resolve(true)
+    },
+  }
+}
+
+const createRemotePaginationSession = ({
+  initialPage,
+  loadPage,
+}: RemoteUsePaginationProps): PaginationSession => {
+  const remotePages = [initialPage]
+  let activePageIndex = 0
+  let isLoadingNextPage = false
+
+  return {
+    getCurrentEmbed: () => remotePages[activePageIndex].embed,
+    isOnlyOnePage: () => !remotePages[0].hasNextPage,
+    canGoLeft: () => activePageIndex > 0,
+    canGoRight: () => {
+      const currentPage = remotePages[activePageIndex]
+      return activePageIndex < remotePages.length - 1 || currentPage.hasNextPage
+    },
+    moveLeft: () => {
+      if (activePageIndex === 0) {
+        return false
+      }
+
+      activePageIndex -= 1
+      return true
+    },
+    moveRight: async (buttonInteraction) => {
+      if (activePageIndex < remotePages.length - 1) {
+        activePageIndex += 1
+        return true
+      }
+
+      const currentPage = remotePages[activePageIndex]
+      if (!currentPage.hasNextPage || !currentPage.nextCursor) {
+        return false
+      }
+
+      await buttonInteraction.deferUpdate()
+      if (isLoadingNextPage) {
+        return false
+      }
+
+      isLoadingNextPage = true
+      try {
+        const nextPageState = await loadNextRemotePaginationPage({
+          remotePages,
+          activePageIndex,
+          loadPage,
+        })
+        activePageIndex = nextPageState.activePageIndex
+        return nextPageState.loaded
+      } finally {
+        isLoadingNextPage = false
+      }
+    },
+  }
+}
+
+const createPaginationSession = (props: PaginationModeProps): PaginationSession =>
+  isRemotePaginationProps(props)
+    ? createRemotePaginationSession(props)
+    : createStaticPaginationSession(props)
+
+const getPaginationComponents = (session: PaginationSession) => {
+  if (session.isOnlyOnePage()) {
+    return undefined
+  }
+
+  return [
+    createPaginationButtons({
+      canGoLeft: session.canGoLeft(),
+      canGoRight: session.canGoRight(),
+    }),
+  ]
+}
+
+const updatePaginationMessage = async ({
+  interaction,
+  session,
+}: {
+  interaction: ChatInputCommandInteraction<CacheType>
+  session: PaginationSession
+}) => {
+  await interaction.editReply({
+    embeds: [session.getCurrentEmbed()],
+    components: getPaginationComponents(session) ?? [],
+  })
+}
+
+const handlePaginationButton = async ({
+  buttonInteraction,
+  interaction,
+  locale,
+  session,
+}: {
+  buttonInteraction: ButtonInteraction
+  interaction: ChatInputCommandInteraction<CacheType>
+  locale: Locales
+  session: PaginationSession
+}) => {
+  if (buttonInteraction.user.id !== interaction.user.id) {
+    await buttonInteraction.reply({
+      content: L[locale].error.buttonsDisabled(),
+      ephemeral: true,
+    })
+    return
+  }
+
+  if (buttonInteraction.customId === PaginationButtonNames.LEFT) {
+    if (!session.moveLeft()) {
+      await buttonInteraction.update({
+        embeds: [session.getCurrentEmbed()],
+        components: getPaginationComponents(session),
+      })
+      return
+    }
+
+    await buttonInteraction.update({
+      embeds: [session.getCurrentEmbed()],
+      components: getPaginationComponents(session),
+    })
+    return
+  }
+
+  if (buttonInteraction.customId !== PaginationButtonNames.RIGHT) {
+    return
+  }
+
+  const hasMoved = await session.moveRight(buttonInteraction)
+  if (buttonInteraction.deferred) {
+    if (hasMoved) {
+      await updatePaginationMessage({
+        interaction,
+        session,
+      })
+    }
+    return
+  }
+
+  await buttonInteraction.update({
+    embeds: [session.getCurrentEmbed()],
+    components: getPaginationComponents(session),
+  })
 }
 
 export const usePagination = async ({
   interaction,
   locale,
   time = PAGINATION_COLLECTION_TIME,
-  embeds,
+  ...props
 }: UsePaginationProps) => {
-  let activePageIndex = 0
-  const paginationLength = embeds.length
-  const isOnlyOnePage = paginationLength === 1
+  const session = createPaginationSession(props as PaginationModeProps)
   const reply = await interaction.editReply({
-    embeds: [embeds[activePageIndex]],
-    components: isOnlyOnePage
-      ? undefined
-      : [createPaginationButtons(activePageIndex, paginationLength)],
+    embeds: [session.getCurrentEmbed()],
+    components: getPaginationComponents(session),
   })
-  if (isOnlyOnePage) {
+
+  if (session.isOnlyOnePage()) {
     return
   }
 
@@ -58,25 +291,12 @@ export const usePagination = async ({
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   collector.on('collect', async (buttonInteraction) => {
     try {
-      if (buttonInteraction.user.id === interaction.user.id) {
-        if (buttonInteraction.customId === PaginationButtonNames.LEFT && activePageIndex > 0) {
-          activePageIndex -= 1
-        } else if (
-          buttonInteraction.customId === PaginationButtonNames.RIGHT &&
-          activePageIndex < paginationLength - 1
-        ) {
-          activePageIndex += 1
-        }
-        await buttonInteraction.update({
-          embeds: [embeds[activePageIndex]],
-          components: [createPaginationButtons(activePageIndex, paginationLength)],
-        })
-      } else {
-        await buttonInteraction.reply({
-          content: L[locale].error.buttonsDisabled(),
-          ephemeral: true,
-        })
-      }
+      await handlePaginationButton({
+        buttonInteraction,
+        interaction,
+        locale,
+        session,
+      })
     } catch (error) {
       logger.error(error, 'Error while collecting pagination buttons')
     }
@@ -87,7 +307,7 @@ export const usePagination = async ({
   collector.on('end', async () => {
     try {
       await interaction.editReply({
-        embeds: [embeds[activePageIndex]],
+        embeds: [session.getCurrentEmbed()],
         components: [],
       })
     } catch (error) {

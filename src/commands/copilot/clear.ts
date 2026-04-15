@@ -1,4 +1,5 @@
 import L from '../../i18n/i18n-node'
+import { refreshVaultSseSubscriptions } from '../../realtime/vaultSseManager'
 import { Prisma } from '../../utils'
 import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
 import type { CommandHandler } from '../types'
@@ -27,6 +28,7 @@ export const copilotClearHandler: CommandHandler = async ({ interaction, context
         // Ignore if the guild faction is not set
       })
     await loadTrackedFactionsFromDBToRedis()
+    await refreshVaultSseSubscriptions()
     response.push(L[locale].copilot.clear.faction())
   }
 

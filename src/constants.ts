@@ -104,6 +104,7 @@ export const RedisKeys = {
   processedSystem: ({ tickTimestamp, systemName }: { tickTimestamp: string; systemName: string }) =>
     `processedSystem:${systemName}:${tickTimestamp}`,
   expansion: ({ factionId }: { factionId: number }) => `expansion:${factionId}`,
+  sseExpansion: ({ factionId }: { factionId: string }) => `sseExpansion:${factionId}`,
   stationType: ({ systemName, stationName }: { systemName: string; stationName: string }) =>
     `stationType:${systemName}:${stationName}`,
 } as const

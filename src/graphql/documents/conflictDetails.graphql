@@ -1,0 +1,27 @@
+query ConflictDetails($factionId: UUID!, $systemId: UUID!) {
+  factionConflicts(condition: { factionId: $factionId, systemId: $systemId }, first: 1) {
+    nodes {
+      faction {
+        name
+      }
+      factionStakeStation {
+        name
+        stationType
+      }
+      factionWonDays
+      opponentFaction {
+        name
+      }
+      opponentStakeStation {
+        name
+        stationType
+      }
+      opponentWonDays
+      status
+      system {
+        name
+      }
+      type
+    }
+  }
+}

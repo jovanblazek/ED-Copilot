@@ -1,0 +1,22 @@
+query FactionSystems($factionId: UUID!, $first: Int!, $after: Cursor) {
+  faction(id: $factionId) {
+    factionStates(orderBy: INFLUENCE_DESC, first: $first, after: $after) {
+      edges {
+        cursor
+        node {
+          influence
+          system {
+            name
+            updatedAt
+          }
+          activeStates
+          pendingStates
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/node'
 import type { Guild } from 'discord.js'
 import { Languages } from '../constants'
+import { refreshVaultSseSubscriptions } from '../realtime/vaultSseManager'
 import logger from '../utils/logger'
 import { Posthog } from '../utils/posthog'
 import { Prisma } from '../utils/prismaClient'
@@ -62,6 +63,7 @@ export const onGuildLeave = async ({ id, name, memberCount }: Guild) => {
     await Prisma.guild.delete({ where: { id } })
     // Reload to remove the guild's tracked faction from redis
     await loadTrackedFactionsFromDBToRedis()
+    await refreshVaultSseSubscriptions()
 
     Posthog.capture({
       distinctId: `guild:${id}`,
@@ -74,6 +76,7 @@ export const onGuildLeave = async ({ id, name, memberCount }: Guild) => {
         had_faction_setup: !!guildData?.guildFaction,
         faction_name: guildData?.guildFaction?.faction?.name || null,
         had_notification_channel: !!guildData?.guildFaction?.notificationChannelId,
+        had_sse_enabled: !!guildData?.guildFaction?.isSSEEnabled,
         had_tick_report_channel: !!guildData?.tickReportChannelId,
         language: guildData?.language || 'unknown',
         timezone: guildData?.timezone || 'unknown',

@@ -1,20 +1,24 @@
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import { bold, hyperlink } from 'discord.js'
-import got from 'got'
-import { round, sortBy } from 'lodash'
+import { round } from 'lodash'
 import { DataParseError } from '../../classes'
 import { DIVIDER, InaraUrl } from '../../constants'
 import { createEmbed, usePagination } from '../../embeds'
-import { chunkDescription } from '../../embeds/utils'
+import { createEliteHubVaultClient } from '../../graphql/client'
+import {
+  type FactionStateEnum,
+  FactionSystemsDocument,
+  type FactionSystemsQuery,
+} from '../../graphql/generated/graphql'
 import L from '../../i18n/i18n-node'
 import type { Locales } from '../../i18n/i18n-types'
-import type { FactionSystemsResponse } from '../../types/eliteBGS'
 import { getTickTimeInTimezone } from '../../utils'
 import { getPastTimeDifferenceFromNow, isAfterTime } from '../../utils/time'
 import type { FactionCommandHandler } from './types'
 
 const INFLUENCE_DECIMAL_PLACES = 1
+const SYSTEMS_PER_PAGE = 10
 
 interface ParsedSystemData {
   systemName: string
@@ -23,28 +27,18 @@ interface ParsedSystemData {
   isInConflict: boolean
 }
 
-const parseSystemsData = ({
-  response,
-  commandContext: { locale, timezone },
+const ConflictStates = new Set<FactionStateEnum>(['CivilWar', 'Election', 'War'])
+
+export const isConflictState = (state: FactionStateEnum | null) =>
+  state !== null && ConflictStates.has(state)
+
+export const isSystemInConflict = ({
+  activeStates,
+  pendingStates,
 }: {
-  response: FactionSystemsResponse
-  commandContext: Parameters<FactionCommandHandler>[0]['context']
-}): ParsedSystemData[] => {
-  if (!response.docs.length) {
-    throw new DataParseError({ locale })
-  }
-
-  const { faction_presence: factionPresence } = response.docs[0]
-
-  const parsedSystemData: ParsedSystemData[] = factionPresence.map((systemFactionPresence) => ({
-    systemName: systemFactionPresence.system_name,
-    lastUpdate: dayjs(systemFactionPresence.updated_at).tz(timezone),
-    currentInfluence: round(systemFactionPresence.influence * 100, INFLUENCE_DECIMAL_PLACES),
-    isInConflict: systemFactionPresence.conflicts.length > 0,
-  }))
-
-  return sortBy(parsedSystemData, 'currentInfluence').reverse()
-}
+  activeStates: Array<FactionStateEnum | null>
+  pendingStates: Array<FactionStateEnum | null>
+}) => [...activeStates, ...pendingStates].some(isConflictState)
 
 const formatSystemEntry = (
   { systemName, currentInfluence, lastUpdate, isInConflict }: ParsedSystemData,
@@ -66,64 +60,151 @@ const formatSystemEntry = (
   return lines.filter(Boolean).join('\n')
 }
 
-const createFactionSystemsEmbeds = (
+const createFactionSystemsEmbed = (
   {
     factionSystems,
     tickTime,
+    pageIndex,
   }: {
     factionSystems: ParsedSystemData[]
     tickTime: Dayjs
+    pageIndex: number
   },
   { faction, guildFaction, locale }: Parameters<FactionCommandHandler>[0]['context']
 ) => {
-  const systemEntries = factionSystems.map((system, index) =>
-    formatSystemEntry(system, index, tickTime, locale)
-  )
+  const description = factionSystems
+    .map((system, index) =>
+      formatSystemEntry(system, pageIndex * SYSTEMS_PER_PAGE + index, tickTime, locale)
+    )
+    .join('\n\n')
 
-  const descriptionChunks = chunkDescription(systemEntries)
+  return createEmbed({
+    title: L[locale].faction.systems.title({
+      factionName: guildFaction.shortName,
+    }),
+    description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}\n${description}`,
+  })
+}
 
-  return descriptionChunks.map((chunk) =>
-    createEmbed({
-      title: L[locale].faction.systems.title({
-        factionName: guildFaction.shortName,
-      }),
-      description: `${hyperlink('INARA', InaraUrl.minorFaction(faction.name))}\n${DIVIDER}\n${chunk}`,
+const fetchFactionSystemsPage = async ({
+  factionId,
+  after,
+}: {
+  factionId: string
+  after?: string | null
+}) => {
+  const client = createEliteHubVaultClient()
+  const response = await client.request(FactionSystemsDocument, {
+    factionId,
+    first: SYSTEMS_PER_PAGE,
+    after: after ?? null,
+  })
+
+  return response.faction?.factionStates ?? null
+}
+
+const createSystemPage = ({
+  factionSystemsConnection,
+  tickTime,
+  pageIndex,
+  context,
+}: {
+  factionSystemsConnection: NonNullable<
+    NonNullable<FactionSystemsQuery['faction']>['factionStates']
+  >
+  tickTime: Dayjs
+  pageIndex: number
+  context: Parameters<FactionCommandHandler>[0]['context']
+}) => {
+  const factionSystems = factionSystemsConnection.edges
+    .map((edge): ParsedSystemData | null => {
+      const node = edge?.node
+
+      if (!node?.system?.name || !node.system.updatedAt) {
+        return null
+      }
+
+      return {
+        systemName: node.system.name,
+        lastUpdate: dayjs(String(node.system.updatedAt)).utc(),
+        currentInfluence: round(node.influence * 100, INFLUENCE_DECIMAL_PLACES),
+        isInConflict: isSystemInConflict({
+          activeStates: node.activeStates,
+          pendingStates: node.pendingStates,
+        }),
+      }
     })
-  )
+    .filter((system): system is ParsedSystemData => Boolean(system))
+
+  if (!factionSystems.length && pageIndex === 0) {
+    throw new DataParseError({ locale: context.locale })
+  }
+
+  return {
+    embed: createFactionSystemsEmbed(
+      {
+        factionSystems,
+        tickTime,
+        pageIndex,
+      },
+      context
+    ),
+    hasNextPage: factionSystemsConnection.pageInfo.hasNextPage,
+    nextCursor: factionSystemsConnection.pageInfo.endCursor,
+  }
 }
 
 export const factionSystemsHandler: FactionCommandHandler = async ({
   interaction,
   context: { faction, guildFaction, locale, timezone },
 }) => {
-  const url = `https://elitebgs.app/api/ebgs/v5/factions?eddbId=${faction.eddbId}`
-  const fetchedData = await got(url).json<FactionSystemsResponse>()
-
-  const factionSystems = parseSystemsData({
-    response: fetchedData,
-    commandContext: {
-      locale,
-      faction,
-      timezone,
-      guildFaction,
-    },
-  })
-  if (!factionSystems.length) {
+  if (!faction.elitehubVaultId) {
     throw new DataParseError({ locale })
   }
-  const tickTime = await getTickTimeInTimezone({ locale, timezone })
 
-  const embeds = createFactionSystemsEmbeds(
-    {
-      factionSystems,
-      tickTime,
-    },
-    { locale, faction, guildFaction, timezone }
-  )
+  const [tickTime, factionSystemsConnection] = await Promise.all([
+    getTickTimeInTimezone({ locale, timezone }),
+    fetchFactionSystemsPage({
+      factionId: faction.elitehubVaultId,
+    }),
+  ])
+
+  if (!factionSystemsConnection) {
+    throw new DataParseError({ locale })
+  }
+
+  const initialPage = createSystemPage({
+    factionSystemsConnection,
+    tickTime,
+    pageIndex: 0,
+    context: { locale, faction, guildFaction, timezone },
+  })
+
+  let loadedPageCount = 1
 
   await usePagination({
     interaction,
-    embeds,
     locale,
+    initialPage,
+    loadPage: async (cursor) => {
+      const nextPage = await fetchFactionSystemsPage({
+        factionId: faction.elitehubVaultId!,
+        after: cursor,
+      })
+
+      if (!nextPage) {
+        throw new DataParseError({ locale })
+      }
+
+      const page = createSystemPage({
+        factionSystemsConnection: nextPage,
+        tickTime,
+        pageIndex: loadedPageCount,
+        context: { locale, faction, guildFaction, timezone },
+      })
+
+      loadedPageCount += 1
+      return page
+    },
   })
 }

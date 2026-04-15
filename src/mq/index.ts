@@ -3,12 +3,14 @@ import logger from '../utils/logger'
 import { CreateDiscordNotificationWorker } from './queues/discordNotification'
 import { CreateFleetCarrierJumpCleanupWorker } from './queues/fleetCarrierJumpCleanup'
 import { SystemProcessingWorker } from './queues/systemProcessing'
+import { VaultRealtimeWorker } from './queues/vaultRealtime'
 
 export const initMQ = ({ client }: { client: Client }) => {
   const bullMQWorkers = [
     CreateDiscordNotificationWorker({ client }),
     SystemProcessingWorker,
     CreateFleetCarrierJumpCleanupWorker({ client }),
+    VaultRealtimeWorker,
   ]
   bullMQWorkers.forEach((worker) => {
     worker.on('failed', (job) => {

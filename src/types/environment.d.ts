@@ -4,6 +4,7 @@ declare global {
       NODE_ENV: 'development' | 'production' | 'test'
       BOT_TOKEN: string
       INARA_API_KEY: string
+      ELITEHUB_VAULT_API_KEY: string
       SENTRY_DSN: string | undefined
       POSTHOG_KEY: string | undefined
       DEBUG_EDDN_LISTENER: 'true' | undefined

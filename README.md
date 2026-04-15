@@ -104,6 +104,18 @@ All notifications are sent with detailed information and direct links to INARA f
 7. Run `pnpm run register-commands` to register the commands on your testing server.
 8. Run `pnpm run dev` to start the bot.
 
+### GraphQL Schema Sync
+
+GraphQL generated files under `src/graphql/generated/` are committed to the repository and should be treated like build artifacts. Contributors do not need `ELITEHUB_VAULT_API_KEY` for normal development, typechecking, or builds as long as those files are up to date in git.
+
+If you change files in `src/graphql/documents/` or need to refresh the EliteHub Vault schema, set `ELITEHUB_VAULT_API_KEY` in your local `.env` and run:
+
+```
+pnpm run graphql:pull-schema
+```
+
+Commit the updated files from `src/graphql/generated/` together with the document changes.
+
 ### 💿 Migrations
 
 After changing the prisma schema, create a migration using following command:

@@ -1,0 +1,29 @@
+query ConflictDetailsByOpponent($factionId: UUID!, $systemId: UUID!, $opponentFactionId: UUID!) {
+  factionConflictByFactionIdAndSystemIdAndOpponentFactionId(
+    factionId: $factionId
+    systemId: $systemId
+    opponentFactionId: $opponentFactionId
+  ) {
+    faction {
+      name
+    }
+    factionStakeStation {
+      name
+      stationType
+    }
+    factionWonDays
+    opponentFaction {
+      name
+    }
+    opponentStakeStation {
+      name
+      stationType
+    }
+    opponentWonDays
+    status
+    system {
+      name
+    }
+    type
+  }
+}
