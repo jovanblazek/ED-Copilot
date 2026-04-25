@@ -21,10 +21,6 @@ const getPossibleExpansionOrigins = async ({
 }: {
   faction: Faction
 }): Promise<PossibleExpansionOrigin[]> => {
-  if (!faction.elitehubVaultId) {
-    return []
-  }
-
   const client = createEliteHubVaultClient()
   const response = await client.request(PossibleExpansionOriginsDocument, {
     factionId: faction.elitehubVaultId,

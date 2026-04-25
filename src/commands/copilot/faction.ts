@@ -1,4 +1,3 @@
-import { randomInt, randomUUID } from 'crypto'
 import type { ChannelType } from 'discord.js'
 import { createEmbed, useConfirmation } from '../../embeds'
 import { createEliteHubVaultClient } from '../../graphql/client'
@@ -9,10 +8,6 @@ import { Prisma } from '../../utils'
 import logger from '../../utils/logger'
 import { loadTrackedFactionsFromDBToRedis } from '../../utils/redis'
 import type { CommandHandler } from '../types'
-
-const createPlaceholderEbgsId = () => `placeholder-${randomUUID()}`
-
-const createPlaceholderEddbId = () => randomInt(-2147483648, -1)
 
 export const copilotFactionHandler: CommandHandler = async ({
   interaction,
@@ -68,46 +63,17 @@ export const copilotFactionHandler: CommandHandler = async ({
         ],
       },
       onConfirm: async (buttonInteraction) => {
-        const placeholderEddbId = createPlaceholderEddbId()
-        const placeholderEbgsId = createPlaceholderEbgsId()
-
         await Prisma.$transaction(async (trx) => {
-          // TODO: Remove this name-based migration fallback once all factions have elitehubVaultId.
-          const existingFaction = await trx.faction.findFirst({
-            where: {
-              OR: [
-                { elitehubVaultId },
-                {
-                  name: factionName,
-                  elitehubVaultId: null,
-                },
-              ],
+          const upsertedFaction = await trx.faction.upsert({
+            where: { elitehubVaultId },
+            create: {
+              elitehubVaultId,
+              name: factionName,
+            },
+            update: {
+              name: factionName,
             },
           })
-
-          const upsertedFaction = existingFaction
-            ? await trx.faction.update({
-                where: {
-                  id: existingFaction.id,
-                },
-                data: {
-                  elitehubVaultId,
-                  name: factionName,
-                },
-              })
-            : await trx.faction.upsert({
-                where: { elitehubVaultId },
-                create: {
-                  eddbId: placeholderEddbId,
-                  ebgsId: placeholderEbgsId,
-                  elitehubVaultId,
-                  name: factionName,
-                },
-                update: {
-                  elitehubVaultId,
-                  name: factionName,
-                },
-              })
 
           // Upsert guild faction
           await trx.guildFaction.upsert({

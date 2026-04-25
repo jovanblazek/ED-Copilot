@@ -219,10 +219,6 @@ const createConflictPage = ({
 export const factionConflictsHandler: FactionCommandHandler = async ({ interaction, context }) => {
   const { faction, timezone, locale } = context
 
-  if (!faction.elitehubVaultId) {
-    throw new DataParseError({ locale })
-  }
-
   const [tickTime, factionConflictsConnection] = await Promise.all([
     getTickTimeInTimezone({ locale, timezone }),
     fetchFactionConflictPage({
@@ -246,7 +242,7 @@ export const factionConflictsHandler: FactionCommandHandler = async ({ interacti
     initialPage,
     loadPage: async (cursor) => {
       const nextPage = await fetchFactionConflictPage({
-        factionId: faction.elitehubVaultId!,
+        factionId: faction.elitehubVaultId,
         after: cursor,
       })
 
