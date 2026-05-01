@@ -51,16 +51,14 @@ model GuildFaction {
 model Faction {
   id              Int       @id @default(autoincrement())
   name            String
-  ebgsId          String    @unique
-  eddbId          Int       @unique
-  elitehubVaultId String?   @unique
+  elitehubVaultId String    @unique
   createdAt       DateTime  @default(now())
   updatedAt       DateTime? @default(now()) @updatedAt
 
   factionStates FactionState[]
   guildFactions GuildFaction[]
 
-  @@index([eddbId, ebgsId, elitehubVaultId, name])
+  @@index([elitehubVaultId, name])
 }
 
 enum StateType {

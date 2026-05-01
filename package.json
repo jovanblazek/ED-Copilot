@@ -18,8 +18,7 @@
     "start": "node build/index.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "backfill:elitehub-vault-faction-ids": "tsx src/scripts/backfillEliteHubVaultFactionIds.ts"
+    "lint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",

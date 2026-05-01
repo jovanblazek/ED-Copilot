@@ -121,11 +121,6 @@ class VaultSseManager {
           notificationChannelId: {
             not: null,
           },
-          faction: {
-            elitehubVaultId: {
-              not: null,
-            },
-          },
         },
         include: {
           faction: true,
@@ -133,9 +128,7 @@ class VaultSseManager {
       })
 
       const subscriptions = buildSseSubscriptions({
-        factionIds: trackedGuildFactions.flatMap(({ faction }) =>
-          faction.elitehubVaultId ? [faction.elitehubVaultId] : []
-        ),
+        factionIds: trackedGuildFactions.map(({ faction }) => faction.elitehubVaultId),
       })
 
       this.reconcileConnections(subscriptions)
