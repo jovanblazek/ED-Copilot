@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "pnpm run graphql:pull-schema && tsx watch src/index.ts",
     "translations:watch": "typesafe-i18n",
     "test": "jest",
     "register-commands": "tsx src/utils/registerCommands.ts",
@@ -13,7 +13,7 @@
     "migrate:dev": "prisma migrate dev",
     "generate-types": "prisma generate",
     "graphql:pull-schema": "graphql-codegen --config codegen.ts",
-    "build": "pnpm run generate-types && rimraf build/ && tsc --project tsconfig.production.json && pnpm run postbuild",
+    "build": "pnpm run generate-types && pnpm run graphql:pull-schema && rimraf build/ && tsc --project tsconfig.production.json && pnpm run postbuild",
     "postbuild": "copyfiles .env ./build",
     "start": "node build/index.js",
     "typecheck": "tsc --noEmit",

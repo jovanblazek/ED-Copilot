@@ -73,6 +73,15 @@ function createVaultEventSource(subscription: SseSubscription) {
     factionIds,
   })
 
+  if (process.env.NODE_ENV === 'production' && !process.env.ELITEHUB_VAULT_API_KEY) {
+    throw new Error('Missing ELITEHUB_VAULT_API_KEY in production')
+  }
+
+  if (!process.env.ELITEHUB_VAULT_API_KEY) {
+    logger.warn('[Vault SSE] Missing ELITEHUB_VAULT_API_KEY. SSE connections will be disabled.')
+    logger.debug('[Vault SSE] URL: %s', url)
+  }
+
   const eventSource = new EventSource(url, {
     fetch: (input, init) =>
       fetch(input, {
